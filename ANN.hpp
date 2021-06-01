@@ -27,8 +27,8 @@ public:
     virtual T appendError(size_t, T)=0;
     virtual Tensor<T> getInputs()=0;
     virtual Tensor<T> getOutputs()=0;
-//    virtual Tensor<T> getInputErrors()=0;
-//    virtual Tensor<T> getOutputErrors()=0;
+    virtual Tensor<T> getInputErrors()=0;
+    virtual Tensor<T> getOutputErrors()=0;
 
     virtual size_t getNumInputs()=0;
     virtual size_t getNumOutputs()=0;

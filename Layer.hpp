@@ -35,11 +35,11 @@ public:
     };
     void backward() override {
 	// ошибки по входам
-	tensormath::mul<T>(params_->get("W"), Learnable<T>::dY_, Learnable<T>::dX_);
+	tensormath::mul<T>(params_->get("W"), Learnable<T>::getOutputErrors(), Learnable<T>::getInputErrors());
 	// градиент синаптической матрицы
-	tensormath::extmulapp<T>(Learnable<T>::dY_, Learnable<T>::getInputs(), grad_->get("W"));
+	tensormath::extmulapp<T>(Learnable<T>::getOutputErrors(), Learnable<T>::getInputs(), grad_->get("W"));
 	// градиент смещений нейронов
-	tensormath::append<T>(grad_->get("C"), Learnable<T>::dY_);
+	tensormath::append<T>(grad_->get("C"), Learnable<T>::getOutputErrors());
 	Learnable<T>::backward();
     };
 

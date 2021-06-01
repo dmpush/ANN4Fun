@@ -32,20 +32,22 @@ public:
     };
     ~Learnable() = default;
 
-    Tensor<T>  getInputs()  { return X_; };
-    Tensor<T>  getOutputs() { return Y_; };
+    Tensor<T>  getInputs()  override { return X_; };
+    Tensor<T>  getOutputs() override { return Y_; };
+    Tensor<T>  getInputErrors() override { return dX_; };
+    Tensor<T> getOutputErrors() override { return dY_; };
 
-    T getOutput(size_t index) { return Y_->get(index); };
-    T setOutput(size_t index, T value) { return dY_->set(index, value - Y_->get(index)); };
+    T getOutput(size_t index)          override  { return Y_->get(index); };
+    T setOutput(size_t index, T value) override { return dY_->set(index, value - Y_->get(index)); };
 
-    T getInput(size_t index) { return X_->get(index); };
-    T setInput(size_t index, T value) { return X_->set(index, value); };
+    T getInput(size_t index)          override { return X_->get(index); };
+    T setInput(size_t index, T value) override { return X_->set(index, value); };
 
-    T setError(size_t index, T value) { return dY_->set(index, value); };
-    T appendError(size_t index, T value) { return dY_->set(index, dY_->get(index) + value); };
+    T setError(size_t index, T value)    override { return dY_->set(index, value); };
+    T appendError(size_t index, T value) override { return dY_->set(index, dY_->get(index) + value); };
 
-    size_t getNumInputs()  { return numberOfInputs_; };
-    size_t getNumOutputs() { return numberOfOutputs_; };
+    size_t getNumInputs()  override { return numberOfInputs_; };
+    size_t getNumOutputs() override { return numberOfOutputs_; };
 
     auto getTutor() { return tutor_; };
 
@@ -77,10 +79,10 @@ private:
     
     Tensor<T> X_;
     Tensor<T> Y_;
-protected:
-    void setTutor(typename AbstractTutor<T>::uPtr tutor) { tutor_=std::move(tutor); };
     Tensor<T> dX_;
     Tensor<T> dY_;
+protected:
+    void setTutor(typename AbstractTutor<T>::uPtr tutor) { tutor_=std::move(tutor); };
 };
 
 #endif

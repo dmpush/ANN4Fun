@@ -159,6 +159,6 @@ private:
 
 }; //class
 template <typename T>
-    using Tensor= DataHolder<T>::Tensor::sPtr;
+    using Tensor=typename DataHolder<T>::Tensor::sPtr;
 
 #endif
