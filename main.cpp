@@ -10,7 +10,7 @@ int main()
 {
     try {
 	Layer<float> layer(2,3);
-	layer.setTutor(std::make_shared<SimpleTutor<float>>(0.1) );
+	layer.setupTutor(std::make_unique<SimpleTutor<float>>(0.1) );
 	layer.setMode(ANN<float>::TrainMode);
 	for(int i=0; i<1000; i++) {
 	layer.batchBegin();

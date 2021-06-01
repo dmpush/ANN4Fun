@@ -19,39 +19,35 @@ public:
 	params_->build();
 	grad_=params_->clone();
 	params_->fill(0.1);
-	setTutor(std::make_shared<SimpleTutor<T>>());
 	params_->description();
 	grad_->description();
+	setupTutor( std::make_unique<SimpleTutor<T>>() );
+    };
+    void setupTutor(typename AbstractTutor<T>::uPtr tutor) override {
+	Learnable<T>::setTutor(std::move(tutor));
+	Learnable<T>::setContext(params_, grad_); // чойтакактанитак
     };
 
-    void setTutor(typename AbstractTutor<T>::sPtr tutor) override {
-	tutor_=tutor;
-	tutor_->setContext(params_, grad_);
-    };
 
     void forward() override {
-	tensormath::copy<T>(params_->get("C"), Learnable<T>::Y_);
-	tensormath::mul<T>(Learnable<T>::X_, params_->get("W"), Learnable<T>::Y_);
+	tensormath::copy<T>(params_->get("C"), Learnable<T>::getOutputs());
+	tensormath::mul<T>(Learnable<T>::getInputs(), params_->get("W"), Learnable<T>::getOutputs());
     };
     void backward() override {
 	// ошибки по входам
 	tensormath::mul<T>(params_->get("W"), Learnable<T>::dY_, Learnable<T>::dX_);
 	// градиент синаптической матрицы
-	tensormath::extmulapp<T>(Learnable<T>::dY_, Learnable<T>::X_, grad_->get("W"));
+	tensormath::extmulapp<T>(Learnable<T>::dY_, Learnable<T>::getInputs(), grad_->get("W"));
 	// градиент смещений нейронов
 	tensormath::append<T>(grad_->get("C"), Learnable<T>::dY_);
-	tutor_->backward();
 	Learnable<T>::backward();
     };
 
     void batchBegin() override {
 	Learnable<T>::batchBegin();
-	tutor_->batchBegin();
     };
 
     void batchEnd() override {
-	if(ANN<T>::isTrainable())
-	    tutor_->batchEnd();
 	Learnable<T>::batchEnd();
     };
 
@@ -59,7 +55,6 @@ public:
 private:
     typename DataHolder<T>::sPtr params_;
     typename DataHolder<T>::sPtr grad_;
-    typename AbstractTutor<T>::sPtr tutor_;
 };
 
 #endif

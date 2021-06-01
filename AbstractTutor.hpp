@@ -13,7 +13,7 @@ protected:
     typename DataHolder<T>::sPtr param_;
     typename DataHolder<T>::sPtr grad_;
 public:
-    using sPtr=std::shared_ptr<AbstractTutor<T>>;
+    using uPtr=std::unique_ptr<AbstractTutor<T>>;
     AbstractTutor() = default;
     AbstractTutor(const AbstractTutor&) = delete;
     virtual ~AbstractTutor() = default;
@@ -25,8 +25,8 @@ public:
 	grad_->fill(T(0));
     };
     virtual void batchBegin() {
-//	if(grad_.isempty())
-//	    throw std::runtime_error("Градиент пуст!");
+	if(grad_->isEmpty())
+	    throw std::runtime_error("Градиент пуст!");
         sampleCount_=0;
         grad_->fill(T(0));
     };

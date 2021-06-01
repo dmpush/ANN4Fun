@@ -2,6 +2,7 @@
 #define __ANN_HPP__
 
 #include <stdexcept>
+#include <DataHolder.hpp>
 
 template<typename T>
 class ANN {
@@ -24,6 +25,10 @@ public:
     virtual T setInput(size_t, T)=0;
     virtual T setError(size_t, T)=0;
     virtual T appendError(size_t, T)=0;
+    virtual Tensor<T> getInputs()=0;
+    virtual Tensor<T> getOutputs()=0;
+//    virtual Tensor<T> getInputErrors()=0;
+//    virtual Tensor<T> getOutputErrors()=0;
 
     virtual size_t getNumInputs()=0;
     virtual size_t getNumOutputs()=0;

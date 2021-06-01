@@ -20,10 +20,9 @@
 
 namespace tensormath {
 
+
 template<typename T>
-void sum   (typename DataHolder<T>::Tensor::sPtr A,
-	    typename DataHolder<T>::Tensor::sPtr B,
-	    typename DataHolder<T>::Tensor::sPtr res) {
+void sum   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
     if(res->dim()!=A->dim() || res->dim()!=B->dim())
 	throw std::runtime_error("sum: Размерности тензоров различны");
     if(res->size()!=A->size() || res->size()!=B->size())
@@ -34,7 +33,7 @@ void sum   (typename DataHolder<T>::Tensor::sPtr A,
 
 // res+=A
 template<typename T>
-void append   (typename DataHolder<T>::Tensor::sPtr A, typename DataHolder<T>::Tensor::sPtr res) {
+void append   (Tensor<T> A, Tensor<T> res) {
     if(res->dim()!=A->dim() )
 	throw std::runtime_error("append(): Размерности тензоров различны");
     if(res->size()!=A->size() )
@@ -48,9 +47,7 @@ void append   (typename DataHolder<T>::Tensor::sPtr A, typename DataHolder<T>::T
 
 /// Умножение матриц, векторов и матриц, и т.д.
 template<typename T>
-void mul   (typename DataHolder<T>::Tensor::sPtr A,
-	    typename DataHolder<T>::Tensor::sPtr B,
-	    typename DataHolder<T>::Tensor::sPtr res) {
+void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 	    auto dimsA=A->dims();
 	    auto dimsB=B->dims();
 //	    std::cout<<A->dim()<<" & "<<B->dim()<<std::endl;
@@ -89,8 +86,7 @@ void mul   (typename DataHolder<T>::Tensor::sPtr A,
 };
 
 template<typename T>
-void copy  (typename DataHolder<T>::Tensor::sPtr src,
-	    typename DataHolder<T>::Tensor::sPtr dest) {
+void copy  (Tensor<T> src, Tensor<T> dest) {
     if(src->size()!=dest->size())
 	throw  std::runtime_error("copy(): тензоры имеют разные размеры");
     for(size_t i=0; i<src->size(); i++)
@@ -98,9 +94,7 @@ void copy  (typename DataHolder<T>::Tensor::sPtr src,
 };
 /// внешнее произведение двух векторов
 template<typename T>
-void extmulapp(typename DataHolder<T>::Tensor::sPtr A,
-	    typename DataHolder<T>::Tensor::sPtr B,
-	    typename DataHolder<T>::Tensor::sPtr res) {
+void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
     if(A->dim()!=1 && B->dim()!=1 || res->dim()!=2) 
 	throw std::runtime_error("extmul(): входные тензоры должны быть векторами, а выходной - матрицей");
     auto dimsA=A->dims();

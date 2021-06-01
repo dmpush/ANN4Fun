@@ -32,6 +32,8 @@ public:
     };
     ~Learnable() = default;
 
+    Tensor<T>  getInputs()  { return X_; };
+    Tensor<T>  getOutputs() { return Y_; };
 
     T getOutput(size_t index) { return Y_->get(index); };
     T setOutput(size_t index, T value) { return dY_->set(index, value - Y_->get(index)); };
@@ -44,20 +46,41 @@ public:
 
     size_t getNumInputs()  { return numberOfInputs_; };
     size_t getNumOutputs() { return numberOfOutputs_; };
-    // перевести на unique !
-    virtual void setTutor(typename AbstractTutor<T>::sPtr) =0;
+
+    auto getTutor() { return tutor_; };
+
+    void backward() override {
+	ANN<T>::backward();
+	tutor_->backward();
+    };
+
+    void batchBegin() override {
+	ANN<T>::batchBegin();
+	tutor_->batchBegin();
+    };
+    void batchEnd() override {
+	ANN<T>::batchEnd();
+	if(ANN<T>::isTrainable())
+	    tutor_->batchEnd();
+    };
+    virtual void  setupTutor(typename AbstractTutor<T>::uPtr) = 0;
+
+    void setContext(typename DataHolder<T>::sPtr params, typename DataHolder<T>::sPtr grad) {
+	tutor_->setContext(params, grad);
+    };
 
 private:
     size_t numberOfInputs_, numberOfOutputs_;
     typename DataHolder<T>::sPtr holder_;
-//    typename AbstracTutor<T>::sPtr tutor_;
+    typename AbstractTutor<T>::uPtr tutor_;
     // возможно, сюда следует перенести params_, grad_, tutor_
     
+    Tensor<T> X_;
+    Tensor<T> Y_;
 protected:
-    typename DataHolder<T>::Tensor::sPtr X_;
-    typename DataHolder<T>::Tensor::sPtr Y_;
-    typename DataHolder<T>::Tensor::sPtr dX_;
-    typename DataHolder<T>::Tensor::sPtr dY_;
+    void setTutor(typename AbstractTutor<T>::uPtr tutor) { tutor_=std::move(tutor); };
+    Tensor<T> dX_;
+    Tensor<T> dY_;
 };
 
 #endif

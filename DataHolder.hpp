@@ -147,6 +147,7 @@ public:
 	    o->description();
 	};
     };
+    bool isEmpty() { return size()==0; };
 
 private:
     void append(std::string name, typename Tensor::sPtr obj) {
@@ -157,5 +158,7 @@ private:
 
 
 }; //class
+template <typename T>
+    using Tensor= DataHolder<T>::Tensor::sPtr;
 
 #endif
