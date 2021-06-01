@@ -5,49 +5,20 @@
 #include <string>
 #include <memory>
 #include <ANN.hpp>
+#include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
 
 template<typename T>
-class Learnable : public ANN<T> {
+class Learnable : public Successor<T> {
 public:
     Learnable() = delete;
     Learnable(const Learnable&) = delete;
     explicit Learnable(size_t Nin, size_t Nout) : 
-	numberOfInputs_(Nin), 
-	numberOfOutputs_(Nout),
-	ANN<T>() {
-	holder_=std::make_shared<DataHolder<T>>();
-	holder_->append("X", {Nin});
-	holder_->append("dX", {Nin});
-	holder_->append("Y", {Nout});
-	holder_->append("dY", {Nout});
-	holder_->build();
-
-	X_=holder_->get("X");
-	dX_=holder_->get("dX");
-	Y_=holder_->get("Y");
-	dY_=holder_->get("dY");
-	holder_->fill(T(0));
+	Successor<T>({Nin},{Nout}) {
     };
     ~Learnable() = default;
 
-    Tensor<T>  getInputs()  override { return X_; };
-    Tensor<T>  getOutputs() override { return Y_; };
-    Tensor<T>  getInputErrors() override { return dX_; };
-    Tensor<T> getOutputErrors() override { return dY_; };
-
-    T getOutput(size_t index)          override  { return Y_->get(index); };
-    T setOutput(size_t index, T value) override { return dY_->set(index, value - Y_->get(index)); };
-
-    T getInput(size_t index)          override { return X_->get(index); };
-    T setInput(size_t index, T value) override { return X_->set(index, value); };
-
-    T setError(size_t index, T value)    override { return dY_->set(index, value); };
-    T appendError(size_t index, T value) override { return dY_->set(index, dY_->get(index) + value); };
-
-    size_t getNumInputs()  override { return numberOfInputs_; };
-    size_t getNumOutputs() override { return numberOfOutputs_; };
 
     auto getTutor() { return tutor_; };
 
@@ -72,15 +43,9 @@ public:
     };
 
 private:
-    size_t numberOfInputs_, numberOfOutputs_;
-    typename DataHolder<T>::sPtr holder_;
+    // unique гарантирует невозможность задать одного Учителя нескольким сетям
     typename AbstractTutor<T>::uPtr tutor_;
-    // возможно, сюда следует перенести params_, grad_, tutor_
-    
-    Tensor<T> X_;
-    Tensor<T> Y_;
-    Tensor<T> dX_;
-    Tensor<T> dY_;
+    // возможно, сюда следует перенести params_, grad
 protected:
     void setTutor(typename AbstractTutor<T>::uPtr tutor) { tutor_=std::move(tutor); };
 };

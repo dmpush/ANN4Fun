@@ -5,7 +5,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <initializer_list>
 #include <stdexcept>
 #include <iterator> // std::size
 #include <iostream>
@@ -15,13 +14,12 @@ template<typename T>
 class DataHolder {
 public:
     using sPtr=std::shared_ptr<DataHolder >;
-    using wPtr=std::weak_ptr<DataHolder >;
+    using uPtr=std::unique_ptr<DataHolder >;
 
     //-------------------------------------------------------------------
     class Tensor{
     public:
 	friend class DataHolder;
-        using wPtr=std::weak_ptr<Tensor>;
         using sPtr=std::shared_ptr<Tensor>;
 
 	Tensor() = delete;
@@ -104,7 +102,7 @@ public:
     };
 
 
-    void append(std::string name, std::initializer_list<size_t> dims) {
+    void append(std::string name, std::vector<size_t> dims) {
 	auto obj=std::make_shared<Tensor>(this, dims);
 	append(name, obj);
     };

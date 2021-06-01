@@ -30,16 +30,16 @@ public:
 
 
     void forward() override {
-	tensormath::copy<T>(params_->get("C"), Learnable<T>::getOutputs());
-	tensormath::mul<T>(Learnable<T>::getInputs(), params_->get("W"), Learnable<T>::getOutputs());
+	tensormath::copy<T>(params_->get("C"), Successor<T>::getOutputs());
+	tensormath::mul<T>(Successor<T>::getInputs(), params_->get("W"), Successor<T>::getOutputs());
     };
     void backward() override {
 	// ошибки по входам
-	tensormath::mul<T>(params_->get("W"), Learnable<T>::getOutputErrors(), Learnable<T>::getInputErrors());
-	// градиент синаптической матрицы
-	tensormath::extmulapp<T>(Learnable<T>::getOutputErrors(), Learnable<T>::getInputs(), grad_->get("W"));
+	tensormath::mul<T>(params_->get("W"), Successor<T>::getOutputErrors(), Successor<T>::getInputErrors());
+	// градиент синаптической матрицы - внешнее произведение входов и ошибок по выходам
+	tensormath::extmulapp<T>(Successor<T>::getOutputErrors(),Successor<T>::getInputs(), grad_->get("W"));
 	// градиент смещений нейронов
-	tensormath::append<T>(grad_->get("C"), Learnable<T>::getOutputErrors());
+	tensormath::append<T>(grad_->get("C"), Successor<T>::getOutputErrors());
 	Learnable<T>::backward();
     };
 
