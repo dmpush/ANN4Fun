@@ -38,6 +38,7 @@ public:
 	const size_t dim() { return dims_.size(); };
 	const size_t size() { return size_; };
 	const auto dims() { return dims_; };
+
 	T get(int ind) { return holder_->get(offset_+ind); };
 	T set(int ind, T val) { return (holder_->set(offset_+ind, val)); };
 
@@ -80,6 +81,12 @@ public:
 	    std::cout<<std::endl;
 	};
 //    friend void sum(typename Tensor::sPtr A, typename Tensor sPtr B, typename Tensor::sPtr res);
+
+	void show() {
+	    std::cout<<"{";
+	    for(int i=0; i<size(); i++)
+		std::cout<<get(i)<<(i+1!=size() ? ", ": "}");
+	};
 
     private:
 	DataHolder *holder_;
@@ -146,6 +153,15 @@ public:
 	};
     };
     bool isEmpty() { return size()==0; };
+
+    void show() {
+	std::cout<<"\n[";
+	for(auto [k,v] : objects_) {
+	    std::cout<<"\n"<<k<<":";
+	    v->show();
+	};
+	std::cout<<"\n]\n";
+    };
 
 private:
     void append(std::string name, typename Tensor::sPtr obj) {

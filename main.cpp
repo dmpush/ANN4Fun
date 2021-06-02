@@ -4,46 +4,64 @@
 #include "SimpleTutor.hpp"
 #include "Input.hpp"
 #include "Layer.hpp"
-#include "ANN.hpp"
+#include "Model.hpp"
 
 using namespace std;
 int main()
 {
     try {
-	Input<float> inputs({2});
-	Layer<float> layer(&inputs, 3);
-	layer.setupTutor(std::make_unique<SimpleTutor<float>>(0.1) );
-	layer.setMode(ANN<float>::TrainMode);
+	Model<float> model;
+	auto inputs = new Input<float>({2});
+	auto layer1 = new Layer<float>(inputs, 2);
+	auto layer2 = new Layer<float>(layer1, 3);
+	model.addLayer( inputs );
+	model.addLayer( layer1 );
+	model.addLayer( layer2 );
+
+//	layer.setupTutor(std::make_unique<SimpleTutor<float>>(0.1) );
 	for(int i=0; i<1000; i++) {
-	layer.batchBegin();
-	inputs.setInput(0, 0.0);
-	inputs.setInput(1,-1.0);
-	layer.forward();
-	layer.setOutput(0, 1.0);
-	layer.setOutput(1, 2.0);
-	layer.setOutput(2, 3.0);
-	layer.backward();
+	    model.setMode(ANN<float>::TrainMode);
 
-	inputs.setInput(0, 1.0);
-	inputs.setInput(1,-0.0);
-	layer.forward();
-	layer.setOutput(0, 3.14);
-	layer.setOutput(1, 2.71);
-	layer.setOutput(2, 1.0);
-	layer.backward();
-	layer.batchEnd();
+	    model.batchBegin();
 
-	layer.setMode(ANN<float>::WorkMode);
-	layer.setInput(0, 0.0);
-	layer.setInput(1,-1.0);
-	layer.forward();
-	for(int j=0; j<3; j++)
-	    cout<<layer.getOutput(j)<<" ";
-	layer.setInput(0, 1.0);
-	layer.setInput(1,-0.0);
-	layer.forward();
-	for(int j=0; j<3; j++)
-	    cout<<layer.getOutput(j)<<" ";
+	    model.setInput(0, 0.0);
+	    model.setInput(1, 1.0);
+	    model.forward();
+	    model.setOutput(0, 1.0);
+	    model.setOutput(1, 2.0);
+	    model.setOutput(2, 3.0);
+	    model.backward();
+
+	    model.setInput(0, 1.0);
+	    model.setInput(1, 0.0);
+	    model.forward();
+	    model.setOutput(0, 3.14);
+	    model.setOutput(1, 2.71);
+	    model.setOutput(2, 1.41);
+	    model.backward();
+
+	    model.batchEnd();
+
+
+	    model.setMode(ANN<float>::WorkMode);
+	    model.setInput(0, 0.0);
+	    model.setInput(1, 1.0);
+	    model.forward();
+	    for(int j=0; j<3; j++)
+		cout<<    model.getOutput(j)<<" ";
+
+	cout<<    model.getInputErrors()->get(0)<<" ";
+	cout<<    model.getInputErrors()->get(1)<<" ";
+
+	    cout<<" | ";
+	    model.setInput(0, 1.0);
+	    model.setInput(1, 0.0);
+	    model.forward();
+	    for(int j=0; j<3; j++)
+		cout<<    model.getOutput(j)<<" ";
+	cout<<    model.getInputErrors()->get(0)<<" ";
+	cout<<    model.getInputErrors()->get(1)<<" ";
+
 	cout<<endl;
     };
     } catch(std::runtime_error ex) {

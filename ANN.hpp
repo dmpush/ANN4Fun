@@ -11,7 +11,7 @@ public:
     ANN() : time_(0), lockTrain_(false), mode_(UnknownMode) {};
     virtual ~ANN() = default;
 
-    void setMode(WorkModes mode) { mode_=mode; };
+    virtual void setMode(WorkModes mode) { mode_=mode; };
     WorkModes getMode() { return mode_; };
 
     void lockTrain() { lockTrain_=true; };
