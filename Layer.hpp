@@ -2,9 +2,10 @@
 #define __LAYER_HPP_
 
 #include <iostream>
-
+#include <vector>
 #include <memory>
 #include <stdexcept>
+
 #include <Learnable.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
@@ -15,13 +16,15 @@
 template <typename T>
 class Layer : public Learnable<T> {
 public:
-    Layer(ANN<T> *ann, size_t Nout) : Learnable<T>(ann, Nout) {
+    Layer(ANN<T> *ann, std::vector<size_t> Nout) : Learnable<T>(ann, Nout) {
 	params_=std::make_shared<DataHolder<T>>();
+	if(Nout.size() != 1)
+	    throw std::runtime_error("Выходы должны быть организованы в 1-тензор");
 	if(ann->getOutputs()->dim() != 1)
 	    throw std::runtime_error("Входы должны быть организованы в 1-тензор");
 	size_t Nin=ann->getOutputs()->size();
-	params_->append("W", {Nout, Nin});
-	params_->append("C", {Nout});
+	params_->append("W", {Nout[0], Nin});
+	params_->append("C", {Nout[0]});
 	params_->build();
 	grad_=params_->clone();
 	params_->fill(0.1);

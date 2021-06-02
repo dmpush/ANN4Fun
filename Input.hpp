@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <ANN.hpp>
 #include <DataHolder.hpp>
+#include <AbstractTutor.hpp>
 
 template<typename T>
 class Input: public ANN<T> {
@@ -45,7 +46,10 @@ public:
 
     void forward() override {
     };
-
+    void batchEnd() override {
+    };
+    void setupTutor(typename AbstractTutor<T>::uPtr) override {
+    };
 private:
     // хранилище данных и псевдонимы для тензоров
     typename DataHolder<T>::uPtr holder_;

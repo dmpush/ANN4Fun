@@ -2,18 +2,41 @@
 #define __MODEL_HPP__
 
 #include <deque>
+#include <vector>
+#include <memory>
+#include <concepts>
+#include <stdexcept>
 
 #include <ANN.hpp>
 #include <DataHolder.hpp>
+#include <Input.hpp>
+#include <Successor.hpp>
+#include <AbstractTutor.hpp>
+
+/// концепт наследования, C++20
+template<typename D, typename B>
+concept Derived= std::is_base_of<B, D>::value;
+
 
 template<typename T>
 class Model : public ANN<T> {
 public:
+
+    template<typename R>
+
     Model() : layers_{} {};
+    Model(std::vector<size_t> shape) : layers_{} {
+	layers_.push_back(std::make_shared<Input<T>>(shape));
+    };
+
+    
     ~Model() = default;
-    // подумать, можно ли тут использовать шаблонную функцию
+
     // дабы спрятать выделение памяти от пользователя
-    void addLayer(ANN<T> * layer) { layers_.push_back(layer); };
+    template<Derived<Successor<T>> AnnType>
+    void addLayer(std::vector<size_t> dims) {
+	layers_.push_back(std::make_shared<AnnType>(layers_.back().get(), dims) );
+    };
 
     void forward() override {
 	for(auto it: layers_)
@@ -33,7 +56,6 @@ public:
     };
 
     void batchEnd() override {
-	ANN<T>::batchEnd();
 	for(auto it: layers_)
 	    it->batchEnd();
     };
@@ -61,9 +83,17 @@ public:
 	    it->setMode(mode);
     };
 
+    typename ANN<T>::sPtr operator()(int index) {
+	return layers_[index];
+    };
+
+    void setupTutor(typename AbstractTutor<T>::uPtr) override {
+	throw std::runtime_error("Model::setupTutor() не доступен");
+    };
+    
 
 private:
-    std::deque<ANN<T>*> layers_;
+    std::deque<typename ANN<T>::sPtr> layers_;
 };
 
 #endif

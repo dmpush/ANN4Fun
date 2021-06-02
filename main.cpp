@@ -1,24 +1,22 @@
 #include <iostream>
 #include <string>
-#include "DataHolder.hpp"
-#include "SimpleTutor.hpp"
-#include "Input.hpp"
-#include "Layer.hpp"
-#include "Model.hpp"
+#include <DataHolder.hpp>
+#include <SimpleTutor.hpp>
+#include <Input.hpp>
+#include <Layer.hpp>
+#include <Model.hpp>
 
 using namespace std;
 int main()
 {
     try {
-	Model<float> model;
-	auto inputs = new Input<float>({2});
-	auto layer1 = new Layer<float>(inputs, 2);
-	auto layer2 = new Layer<float>(layer1, 3);
-	model.addLayer( inputs );
-	model.addLayer( layer1 );
-	model.addLayer( layer2 );
+	Model<float> model({2});
+	model.addLayer<Layer<float>>({2});
+	model.addLayer<Layer<float>>({3});
 
-//	layer.setupTutor(std::make_unique<SimpleTutor<float>>(0.1) );
+//	model.setupTutor(std::make_unique<SimpleTutor<float>>(0.1));
+	model(1)->setupTutor(std::make_unique<SimpleTutor<float>>(0.05));
+
 	for(int i=0; i<1000; i++) {
 	    model.setMode(ANN<float>::TrainMode);
 

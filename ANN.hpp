@@ -2,11 +2,14 @@
 #define __ANN_HPP__
 
 #include <stdexcept>
+#include <memory>
 #include <DataHolder.hpp>
+#include <AbstractTutor.hpp>
 
 template<typename T>
 class ANN {
 public:
+    using sPtr=std::shared_ptr<ANN<T>>;
     enum WorkModes{TrainMode, WorkMode, UnknownMode};
     ANN() : time_(0), lockTrain_(false), mode_(UnknownMode) {};
     virtual ~ANN() = default;
@@ -42,7 +45,9 @@ public:
 	    throw std::runtime_error("ANN::batchBegin(): Не задан режим работы ИНС");
     };
 
-    virtual void batchEnd() {};
+    virtual void batchEnd() =0;
+    
+    virtual void setupTutor(typename AbstractTutor<T>::uPtr) = 0;
 
 private:
     size_t time_;

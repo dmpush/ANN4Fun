@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <vector>
+
 #include <ANN.hpp>
 #include <Successor.hpp>
 #include <DataHolder.hpp>
@@ -14,7 +16,7 @@ class Learnable : public Successor<T> {
 public:
     Learnable() = delete;
     Learnable(const Learnable&) = delete;
-    explicit Learnable(ANN<T>* ann, size_t Nout) : Successor<T>(ann,{Nout}) {
+    explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) : Successor<T>(ann,Nout) {
     };
     ~Learnable() = default;
 
@@ -31,11 +33,10 @@ public:
 	tutor_->batchBegin();
     };
     void batchEnd() override {
-	ANN<T>::batchEnd();
+//	ANN<T>::batchEnd();
 	if(ANN<T>::isTrainable())
 	    tutor_->batchEnd();
     };
-    virtual void  setupTutor(typename AbstractTutor<T>::uPtr) = 0;
 
     void setContext(typename DataHolder<T>::sPtr params, typename DataHolder<T>::sPtr grad) {
 	tutor_->setContext(params, grad);
