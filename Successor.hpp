@@ -9,18 +9,17 @@
 template<typename T>
 class Successor : public ANN<T> {
 public:
-    Successor(std::vector<size_t> Nin, std::vector<size_t> Nout) : ANN<T>() {
+    Successor(ANN<T> *ann, std::vector<size_t> Nout) : precursor_(ann), ANN<T>() {
 	// сеть является владельцем своих входов и выходов
 	holder_=std::make_unique<DataHolder<T>>();
-	holder_->append("X", Nin);
-	holder_->append("dX", Nin);
 	holder_->append("Y", Nout);
 	holder_->append("dY", Nout);
 	holder_->build();
-	X_=holder_->get("X");
-	dX_=holder_->get("dX");
-	Y_=holder_->get("Y");
-	dY_=holder_->get("dY");
+	// псевдонимы
+	X_ = precursor_ -> getOutputs();
+	dX_= precursor_ -> getOutputErrors();
+	Y_ = holder_    -> get("Y");
+	dY_= holder_    -> get("dY");
 	holder_->fill(T(0));
 	holder_->description();
     };
@@ -51,9 +50,10 @@ private:
     // хранилище данных и псевдонимы для тензоров
     typename DataHolder<T>::uPtr holder_;
     Tensor<T> X_;
-    Tensor<T> Y_;
     Tensor<T> dX_;
+    Tensor<T> Y_;
     Tensor<T> dY_;
+    ANN<T> *precursor_;
 };
 
 #endif

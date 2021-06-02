@@ -14,8 +14,7 @@ class Learnable : public Successor<T> {
 public:
     Learnable() = delete;
     Learnable(const Learnable&) = delete;
-    explicit Learnable(size_t Nin, size_t Nout) : 
-	Successor<T>({Nin},{Nout}) {
+    explicit Learnable(ANN<T>* ann, size_t Nout) : Successor<T>(ann,{Nout}) {
     };
     ~Learnable() = default;
 

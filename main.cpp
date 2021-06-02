@@ -2,6 +2,7 @@
 #include <string>
 #include "DataHolder.hpp"
 #include "SimpleTutor.hpp"
+#include "Input.hpp"
 #include "Layer.hpp"
 #include "ANN.hpp"
 
@@ -9,21 +10,22 @@ using namespace std;
 int main()
 {
     try {
-	Layer<float> layer(2,3);
+	Input<float> inputs({2});
+	Layer<float> layer(&inputs, 3);
 	layer.setupTutor(std::make_unique<SimpleTutor<float>>(0.1) );
 	layer.setMode(ANN<float>::TrainMode);
 	for(int i=0; i<1000; i++) {
 	layer.batchBegin();
-	layer.setInput(0, 0.0);
-	layer.setInput(1,-1.0);
+	inputs.setInput(0, 0.0);
+	inputs.setInput(1,-1.0);
 	layer.forward();
 	layer.setOutput(0, 1.0);
 	layer.setOutput(1, 2.0);
 	layer.setOutput(2, 3.0);
 	layer.backward();
 
-	layer.setInput(0, 1.0);
-	layer.setInput(1,-0.0);
+	inputs.setInput(0, 1.0);
+	inputs.setInput(1,-0.0);
 	layer.forward();
 	layer.setOutput(0, 3.14);
 	layer.setOutput(1, 2.71);

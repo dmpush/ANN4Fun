@@ -2,6 +2,7 @@
 #define __LAYER_HPP_
 
 #include <memory>
+#include <stdexcept>
 #include <Learnable.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
@@ -12,9 +13,11 @@
 template <typename T>
 class Layer : public Learnable<T> {
 public:
-    Layer(size_t Nin, size_t Nout) : Learnable<T>(Nin, Nout) {
+    Layer(ANN<T> *ann, size_t Nout) : Learnable<T>(ann, Nout) {
 	params_=std::make_shared<DataHolder<T>>();
-	params_->append("W", {Nout, Nin});
+	if(ann->getOutputs()->dim() != 1)
+	    throw std::runtime_error("Входная сеть иметь выход 1-тензор");
+	params_->append("W", {Nout, ann->getOutputs()->size()});
 	params_->append("C", {Nout});
 	params_->build();
 	grad_=params_->clone();
