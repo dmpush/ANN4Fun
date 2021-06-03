@@ -4,6 +4,7 @@ all:
 run:
 	./test
 clean:
+	make -C units clean
 	$(RM) test
 	$(RM) callgrind.out*
 leaks:
@@ -12,3 +13,6 @@ profile:
 	valgrind --tool=callgrind ./test
 view:
 	qcachegrind 
+unit:
+	make -C units
+	make -C units run

@@ -56,7 +56,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		/// скалярное произведение векторов
 		if(A->size()!=B->size() || res->size()!=1)
 		    throw std::runtime_error("Вектора не сцеплены");
-		T s=T(0);
+		T s{0};
 		for(size_t j=0; j<dimsB[1]; j++)
 		    s+=A->get(j)*B->get(j);
 		res->set(0,s);
@@ -65,7 +65,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		if(A->size() != dimsB[1] || dimsB[0]!=res->size() )
 		    throw std::runtime_error("Вектор и матрица не сцеплены");
 		for(size_t i=0; i<dimsB[0]; i++) {
-		    T s=T(0);
+		    T s{0};
 		    for(size_t j=0; j<dimsB[1]; j++)
 			s+=A->get(j)*B->get({i,j});
 		    res->set(i, s);
@@ -75,7 +75,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		if(dimsA[0]!=B->size() || dimsA[1]!=res->size())
 		    throw std::runtime_error("Матрица и вектор не сцеплены");
 		for(size_t i=0; i<dimsA[1]; i++) {
-		    T s=T(0);
+		    T s{0};
 		    for(size_t j=0; j<dimsA[0]; j++)
 			s+=A->get({j,i}) * B->get(j);
 		    res->set(i,s);

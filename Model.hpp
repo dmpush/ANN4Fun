@@ -38,6 +38,7 @@ public:
 	layers_.push_back(std::make_shared<AnnType>(layers_.back().get(), dims) );
     };
 
+
     void forward() override {
 	for(auto it: layers_)
 	    it->forward();
