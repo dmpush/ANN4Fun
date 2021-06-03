@@ -1,6 +1,7 @@
 RM=rm -f
 TARGET=unit
 all:
+	clear
 	clang++ -std=c++20 -static -m32 -g -I ../.. main.cpp -o $(TARGET).32
 	clang++ -std=c++20 -static -m64 -g -I ../.. main.cpp -o $(TARGET).64
 run:
