@@ -1,16 +1,6 @@
 #ifndef __TENSOR_MATH_HPP__
 #define __TENSOR_MATH_HPP__
-/*
-#include <map>
-#include <memory>
-#include <string>
-#include <vector>
-#include <initializer_list>
-#include <stdexcept>
-#include <iterator> // std::size
-#include <iostream>
-#include <algorithm> //std::fill
-*/
+
 #include <DataHolder.hpp>
 
 /**
@@ -50,6 +40,7 @@ template<typename T>
 void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 	    auto dimsA=A->dims();
 	    auto dimsB=B->dims();
+
 //	    std::cout<<A->dim()<<" & "<<B->dim()<<std::endl;
 	    /// матрицы разворачиваются строка за строкой
 	    if(A->dim()==1 && B->dim()==1) {

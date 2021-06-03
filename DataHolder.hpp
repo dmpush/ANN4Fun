@@ -39,8 +39,8 @@ public:
 	const size_t size() { return size_; };
 	const auto dims() { return dims_; };
 
-	T get(int ind) { return holder_->get(offset_+ind); };
-	T set(int ind, T val) { return (holder_->set(offset_+ind, val)); };
+	T get(size_t ind) { return holder_->get(offset_+ind); };
+	T set(size_t ind, T val) { return (holder_->set(offset_+ind, val)); };
 
 	T get(const std::vector<size_t>& ind) {
 	    if(std::size(ind)!=dim())
@@ -102,10 +102,14 @@ public:
     DataHolder() = default;
     virtual ~DataHolder() = default;
 
-    T get(int ind) { return data_[ind]; };
-    T set(int ind, T val) { return (data_[ind]=val); };
+    T get(size_t ind) { return data_[ind]; };
+    T set(size_t ind, T val) { return (data_[ind]=val); };
     typename Tensor::sPtr get(std::string name)  {
+	auto it=objects_.find(name);
+	if(it==objects_.end())
+	    throw std::runtime_error(std::string("Нет тензора ")+name+std::string(" в хранилище"));
 	return objects_[name];
+//	return it->value();
     };
 
 
@@ -131,22 +135,22 @@ public:
 	for(size_t i=0; i<size(); i++)
 	data_[i] += h*B->data_[i];
     };
-    /// шаблон Прототип
-    auto clone() {
-	auto out=std::make_shared<DataHolder<T>>();
-	for(auto [name, obj] : objects_) {
+
+    void clone(typename DataHolder<T>::sPtr src) {
+	for(auto [name, obj] : src->objects_) {
 	    auto o=obj->clone();
-	    o->holder_=out.get();
-	    out->append(name, o);
+	    o->holder_=this;
+	    append(name, o);
 	};
-	out->build();
-	return out;
+	build();
+	for(size_t i=0; i<size(); i++)
+	    set(i, src->get(i));
     };
     void fill(T val) {
         std::fill(data_.begin(), data_.end(), val);
     };
     void description() {
-	std::cout<<"Размер хранища "<<size()<<" объектов ("<<size()*sizeof(T)<<" байт)."<<std::endl;
+	std::cout<<"Размер хранилища "<<size()<<" объектов ("<<size()*sizeof(T)<<" байт)."<<std::endl;
 	for(auto [n,o]: objects_) {
 	    std::cout<<n<<": ";
 	    o->description();

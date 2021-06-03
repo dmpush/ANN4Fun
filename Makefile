@@ -1,16 +1,17 @@
 RM=rm -f
+TARGET=test
 all:
-	clang++ -std=c++20 -static -g -I . main.cpp -o test
+	clang++ -std=c++20 -static -g -I . main.cpp -o $(TARGET)
 run:
 	./test
 clean:
 	make -C units clean
-	$(RM) test
+	$(RM) $(TARGET)
 	$(RM) callgrind.out*
 leaks:
-	valgrind --leak-check=full ./test
+	valgrind --leak-check=full ./$(TARGET)
 profile:
-	valgrind --tool=callgrind ./test
+	valgrind --tool=callgrind ./$(TARGET)
 view:
 	qcachegrind 
 unit:

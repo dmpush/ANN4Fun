@@ -47,7 +47,7 @@ public:
 
     virtual void batchEnd() =0;
     
-    virtual void setupTutor(typename AbstractTutor<T>::uPtr) = 0;
+    virtual void setTutor(typename AbstractTutor<T>::uPtr) = 0;
 
 private:
     size_t time_;

@@ -1,7 +1,6 @@
 #ifndef __LAYER_HPP_
 #define __LAYER_HPP_
 
-#include <iostream>
 #include <vector>
 #include <memory>
 #include <stdexcept>
@@ -16,58 +15,58 @@
 template <typename T>
 class Layer : public Learnable<T> {
 public:
+    Layer() = delete;
+    Layer(const Layer&) = delete;
     Layer(ANN<T> *ann, std::vector<size_t> Nout) : Learnable<T>(ann, Nout) {
-	params_=std::make_shared<DataHolder<T>>();
 	if(Nout.size() != 1)
-	    throw std::runtime_error("Выходы должны быть организованы в 1-тензор");
+	    throw std::runtime_error("Выходы должны быть организованны в 1-тензор");
 	if(ann->getOutputs()->dim() != 1)
-	    throw std::runtime_error("Входы должны быть организованы в 1-тензор");
+	    throw std::runtime_error("Входы должны быть организованны в 1-тензор");
 	size_t Nin=ann->getOutputs()->size();
-	params_->append("W", {Nout[0], Nin});
-	params_->append("C", {Nout[0]});
-	params_->build();
-	grad_=params_->clone();
-	params_->fill(0.1);
-	params_->description();
-	grad_->description();
-	setupTutor( std::make_unique<SimpleTutor<T>>() );
-    };
-    void setupTutor(typename AbstractTutor<T>::uPtr tutor) override {
-	Learnable<T>::setTutor(std::move(tutor));
-	Learnable<T>::setContext(params_, grad_); // чойтакактанитак
+	Learnable<T>::getParams()->append("W", {Nout[0], Nin});
+	Learnable<T>::getParams()->append("C", {Nout[0]});
+	Learnable<T>::getParams()->build();
+	Learnable<T>::getParams()->fill(0.1);
+
+	Learnable<T>::getGrad()->clone( Learnable<T>::getParams() );
+//	Learnable<T>::getParams()->description();
+	Learnable<T>::setTutor( std::make_unique<SimpleTutor<T>>() );
+	// определяем прямые ссылки на тензоры
+	W_=Learnable<T>::getParams()->get("W");
+	C_=Learnable<T>::getParams()->get("C");
+
+	dW_=Learnable<T>::getGrad()->get("W");
+	dC_=Learnable<T>::getGrad()->get("C");
+
+	X_=Learnable<T>::getInputs();
+	Y_=Learnable<T>::getOutputs();
+
+	dX_=Learnable<T>::getInputErrors();
+	dY_=Learnable<T>::getOutputErrors();
     };
 
 
     void forward() override {
-	tensormath::mul<T>(Successor<T>::getInputs(), params_->get("W"), Successor<T>::getOutputs());
-	tensormath::append<T>(params_->get("C"), Successor<T>::getOutputs());
-//	params_->show();
-//	grad_->show();
+	tensormath::mul<T>(X_, W_, Y_);
+	tensormath::append<T>(C_, Y_);
     };
 
     void backward() override {
 	// ошибки по входам
-	tensormath::mul<T>(params_->get("W"), Successor<T>::getOutputErrors(), Successor<T>::getInputErrors());
+	tensormath::mul<T>(W_, dY_, dX_);
 	// градиент синаптической матрицы - внешнее произведение входов и ошибок по выходам
-	tensormath::extmulapp<T>(Successor<T>::getOutputErrors(),Successor<T>::getInputs(), grad_->get("W"));
+	tensormath::extmulapp<T>(dY_, X_, dW_);
 	// градиент смещений нейронов
-//	tensormath::append<T>(grad_->get("C"), Successor<T>::getOutputErrors());
-	tensormath::copy<T>( Successor<T>::getOutputErrors(), grad_->get("C"));
+	tensormath::copy<T>( dY_, dC_);
 	Learnable<T>::backward();
     };
 
-    void batchBegin() override {
-	Learnable<T>::batchBegin();
-    };
-
-    void batchEnd() override {
-	Learnable<T>::batchEnd();
-    };
 
 
 private:
-    typename DataHolder<T>::sPtr params_;
-    typename DataHolder<T>::sPtr grad_;
+    // ссылки на тензоры для быстрого доступа
+    Tensor<T> W_, C_, X_, Y_;
+    Tensor<T> dW_, dC_, dX_, dY_;
 };
 
 #endif

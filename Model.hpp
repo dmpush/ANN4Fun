@@ -88,7 +88,7 @@ public:
 	return layers_[index];
     };
 
-    void setupTutor(typename AbstractTutor<T>::uPtr) override {
+    void setTutor(typename AbstractTutor<T>::uPtr) override {
 	throw std::runtime_error("Model::setupTutor() не доступен");
     };
     

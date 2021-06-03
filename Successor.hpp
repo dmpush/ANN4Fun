@@ -21,7 +21,7 @@ public:
 	Y_ = holder_    -> get("Y");
 	dY_= holder_    -> get("dY");
 	holder_->fill(T(0));
-	holder_->description();
+//	holder_->description();
     };
     virtual ~Successor() = default;
 

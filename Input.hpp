@@ -19,7 +19,7 @@ public:
 	X_=holder_->get("X");
 	dX_=holder_->get("dX");
 	holder_->fill(T(0));
-	holder_->description();
+//	holder_->description();
     };
     virtual ~Input() = default;
 
@@ -48,7 +48,7 @@ public:
     };
     void batchEnd() override {
     };
-    void setupTutor(typename AbstractTutor<T>::uPtr) override {
+    void setTutor(typename AbstractTutor<T>::uPtr) override {
     };
 private:
     // хранилище данных и псевдонимы для тензоров
