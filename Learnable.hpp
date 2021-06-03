@@ -16,9 +16,10 @@ class Learnable : public Successor<T> {
 public:
     Learnable() = delete;
     Learnable(const Learnable&) = delete;
-    explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) : Successor<T>(ann,Nout) {
-	params_=std::make_shared<DataHolder<T>>();
-	grad_=std::make_shared<DataHolder<T>>();
+    explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) : 
+	params_{std::make_shared<DataHolder<T>>()},
+	grad_{std::make_shared<DataHolder<T>>()},
+	Successor<T>(ann,Nout) {
     };
     ~Learnable() = default;
 
@@ -52,8 +53,8 @@ public:
 private:
     // unique гарантирует невозможность задать одного Учителя нескольким сетям
     typename AbstractTutor<T>::uPtr tutor_;
-    typename DataHolder<T>::sPtr params_;
-    typename DataHolder<T>::sPtr grad_;
+    const typename DataHolder<T>::sPtr params_;
+    const typename DataHolder<T>::sPtr grad_;
 protected:
 };
 
