@@ -47,8 +47,8 @@ int main()
 	    for(int j=0; j<3; j++)
 		cout<<    model.getOutput(j)<<" ";
 
-	cout<<    model.getInputErrors()->get(0)<<" ";
-	cout<<    model.getInputErrors()->get(1)<<" ";
+	cout<<    model.getInputErrors()->raw(0)<<" ";
+	cout<<    model.getInputErrors()->raw(1)<<" ";
 
 	    cout<<" | ";
 	    model.setInput(0, 1.0);
@@ -56,8 +56,8 @@ int main()
 	    model.forward();
 	    for(int j=0; j<3; j++)
 		cout<<    model.getOutput(j)<<" ";
-	cout<<    model.getInputErrors()->get(0)<<" ";
-	cout<<    model.getInputErrors()->get(1)<<" ";
+	cout<<    model.getInputErrors()->raw(0)<<" ";
+	cout<<    model.getInputErrors()->raw(1)<<" ";
 
 	cout<<endl;
     };

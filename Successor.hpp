@@ -33,14 +33,14 @@ public:
     Tensor<T>  getInputErrors()  override { return dX_; };
     Tensor<T>  getOutputErrors() override { return dY_; };
 
-    T getOutput(size_t index)          override { return Y_->get(index); };
-    T setOutput(size_t index, T value) override { return dY_->set(index, value - Y_->get(index)); };
+    T getOutput(size_t index)          override { return Y_->raw(index); };
+    T setOutput(size_t index, T value) override { return (dY_->raw(index) = value - Y_->raw(index)); };
 
-    T getInput(size_t index)          override { return X_->get(index); };
-    T setInput(size_t index, T value) override { return X_->set(index, value); };
+    T getInput(size_t index)          override { return X_->raw(index); };
+    T setInput(size_t index, T value) override { return (X_->raw(index) = value); };
 
-    T setError(size_t index, T value)    override { return dY_->set(index, value); };
-    T appendError(size_t index, T value) override { return dY_->set(index, dY_->get(index) + value); };
+    T setError(size_t index, T value)    override { return (dY_->raw(index) = value); };
+    T appendError(size_t index, T value) override { return (dY_->raw(index) = dY_->raw(index) + value); };
 
 
     size_t getNumInputs()  override { return X_->size(); };

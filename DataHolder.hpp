@@ -39,18 +39,17 @@ public:
 	const size_t size() { return size_; };
 	const auto dims() { return dims_; };
 
-	T get(size_t ind) { return holder_->raw(offset_+ind); };
-	T set(size_t ind, T val) { return (holder_->raw(offset_+ind)=val); };
+	T& raw(size_t ind) { return holder_->raw(offset_+ind); };
 
 	T get(const std::vector<size_t>& ind) {
 	    if(std::size(ind)!=dim())
 		throw std::runtime_error("Неправильное число индексов в тензоре");
 	    if(dim()==1)
-		return get(ind[0]);
+		return raw(ind[0]);
 	    else if(dim()==2)
-		return get(ind[0]+ind[1]*dims_[0]);
+		return raw(ind[0]+ind[1]*dims_[0]);
 	    else if(dim()==3)
-		return get(ind[0] + ind[1]*dims_[0] + ind[2]*dims_[0]*dims_[1]);
+		return raw(ind[0] + ind[1]*dims_[0] + ind[2]*dims_[0]*dims_[1]);
 	    throw std::runtime_error("Тензор не реализован");
 	    return T(0);
 	};
@@ -59,11 +58,11 @@ public:
 	    if(std::size(ind)!=dim())
 		throw std::runtime_error("Неправильное число индексов в тензоре");
 	    if(dim()==1)
-		return set(ind[0], value);
+		return (raw(ind[0])=value);
 	    else if(dim()==2)
-		return set(ind[0]+ind[1]*dims_[0], value);
+		return (raw(ind[0]+ind[1]*dims_[0]) = value);
 	    else if(dim()==3)
-		return set(ind[0] + ind[1]*dims_[0] + ind[2]*dims_[0]*dims_[1], value);
+		return (raw(ind[0] + ind[1]*dims_[0] + ind[2]*dims_[0]*dims_[1]) = value);
 	    throw std::runtime_error("Тензор не реализован");
 	    return T(0);
 	};

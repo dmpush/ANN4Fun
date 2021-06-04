@@ -18,7 +18,7 @@ void sum   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
     if(res->size()!=A->size() || res->size()!=B->size())
 	throw std::runtime_error("sum: Размеры тензоров различны");
     for(size_t i=0; i<res->size(); i++)
-	res->set(i, A->get(i)+B->get(i));
+	res->raw(i) = A->get(i) + B->get(i);
 };
 
 // res+=A
@@ -29,7 +29,7 @@ void append   (Tensor<T> A, Tensor<T> res) {
     if(res->size()!=A->size() )
 	throw std::runtime_error("append(): Размеры тензоров различны");
     for(size_t i=0; i<res->size(); i++)
-	res->set(i, A->get(i)+res->get(i));
+	res->raw(i) = res->raw(i) + A->raw(i);
 };
 
 
@@ -49,8 +49,8 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		    throw std::runtime_error("Вектора не сцеплены");
 		T s{0};
 		for(size_t j=0; j<dimsB[1]; j++)
-		    s+=A->get(j)*B->get(j);
-		res->set(0,s);
+		    s+=A->raw(j)*B->raw(j);
+		res->raw(0) = s;
 	    } else if(A->dim()==1 && B->dim()==2) {
 		/// умножение вектора-столбца на матрицу
 		if(A->size() != dimsB[1] || dimsB[0]!=res->size() )
@@ -58,8 +58,8 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		for(size_t i=0; i<dimsB[0]; i++) {
 		    T s{0};
 		    for(size_t j=0; j<dimsB[1]; j++)
-			s+=A->get(j)*B->get({i,j});
-		    res->set(i, s);
+			s+=A->raw(j)*B->get({i,j});
+		    res->raw(i) = s;
 		};
 	    } else if(A->dim()==2 && B->dim()==1) {
 		/// умножение матрицы на вектор-столбец
@@ -68,8 +68,8 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		for(size_t i=0; i<dimsA[1]; i++) {
 		    T s{0};
 		    for(size_t j=0; j<dimsA[0]; j++)
-			s+=A->get({j,i}) * B->get(j);
-		    res->set(i,s);
+			s+=A->get({j,i}) * B->raw(j);
+		    res->raw(i) = s;
 		};
 	    } else {
 		throw  std::runtime_error("Умножение не релизовано");
@@ -81,7 +81,7 @@ void copy  (Tensor<T> src, Tensor<T> dest) {
     if(src->size()!=dest->size())
 	throw  std::runtime_error("copy(): тензоры имеют разные размеры");
     for(size_t i=0; i<src->size(); i++)
-	dest->set(i, src->get(i));
+	dest->raw(i) = src->raw(i);
 };
 /// внешнее произведение двух векторов
 template<typename T>
@@ -96,7 +96,7 @@ void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
 	throw std::runtime_error("extmulapp(): входные тензоны не согласованны с выходным");
     for(size_t i=0; i<dimsC[0]; i++)
 	for(size_t j=0; j<dimsC[1]; j++)
-	    res->set({i,j}, res->get({i,j}) + A->get(i) * B->get(j) );
+	    res->set({i,j}, res->get({i,j}) + A->raw(i) * B->raw(j) );
 };
 
 };//namespace

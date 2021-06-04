@@ -25,7 +25,7 @@ public:
     template<typename R>
 
     Model() : layers_{} {};
-    Model(std::vector<size_t> shape) : layers_{} {
+    Model(const std::vector<size_t>& shape) : layers_{} {
 	layers_.push_back(std::make_shared<Input<T>>(shape));
     };
 
