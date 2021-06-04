@@ -12,6 +12,7 @@ public:
     using sPtr=std::shared_ptr<ANN<T>>;
     enum WorkModes{TrainMode, WorkMode, UnknownMode};
     ANN() : time_{0}, lockTrain_{false}, mode_{UnknownMode} {};
+    ANN(ANN*) {};
     virtual ~ANN() = default;
 
     virtual void setMode(WorkModes mode) { mode_=mode; };

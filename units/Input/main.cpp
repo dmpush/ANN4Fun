@@ -20,19 +20,21 @@ template<typename T>
 void testExceptions() {
     bool hasException{false};
 
-    auto  inputs=std::make_shared<Input<T>> (std::vector<size_t>({2}));
+    auto  inputs=std::make_shared<Input<T>> ( std::vector<size_t>({2}) );
 
     cout<<"Проверка Input на исключения..."<<endl;
     hasException=false;
     try {
 	inputs->batchBegin();
-	inputs->setInput(0,T(0.0));
-	inputs->setInput(1,T(1.0));
-	inputs->forward();
-	inputs->setOutput(0, T(3.14));
-	inputs->setOutput(1, T(2.71));
+    } catch(std::runtime_error e) {
+	exceptMsg<T>(e);
+	hasException=true;
+    };
+    assert(hasException);
+
+    hasException=false;
+    try {
 	inputs->backward();
-	inputs->batchEnd();
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
@@ -40,6 +42,8 @@ void testExceptions() {
     assert(hasException);
 
 };
+
+
 
 
 

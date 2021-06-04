@@ -39,6 +39,17 @@ public:
     };
 
 
+    template<Derived<Successor<T>> AnnType>
+    void addLayer() {
+	layers_.push_back(std::make_shared<AnnType>(layers_.back().get() ) );
+    };
+
+/*    template<Derived<Successor<T>> AnnType, typename... Args>
+    void addLayer(Args... args) {
+	layers_.push_back(std::make_shared<AnnType>(layers_.back().get(), args...) );
+    };
+*/
+
     void forward() override {
 	for(auto it: layers_)
 	    it->forward();

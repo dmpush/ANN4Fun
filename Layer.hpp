@@ -17,7 +17,7 @@ class Layer : public Learnable<T> {
 public:
     Layer() = delete;
     Layer(const Layer&) = delete;
-    Layer(ANN<T> *ann, std::vector<size_t> Nout) : Learnable<T>(ann, Nout) {
+    Layer(ANN<T> *ann, const std::vector<size_t>& Nout) : Learnable<T>(ann, Nout) {
 	if(Nout.size() != 1)
 	    throw std::runtime_error("Выходы должны быть организованны в 1-тензор");
 	if(ann->getOutputs()->dim() != 1)

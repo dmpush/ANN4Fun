@@ -9,7 +9,7 @@
 template<typename T>
 class Successor : public ANN<T> {
 public:
-    Successor(ANN<T> *ann, std::vector<size_t> Nout) : precursor_(ann), ANN<T>() {
+    Successor(ANN<T> *ann, std::vector<size_t> Nout) : precursor_(ann), ANN<T>(ann) {
 	// сеть является владельцем своих входов и выходов
 	holder_=std::make_unique<DataHolder<T>>();
 	holder_->append("Y", Nout);
@@ -21,8 +21,10 @@ public:
 	Y_ = holder_    -> get("Y");
 	dY_= holder_    -> get("dY");
 	holder_->fill(T(0));
-//	holder_->description();
     };
+
+    Successor(ANN<T> *ann) : Successor(ann, ann->getOutputs()->dims()) {};
+
     virtual ~Successor() = default;
 
 

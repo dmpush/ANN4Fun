@@ -10,7 +10,7 @@
 template<typename T>
 class Input: public ANN<T> {
 public:
-    Input(std::vector<size_t> Nin) : ANN<T>() {
+    Input(const std::vector<size_t>& Nin) : ANN<T>() {
 	// сеть является владельцем своих входов и выходов
 	holder_=std::make_unique<DataHolder<T>>();
 	holder_->append("X", Nin);
@@ -21,6 +21,7 @@ public:
 	holder_->fill(T(0));
 //	holder_->description();
     };
+    Input(ANN<T>*) = delete;
     virtual ~Input() = default;
 
 

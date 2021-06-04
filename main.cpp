@@ -5,6 +5,7 @@
 #include <Input.hpp>
 #include <Layer.hpp>
 #include <Model.hpp>
+#include <ReLU.hpp>
 
 using namespace std;
 int main()
@@ -12,7 +13,9 @@ int main()
     try {
 	Model<float> model({2});
 	model.addLayer<Layer<float>>({2});
+	model.addLayer<ReLU<float>>();
 	model.addLayer<Layer<float>>({3});
+	model.addLayer<ReLU<float>>();
 
 	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
 
