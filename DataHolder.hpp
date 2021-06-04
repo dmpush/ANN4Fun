@@ -39,8 +39,8 @@ public:
 	const size_t size() { return size_; };
 	const auto dims() { return dims_; };
 
-	T get(size_t ind) { return holder_->get(offset_+ind); };
-	T set(size_t ind, T val) { return (holder_->set(offset_+ind, val)); };
+	T get(size_t ind) { return holder_->raw(offset_+ind); };
+	T set(size_t ind, T val) { return (holder_->raw(offset_+ind)=val); };
 
 	T get(const std::vector<size_t>& ind) {
 	    if(std::size(ind)!=dim())
@@ -102,8 +102,9 @@ public:
     DataHolder() = default;
     virtual ~DataHolder() = default;
 
-    T get(size_t ind) { return data_[ind]; };
-    T set(size_t ind, T val) { return (data_[ind]=val); };
+    T& raw(size_t ind) { return data_[ind]; };
+//    T get(size_t ind) { return data_[ind]; };
+//    T set(size_t ind, T val) { return (data_[ind]=val); };
     typename Tensor::sPtr get(std::string name)  {
 	auto it=objects_.find(name);
 	if(it==objects_.end())
@@ -144,7 +145,7 @@ public:
 	};
 	build();
 	for(size_t i=0; i<size(); i++)
-	    set(i, src->get(i));
+	    raw(i)= src->raw(i);
     };
     void fill(T val) {
         std::fill(data_.begin(), data_.end(), val);

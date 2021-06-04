@@ -124,7 +124,7 @@ void testClone() {
     holder1->append("C", {15});
     holder1->build();
     for(int i=0; i<holder1->size(); i++)
-	holder1->set(i, static_cast<T>(i));
+	holder1->raw(i)=static_cast<T>(i);
 
     auto holder2=std::make_shared<DataHolder<T>>();
     holder2->clone(holder1);
