@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <initializer_list>
 #include <stdexcept>
 #include <iterator> // std::size
 #include <iostream>
@@ -41,17 +42,19 @@ public:
 
 	T& raw(size_t ind) { return holder_->raw(offset_+ind); };
 
-	T& val(const std::vector<size_t>& ind) {
+	T& val(const std::initializer_list<size_t>& ind) {
+	
 	    if(std::size(ind)!=dim())
 		throw std::runtime_error("Неправильное число индексов в тензоре");
-	    if(dim()==1)
-		return raw(ind[0]);
-	    else if(dim()==2)
-		return raw(ind[0]+ind[1]*dims_[0]);
-	    else if(dim()==3)
-		return raw(ind[0] + ind[1]*dims_[0] + ind[2]*dims_[0]*dims_[1]);
-	    throw std::runtime_error("Тензор не реализован");
-	//    return T(0);
+	    size_t plane=1;
+	    size_t off=0;
+	    size_t k=0;
+	    for(auto i: ind) {
+		off+=i*plane;
+		plane *= dims_[k];
+		k++;
+	    };
+	    return raw(off);
 	};
 	/// паттерн Прототип
 	auto clone() {

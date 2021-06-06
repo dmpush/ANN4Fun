@@ -43,28 +43,11 @@ void testExceptions() {
     };
     assert(hasException);
 
-    hasException=false;
-    try {
-	holder1->get("U")->val({1,1,1,1,1});
-    } catch(std::runtime_error e) {
-	exceptMsg<T>(e);
-	hasException=true;
-    };
-    assert(hasException);
 
     cout<<"Проверка cеттера на исключения..."<<endl;
     hasException=false;
     try {
 	holder1->get("T")->val({1,1,1}) = 1;
-    } catch(std::runtime_error e) {
-	exceptMsg<T>(e);
-	hasException=true;
-    };
-    assert(hasException);
-
-    hasException=false;
-    try {
-	holder1->get("U")->val({1,1,1,1,1})=1;
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
