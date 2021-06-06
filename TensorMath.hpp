@@ -18,7 +18,7 @@ void sum   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
     if(res->size()!=A->size() || res->size()!=B->size())
 	throw std::runtime_error("sum: Размеры тензоров различны");
     for(size_t i=0; i<res->size(); i++)
-	res->raw(i) = A->get(i) + B->get(i);
+	res->raw(i) = A->raw(i) + B->raw(i);
 };
 
 // res+=A
@@ -58,7 +58,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		for(size_t i=0; i<dimsB[0]; i++) {
 		    T s{0};
 		    for(size_t j=0; j<dimsB[1]; j++)
-			s+=A->raw(j)*B->get({i,j});
+			s+=A->raw(j)*B->val({i,j});
 		    res->raw(i) = s;
 		};
 	    } else if(A->dim()==2 && B->dim()==1) {
@@ -68,7 +68,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		for(size_t i=0; i<dimsA[1]; i++) {
 		    T s{0};
 		    for(size_t j=0; j<dimsA[0]; j++)
-			s+=A->get({j,i}) * B->raw(j);
+			s+=A->val({j,i}) * B->raw(j);
 		    res->raw(i) = s;
 		};
 	    } else {
@@ -96,7 +96,7 @@ void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
 	throw std::runtime_error("extmulapp(): входные тензоны не согласованны с выходным");
     for(size_t i=0; i<dimsC[0]; i++)
 	for(size_t j=0; j<dimsC[1]; j++)
-	    res->set({i,j}, res->get({i,j}) + A->raw(i) * B->raw(j) );
+	    res->val({i,j}) = res->val({i,j}) + A->raw(i) * B->raw(j);
 };
 
 };//namespace

@@ -36,7 +36,7 @@ void testExceptions() {
     cout<<"Проверка геттера на исключения..."<<endl;
     hasException=false;
     try {
-	holder1->get("T")->get({1,1,1});
+	holder1->get("T")->val({1,1,1});
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
@@ -45,7 +45,7 @@ void testExceptions() {
 
     hasException=false;
     try {
-	holder1->get("U")->get({1,1,1,1,1});
+	holder1->get("U")->val({1,1,1,1,1});
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
@@ -55,7 +55,7 @@ void testExceptions() {
     cout<<"Проверка cеттера на исключения..."<<endl;
     hasException=false;
     try {
-	holder1->get("T")->set({1,1,1}, 1);
+	holder1->get("T")->val({1,1,1}) = 1;
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
@@ -64,7 +64,7 @@ void testExceptions() {
 
     hasException=false;
     try {
-	holder1->get("U")->set({1,1,1,1,1}, 1);
+	holder1->get("U")->val({1,1,1,1,1})=1;
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
@@ -134,15 +134,15 @@ void testClone() {
 
     for(size_t i=0; i<2; i++)
 	for(size_t j=0; j<3; j++)
-	    assert(holder1->get("A")->get({i,j}) == holder2->get("A")->get({i,j}) );
+	    assert(holder1->get("A")->val({i,j}) == holder2->get("A")->val({i,j}) );
 
     for(size_t i=0; i<2; i++)
 	for(size_t j=0; j<3; j++)
 	    for(size_t k=0; k<4; k++)
-	    assert(holder1->get("B")->get({i,j,k}) == holder2->get("B")->get({i,j,k}) );
+	    assert(holder1->get("B")->val({i,j,k}) == holder2->get("B")->val({i,j,k}) );
 
     for(size_t i=0; i<15; i++)
-	    assert(holder1->get("C")->get({i}) == holder2->get("C")->get({i}) );
+	    assert(holder1->get("C")->val({i}) == holder2->get("C")->val({i}) );
 
 
     cout<<"ok."<<endl;
@@ -158,7 +158,7 @@ void testFill() {
     holder1->fill(static_cast<T>(3.1415f));
     for(size_t i=0; i<3; i++)
 	for(size_t j=0; j<4; j++)
-	    assert( std::abs(static_cast<double>(holder1->get("A")->get({i,j})) - 3.1415)<0.01 );
+	    assert( std::abs(static_cast<double>(holder1->get("A")->val({i,j})) - 3.1415)<0.01 );
     cout<<"ok."<<endl;
 };
 
@@ -176,7 +176,7 @@ void testUpdate() {
     holder2->fill(static_cast<T>(2));
     holder1->update(holder2, 0.1);
     for(size_t i=0; i<holder1->size(); i++)
-	assert( std::abs( static_cast<double>(holder1->get("some")->get({i})) - 1.2) < 0.05);
+	assert( std::abs( static_cast<double>(holder1->get("some")->val({i})) - 1.2) < 0.05);
 
     cout<<"ok."<<endl;
 };

@@ -41,7 +41,7 @@ public:
 
 	T& raw(size_t ind) { return holder_->raw(offset_+ind); };
 
-	T get(const std::vector<size_t>& ind) {
+	T& val(const std::vector<size_t>& ind) {
 	    if(std::size(ind)!=dim())
 		throw std::runtime_error("Неправильное число индексов в тензоре");
 	    if(dim()==1)
@@ -51,20 +51,7 @@ public:
 	    else if(dim()==3)
 		return raw(ind[0] + ind[1]*dims_[0] + ind[2]*dims_[0]*dims_[1]);
 	    throw std::runtime_error("Тензор не реализован");
-	    return T(0);
-	};
-
-	T set(const std::vector<size_t>& ind, T value) {
-	    if(std::size(ind)!=dim())
-		throw std::runtime_error("Неправильное число индексов в тензоре");
-	    if(dim()==1)
-		return (raw(ind[0])=value);
-	    else if(dim()==2)
-		return (raw(ind[0]+ind[1]*dims_[0]) = value);
-	    else if(dim()==3)
-		return (raw(ind[0] + ind[1]*dims_[0] + ind[2]*dims_[0]*dims_[1]) = value);
-	    throw std::runtime_error("Тензор не реализован");
-	    return T(0);
+	//    return T(0);
 	};
 	/// паттерн Прототип
 	auto clone() {
@@ -84,7 +71,7 @@ public:
 	void show() {
 	    std::cout<<"{";
 	    for(int i=0; i<size(); i++)
-		std::cout<<get(i)<<(i+1!=size() ? ", ": "}");
+		std::cout<<val(i)<<(i+1!=size() ? ", ": "}");
 	};
 
     private:
