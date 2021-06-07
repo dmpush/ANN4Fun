@@ -7,6 +7,7 @@ run:
 	./test
 clean:
 	make -C units clean
+	$(RM) -r docs
 	$(RM) $(TARGET)
 	$(RM) callgrind.out*
 leaks:
