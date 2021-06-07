@@ -17,7 +17,8 @@ int main()
 	model.addLayer<Layer<float>>({3});
 	model.addLayer<ReLU<float>>();
 
-	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
+//	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
+	model.setTutor<SimpleTutor<float>>(0.1);
 
 	for(int i=0; i<1000; i++) {
 	    model.setMode(ANN<float>::TrainMode);

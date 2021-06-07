@@ -46,7 +46,7 @@ public:
     typename DataHolder<T>::sPtr getGrad()   { return grad_; };
 
 
-    void setTutor(typename AbstractTutor<T>::uPtr tutor) override { 
+    void setTutor(typename AbstractTutor<T>::uPtr tutor) override final { 
 	tutor_=std::move(tutor); 
 	grad_->fill(T(0));
 	tutor_->setContext(params_, grad_);

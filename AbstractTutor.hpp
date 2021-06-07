@@ -12,7 +12,7 @@ template<typename T>
 class AbstractTutor {
 protected:
 //    std::vector<T> lambdas_;
-    size_t sampleCount_;
+    size_t sampleCount_; ///< счетчик семплов внутри батча
     typename DataHolder<T>::sPtr param_;
     typename DataHolder<T>::sPtr grad_;
 public:

@@ -42,11 +42,6 @@ public:
     };
     void batchEnd() override {
     };
-    
-
-    void setTutor(typename AbstractTutor<T>::uPtr tutor) override { 
-	throw std::runtime_error("Wire::setTutor() не поддерживатеся");
-    };
 
 private:
     Tensor<T> X_, Y_;

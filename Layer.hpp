@@ -33,7 +33,6 @@ public:
 	Learnable<T>::getParams()->fill(0.1);
 
 	Learnable<T>::getGrad()->clone( Learnable<T>::getParams() );
-//	Learnable<T>::getParams()->description();
 	Learnable<T>::setTutor( std::make_unique<SimpleTutor<T>>() );
 	// определяем прямые ссылки на тензоры
 	W_=Learnable<T>::getParams()->get("W");

@@ -73,22 +73,11 @@ public:
 	    it->batchEnd();
     };
 
-    T getOutput(size_t ind) override { return layers_.back()->getOutput(ind); };
-    T getInput (size_t ind) override { return layers_.front()->getInput(ind); };
-
-    T setOutput(size_t ind, T val) override { return layers_.back()->setOutput(ind, val); };
-    T setInput (size_t ind, T val) override { return layers_.front()->setInput(ind, val); };
-
-    T setError   (size_t ind, T val) override { return layers_.back()->setError(ind, val); };
-    T appendError(size_t ind, T val) override { return layers_.back()->appendError(ind, val); };
 
     Tensor<T> getInputs()       override { return layers_.front()->getInputs(); };
     Tensor<T> getInputErrors()  override { return layers_.front()->getInputErrors(); };
     Tensor<T> getOutputs()      override { return layers_.back()->getOutputs(); };
     Tensor<T> getOutputErrors() override { return layers_.back()->getOutputErrors(); };
-
-    size_t getNumInputs()  override { return layers_.front()->getNumInputs(); };
-    size_t getNumOutputs() override { return layers_.back()->getNumOutputs(); };
 
     void setMode(typename ANN<T>::WorkModes mode) override {
 	ANN<T>::setMode(mode);
@@ -100,12 +89,17 @@ public:
 	return layers_[index];
     };
 
-    void setTutor(typename AbstractTutor<T>::uPtr) override {
-	throw std::runtime_error("Model::setupTutor() не доступен");
+
+    template<Derived<AbstractTutor<T>> Tut, typename... Args>
+    void setTutor(Args... args) {
+	for(auto it: layers_) {
+	    it->setTutor(std::make_unique<Tut>(args...));
+	};
     };
     
 
 private:
+    /// список слоев, составляющих модель
     std::deque<typename ANN<T>::sPtr> layers_;
 };
 

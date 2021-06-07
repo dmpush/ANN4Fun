@@ -98,8 +98,9 @@ public:
     DataHolder(const DataHolder&) = delete;
     DataHolder() = default;
     virtual ~DataHolder() = default;
-
-    T& raw(size_t ind) { return data_[ind]; };
+    /// модификация данных напрямую
+    T& raw(size_t ind) { return data_[ind]; }; 
+    /// возвращает указатель на тензор по его имени/ключу
     typename Tensor::sPtr get(std::string name)  {
 	auto it=objects_.find(name);
 	if(it==objects_.end())
@@ -107,12 +108,12 @@ public:
 	return objects_[name];
     };
 
-
+    /// добавляет в хранилище пару имя тензора/форма тензора
     void append(std::string name, std::vector<size_t> dims) {
 	auto obj=std::make_shared<Tensor>(this, dims);
 	append(name, obj);
     };
-
+    /// аллокация памяти хранилища
     void build() {
 	int offset=0;
 	for(auto [name, obj]: objects_) {
@@ -122,6 +123,7 @@ public:
 	data_.resize(offset);
 	std::fill(data_.begin(), data_.end(), T(0));
     };
+    /// количество чисел в хранилище
     size_t size() { return data_.size(); };
     /// оператор  A+=h*B
     void update(typename DataHolder<T>::sPtr B, T h) {
@@ -130,7 +132,7 @@ public:
 	for(size_t i=0; i<size(); i++)
 	data_[i] += h*B->data_[i];
     };
-
+    /// создание полной копии хранилища
     void clone(typename DataHolder<T>::sPtr src) {
 	for(auto [name, obj] : src->objects_) {
 	    auto o=obj->clone();
@@ -141,9 +143,11 @@ public:
 	for(size_t i=0; i<size(); i++)
 	    raw(i)= src->raw(i);
     };
-    void fill(T val) {
+    /// заполнение хранилища константой
+    void fill(T val=T(0)) {
         std::fill(data_.begin(), data_.end(), val);
     };
+    /// печать описания объектов, содержащихся внутри хранилища
     void description() {
 	std::cout<<"Размер хранилища "<<size()<<" объектов ("<<size()*sizeof(T)<<" байт)."<<std::endl;
 	for(auto [n,o]: objects_) {
@@ -151,17 +155,8 @@ public:
 	    o->description();
 	};
     };
+    /// true, если хранилище пустое или неинициализированное командой build()
     bool isEmpty() { return size()==0; };
-
-    void show() {
-	std::cout<<"\n[";
-	for(auto [k,v] : objects_) {
-	    std::cout<<"\n"<<k<<":";
-	    v->show();
-	};
-	std::cout<<"\n]\n";
-    };
-
 private:
     void append(std::string name, typename Tensor::sPtr obj) {
         objects_[name]=obj;

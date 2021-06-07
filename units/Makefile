@@ -5,6 +5,7 @@ all:
 	make -C Model
 	make -C ReLU
 	make -C Wire
+	make -C Reshape
 run:
 	clear
 	make -C DataHolder run
@@ -13,6 +14,7 @@ run:
 	make -C Model run
 	make -C ReLU run
 	make -C Wire run
+	make -C Reshape run
 	echo 'Тестирование удачно завершено!'
 clean:
 	make -C DataHolder clean
@@ -21,3 +23,5 @@ clean:
 	make -C Model clean
 	make -C ReLU clean
 	make -C Wire clean
+	make -C Reshape clean
+
