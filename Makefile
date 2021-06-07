@@ -19,3 +19,5 @@ view:
 unit:
 	make -C units
 	make -C units run
+doc:
+	doxygen

@@ -14,7 +14,7 @@ using namespace std;
 
 template<typename T>
 void test1() {
-    cout<<"Проверка Wire...";
+    cout<<"Проверка Wire<"<<typeid(T).name()<<">...";
     bool hasException{false};
     try {
 	Model<T> model({2});
@@ -53,9 +53,16 @@ void test1() {
     cout<<"ok."<<endl;
 };
 
+template <typename T>
+void test() {
+    test1<T>();
+};
+
 int main()
 {
-    test1<float>();
+    test<float>();
+    test<double>();
+    test<long double>();
     return 0;
 };
 

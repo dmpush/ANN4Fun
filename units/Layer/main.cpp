@@ -23,7 +23,7 @@ void testExceptions() {
     bool hasException{false};
 
 
-    cout<<"Проверка Layer на исключения..."<<endl;
+    cout<<"Проверка Layer<"<<typeid(T).name()<<"> на исключения..."<<endl;
     hasException=false;
     try {
 	auto  inputs=std::make_shared<Input<T>> (std::vector<size_t>({2,2}));
@@ -51,7 +51,7 @@ void testExceptions() {
 
 template<typename T>
 void testTrain() {
-    cout<<"Проверка обучаемости (детерминированная)...";
+    cout<<"Проверка Layer<"<<typeid(T).name()<<"> обучаемости (детерминированная)...";
     bool hasException{false};
     try {
 	auto  input=std::make_shared<Input<T>> ( std::vector<size_t>({2}) );

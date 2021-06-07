@@ -5,11 +5,12 @@
 #include <stdexcept>
 #include <ANN.hpp>
 #include <DataHolder.hpp>
+#include <Succession.hpp>
 
 template<typename T>
-class Successor : public ANN<T> {
+class Successor : public Succession<T> {
 public:
-    Successor(ANN<T> *ann, std::vector<size_t> Nout) : precursor_(ann), ANN<T>(ann) {
+    Successor(ANN<T> *ann, std::vector<size_t> Nout) : precursor_(ann), Succession<T>(ann) {
 	// сеть является владельцем своих входов и выходов
 	holder_=std::make_unique<DataHolder<T>>();
 	holder_->append("Y", Nout);

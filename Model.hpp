@@ -10,7 +10,8 @@
 #include <ANN.hpp>
 #include <DataHolder.hpp>
 #include <Input.hpp>
-#include <Successor.hpp>
+#include <Wire.hpp>
+#include <Succession.hpp>
 #include <AbstractTutor.hpp>
 
 /// концепт наследования, C++20
@@ -19,36 +20,34 @@ concept Derived= std::is_base_of<B, D>::value;
 
 
 template<typename T>
-class Model : public ANN<T> {
+class Model : public Succession<T> {
 public:
 
     template<typename R>
 
     Model() : layers_{} {};
-    Model(const std::vector<size_t>& shape) : layers_{} {
+    Model(const std::vector<size_t>& shape) : layers_{}, Succession<T>() {
 	layers_.push_back(std::make_shared<Input<T>>(shape));
+    };
+
+    Model(ANN<T> *ann) : layers_{}, Succession<T>(ann) {
+	layers_.push_back(std::make_shared<Wire<T>>(ann));
     };
 
     
     ~Model() = default;
 
     // дабы спрятать выделение памяти от пользователя
-    template<Derived<Successor<T>> AnnType>
+    template<Derived<Succession<T>> AnnType>
     void addLayer(std::vector<size_t> dims) {
 	layers_.push_back(std::make_shared<AnnType>(layers_.back().get(), dims) );
     };
 
 
-    template<Derived<Successor<T>> AnnType>
+    template<Derived<Succession<T>> AnnType>
     void addLayer() {
 	layers_.push_back(std::make_shared<AnnType>(layers_.back().get() ) );
     };
-
-/*    template<Derived<Successor<T>> AnnType, typename... Args>
-    void addLayer(Args... args) {
-	layers_.push_back(std::make_shared<AnnType>(layers_.back().get(), args...) );
-    };
-*/
 
     void forward() override {
 	for(auto it: layers_)
