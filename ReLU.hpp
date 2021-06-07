@@ -10,7 +10,9 @@
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-
+/**
+    @brief ReLU - простая функция активации - выпрямленная линейная функция.
+*/
 template<typename T>
 class ReLU : public Successor<T> {
 public:

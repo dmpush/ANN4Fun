@@ -3,7 +3,9 @@
 
 #include <AbstractTutor.hpp>
 #include <DataHolder.hpp>
-//#include <iostream>
+/**
+    @brief SimpleTutor - простейшая реализация Учителя - градиентный метод с постоянным шагом.
+*/
 template<typename T>
 class SimpleTutor : public AbstractTutor<T> {
     T dt_;
@@ -13,10 +15,8 @@ public:
     ~SimpleTutor() = default;
 
     void batchEnd() override {
-//	std::cout<<"batch_size="<<AbstractTutor<T>::sampleCount_<<std::endl;
 	AbstractTutor<T>::param_ -> update(AbstractTutor<T>::grad_, dt_/static_cast<T>(AbstractTutor<T>::sampleCount_) );
     };
-    // static std::uniqie_ptr<> build(T dt=static_cast<T>(0.1f)) ...
 };
 
 #endif

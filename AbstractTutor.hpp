@@ -4,7 +4,10 @@
 #include <DataHolder.hpp>
 #include <vector>
 #include <memory>
-
+/**
+    @brief AbstractTutor - абстрактный класс Учителя нейронной сети. Учитель оперирует двумя объектами DataHolder - 
+    вектором скрытых параметров и градиентом ошибки.
+*/
 template<typename T>
 class AbstractTutor {
 protected:

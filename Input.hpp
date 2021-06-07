@@ -6,7 +6,9 @@
 #include <ANN.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-
+/**
+    @brief Input - входной слой нейронной сети, предназначен для передачи данны внутрь сети.
+*/
 template<typename T>
 class Input: public ANN<T> {
 public:

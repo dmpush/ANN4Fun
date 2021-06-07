@@ -12,6 +12,10 @@
 #include <ANN.hpp>
 #include <TensorMath.hpp>
 
+/**
+    @brief Layer - классический слой нейронной сети - получает на вход вектор, умножает его на матрицу весов,
+    и к полученном произведению прибавляет вектор смещений. Вход и выход сети - векторы.
+*/
 template <typename T>
 class Layer : public Learnable<T> {
 public:

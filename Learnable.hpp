@@ -10,7 +10,9 @@
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-
+/**
+    @brief Learnable - абстрактный слой/сеть, содержащий в своем составе Учителя, вектор параметров и градиента.
+*/
 template<typename T>
 class Learnable : public Successor<T> {
 public:

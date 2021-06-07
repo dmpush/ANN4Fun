@@ -4,13 +4,13 @@
 #include <DataHolder.hpp>
 
 /**
-    Общее правило - последний аргумент функции - результат
+    @file TensorMath.hpp Общее правило - последний аргумент функции - результат
 
 */
 
 namespace tensormath {
 
-
+/// @brief sum() - поэлементная сумма двух тензоров с записью в третий тензор: res=A+B
 template<typename T>
 void sum   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
     if(res->dim()!=A->dim() || res->dim()!=B->dim())
@@ -21,7 +21,7 @@ void sum   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 	res->raw(i) = A->raw(i) + B->raw(i);
 };
 
-// res+=A
+/// @brief append() - операция += для тензоров: res+=A
 template<typename T>
 void append   (Tensor<T> A, Tensor<T> res) {
     if(res->dim()!=A->dim() )
@@ -35,16 +35,15 @@ void append   (Tensor<T> A, Tensor<T> res) {
 
 
 
-/// Умножение матриц, векторов и матриц, и т.д.
+///  @brief mul() -  Умножение матриц, векторов и матриц, и т.д.: res=A*B
 template<typename T>
 void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 	    auto dimsA=A->dims();
 	    auto dimsB=B->dims();
 
-//	    std::cout<<A->dim()<<" & "<<B->dim()<<std::endl;
-	    /// матрицы разворачиваются строка за строкой
+	    // матрицы разворачиваются строка за строкой
 	    if(A->dim()==1 && B->dim()==1) {
-		/// скалярное произведение векторов
+		// скалярное произведение векторов
 		if(A->size()!=B->size() || res->size()!=1)
 		    throw std::runtime_error("Вектора не сцеплены");
 		T s{0};
@@ -52,7 +51,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		    s+=A->raw(j)*B->raw(j);
 		res->raw(0) = s;
 	    } else if(A->dim()==1 && B->dim()==2) {
-		/// умножение вектора-столбца на матрицу
+		// умножение вектора-столбца на матрицу
 		if(A->size() != dimsB[1] || dimsB[0]!=res->size() )
 		    throw std::runtime_error("Вектор и матрица не сцеплены");
 		for(size_t i=0; i<dimsB[0]; i++) {
@@ -62,7 +61,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		    res->raw(i) = s;
 		};
 	    } else if(A->dim()==2 && B->dim()==1) {
-		/// умножение матрицы на вектор-столбец
+		// умножение матрицы на вектор-столбец
 		if(dimsA[0]!=B->size() || dimsA[1]!=res->size())
 		    throw std::runtime_error("Матрица и вектор не сцеплены");
 		for(size_t i=0; i<dimsA[1]; i++) {
@@ -75,7 +74,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		throw  std::runtime_error("Умножение не релизовано");
 	    };
 };
-
+/// @brief copy() - название говорит само за себя. Копирование тензоров: dest=src
 template<typename T>
 void copy  (Tensor<T> src, Tensor<T> dest) {
     if(src->size()!=dest->size())
@@ -83,7 +82,7 @@ void copy  (Tensor<T> src, Tensor<T> dest) {
     for(size_t i=0; i<src->size(); i++)
 	dest->raw(i) = src->raw(i);
 };
-/// внешнее произведение двух векторов
+/// @brief extmulapp() внешнее произведение двух векторов c добавлением к двухмерной матрице: res+=A*B
 template<typename T>
 void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
     if(A->dim()!=1 && B->dim()!=1 || res->dim()!=2) 

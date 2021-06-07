@@ -18,7 +18,9 @@
 template<typename D, typename B>
 concept Derived= std::is_base_of<B, D>::value;
 
-
+/**
+    @brief Model - нейронная сеть составленная из нескольких слоев сетей разных архитектур.
+*/
 template<typename T>
 class Model : public Succession<T> {
 public:
@@ -29,7 +31,7 @@ public:
     Model(const std::vector<size_t>& shape) : layers_{}, Succession<T>() {
 	layers_.push_back(std::make_shared<Input<T>>(shape));
     };
-
+    /// @brief конструктор композиции
     Model(ANN<T> *ann) : layers_{}, Succession<T>(ann) {
 	layers_.push_back(std::make_shared<Wire<T>>(ann));
     };

@@ -7,6 +7,10 @@
 #include <DataHolder.hpp>
 #include <Succession.hpp>
 
+/**
+    @brief Successor - сеть, которая явяется очередным слоем в составе другой сети. Имеет собственную память - 
+    выходные значения и сигналы ошибок.
+*/
 template<typename T>
 class Successor : public Succession<T> {
 public:

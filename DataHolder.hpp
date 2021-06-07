@@ -11,6 +11,10 @@
 #include <iostream>
 #include <algorithm> //std::fill
 
+/**
+    @brief DataHolder - массив памяти, хранящий в себе именованные переменные - тензоры. В некоторых случаях,
+    объекты этого класса интерпретиуются как одномерные тензоры (вектор), например в реализации Учителя.
+*/
 template<typename T>
 class DataHolder {
 public:
@@ -18,6 +22,11 @@ public:
     using uPtr=std::unique_ptr<DataHolder >;
 
     //-------------------------------------------------------------------
+    /**
+	@brief Tensor - класс, реализующий многомерный массив (тензор). Тензор не может
+	существовать сам по себе, он всегда лежит в некотором хранилище, потому его реализция является
+	внутренней по отношению к DataHolder.
+    */
     class Tensor{
     public:
 	friend class DataHolder;
@@ -69,7 +78,6 @@ public:
 		std::cout<<i<<" ";
 	    std::cout<<std::endl;
 	};
-//    friend void sum(typename Tensor::sPtr A, typename Tensor sPtr B, typename Tensor::sPtr res);
 
 	void show() {
 	    std::cout<<"{";
@@ -92,14 +100,11 @@ public:
     virtual ~DataHolder() = default;
 
     T& raw(size_t ind) { return data_[ind]; };
-//    T get(size_t ind) { return data_[ind]; };
-//    T set(size_t ind, T val) { return (data_[ind]=val); };
     typename Tensor::sPtr get(std::string name)  {
 	auto it=objects_.find(name);
 	if(it==objects_.end())
 	    throw std::runtime_error(std::string("Нет тензора ")+name+std::string(" в хранилище"));
 	return objects_[name];
-//	return it->value();
     };
 
 

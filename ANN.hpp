@@ -5,7 +5,9 @@
 #include <memory>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-
+/**
+    @brief ANN Суперкласс нейронной сети.
+*/
 template<typename T>
 class ANN {
 public:

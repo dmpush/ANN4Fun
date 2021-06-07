@@ -12,7 +12,10 @@
 #include <AbstractTutor.hpp>
 #include <TensorMath.hpp>
 
-/// Простой класс соединительных "проводов".
+/** 
+    @brief Wire - Простой класс соединительных "проводов". Основное назначение - участие в конструкторе композиции
+    класса Model.
+*/
 template<typename T>
 class Wire : public Successor<T> {
 public:
