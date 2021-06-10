@@ -24,8 +24,6 @@ void test1() {
 	for(int i=0; i<1000; i++) {
 	    float x=static_cast<float>(std::rand())/static_cast<float>(RAND_MAX);
 	    float y=static_cast<float>(std::rand())/static_cast<float>(RAND_MAX);
-	    model.setMode(ANN<T>::TrainMode);
-
 	    model.batchBegin();
 
 	    model.setInput(0, x);

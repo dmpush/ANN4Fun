@@ -45,14 +45,13 @@ public:
 	    };
 	    dX_->raw(i) =  sum;
 	};
-	Successor<T>::backward();
     };
     void batchBegin() override {
-	ANN<T>::batchBegin();
     };
     void batchEnd() override {
     };
-    
+    void setTutor(typename AbstractTutor<T>::uPtr) override {
+    };
 
 
 private:

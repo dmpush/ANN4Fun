@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <memory>
 #include <vector>
+#include <cstdlib>
+#include <cmath>
 
 #include <Input.hpp>
 #include <DataHolder.hpp>
@@ -17,30 +19,36 @@ void exceptMsg(std::runtime_error e) {
 
 
 template<typename T>
-void testExceptions() {
+void test1() {
     bool hasException{false};
 
-    auto  inputs=std::make_shared<Input<T>> ( std::vector<size_t>({2}) );
+    cout<<"Проверка Input<"<<typeid(T).name()<<">...";
 
-    cout<<"Проверка Input на исключения..."<<endl;
+
     hasException=false;
     try {
+	auto  inputs=std::make_shared<Input<T>> ( std::vector<size_t>({2}) );
+	T x=static_cast<T>(std::rand())/static_cast<T>(RAND_MAX);
+	T y=static_cast<T>(std::rand())/static_cast<T>(RAND_MAX);
 	inputs->batchBegin();
-    } catch(std::runtime_error e) {
-	exceptMsg<T>(e);
-	hasException=true;
-    };
-    assert(hasException);
-
-    hasException=false;
-    try {
+	inputs->setInput(0, x);
+	inputs->setInput(1, y);
+	inputs->forward();
+	assert( std::abs(x - inputs->getOutput(0)) < std::max(x,y)*1e-4 );
+	assert( std::abs(y - inputs->getOutput(1)) < std::max(x,y)*1e-4 );
+	inputs->setOutput(0, T(0));
+	inputs->setOutput(1, T(0));
 	inputs->backward();
+	assert( std::abs(-x - inputs->getInputErrors()->raw(0)) < std::max(x,y)*1e-4 );
+	assert( std::abs(-y - inputs->getInputErrors()->raw(1)) < std::max(x,y)*1e-4 );
+	inputs->batchEnd();
+	
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
     };
-    assert(hasException);
-
+    assert( ! hasException);
+    cout<<"ok."<<endl;
 };
 
 
@@ -49,7 +57,7 @@ void testExceptions() {
 
 template<typename T>
 void test() {
-    testExceptions<T>();
+    test1<T>();
 };
 
 
@@ -59,6 +67,7 @@ int main()
     test<float>();
     test<double>();
     test<long double>();
+    cout<<"Ok."<<endl;
     return 0;
 };
 

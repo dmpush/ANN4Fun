@@ -57,13 +57,11 @@ public:
     };
 
     void backward() override {
-	ANN<T>::backward();
 	for(auto it=layers_.rbegin(); it!=layers_.rend(); it++)
 	    (*it)->backward();
 
     };
     void batchBegin() override {
-	ANN<T>::batchBegin();
 	for(auto it: layers_)
 	    it->batchBegin();
     };
@@ -79,12 +77,6 @@ public:
     Tensor<T> getOutputs()      override { return layers_.back()->getOutputs(); };
     Tensor<T> getOutputErrors() override { return layers_.back()->getOutputErrors(); };
 
-    void setMode(typename ANN<T>::WorkModes mode) override {
-	ANN<T>::setMode(mode);
-	for(auto it: layers_)
-	    it->setMode(mode);
-    };
-
     typename ANN<T>::sPtr operator()(int index) {
 	return layers_[index];
     };
@@ -95,6 +87,10 @@ public:
 	for(auto it: layers_) {
 	    it->setTutor(std::make_unique<Tut>(args...));
 	};
+    };
+
+    void setTutor(typename AbstractTutor<T>::uPtr) override final {
+	throw std::runtime_error("Невозможно установить одного Учителя для всех компонент сети!");
     };
     
 

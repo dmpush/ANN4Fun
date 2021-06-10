@@ -58,8 +58,6 @@ void testTrain() {
 	auto  layer=std::make_shared<Layer<T>> ( input.get(), std::vector<size_t>({2}) );
 
 	for(size_t it=0; it<1000; it++) {
-	    input->setMode(ANN<T>::TrainMode);
-	    layer->setMode(ANN<T>::TrainMode);
 	    input->batchBegin();
 	    layer->batchBegin();
 	    input->setInput(0, T(1));
@@ -83,8 +81,6 @@ void testTrain() {
 	    layer->batchEnd();
 	    input->batchEnd();
 	};
-	input->setMode(ANN<T>::WorkMode);
-	layer->setMode(ANN<T>::WorkMode);
 	input->setInput(0, T(1));
 	input->setInput(1, T(0));
 	input->forward();

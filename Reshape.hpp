@@ -45,12 +45,12 @@ public:
     };
     void backward() override {
 	tensormath::copy<T>(dY_, dX_);
-	Successor<T>::backward();
     };
     void batchBegin() override {
-	ANN<T>::batchBegin();
     };
     void batchEnd() override {
+    };
+    void setTutor(typename AbstractTutor<T>::uPtr) override {
     };
 
     Tensor<T> getOutputs()      override { return Y_; };

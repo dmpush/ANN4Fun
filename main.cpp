@@ -21,8 +21,6 @@ int main()
 	model.setTutor<SimpleTutor<float>>(0.1);
 
 	for(int i=0; i<1000; i++) {
-	    model.setMode(ANN<float>::TrainMode);
-
 	    model.batchBegin();
 
 	    model.setInput(0, 0.0);
@@ -43,8 +41,6 @@ int main()
 
 	    model.batchEnd();
 
-
-	    model.setMode(ANN<float>::WorkMode);
 	    model.setInput(0, 0.0);
 	    model.setInput(1, 1.0);
 	    model.forward();

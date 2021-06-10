@@ -28,8 +28,6 @@ void test1() {
 	    T d=static_cast<T>(std::rand())/static_cast<T>(RAND_MAX);
 	    T e=static_cast<T>(std::rand())/static_cast<T>(RAND_MAX);
 	    T f=static_cast<T>(std::rand())/static_cast<T>(RAND_MAX);
-	    model.setMode(ANN<T>::TrainMode);
-
 	    model.batchBegin();
 
 	    model.setInput(0, a);

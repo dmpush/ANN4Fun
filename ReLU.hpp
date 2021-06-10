@@ -34,14 +34,13 @@ public:
     void backward() override {
 	for(size_t i=0; i<X_->size(); i++)
 	    dX_->raw(i) =  X_->raw(i) > T(0)? dY_->raw(i) : T(0);
-	Successor<T>::backward();
     };
     void batchBegin() override {
-	ANN<T>::batchBegin();
     };
     void batchEnd() override {
     };
-    
+    void setTutor(typename AbstractTutor<T>::uPtr) override {
+    };
 
 
 private:

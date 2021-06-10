@@ -6,64 +6,81 @@
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
 /**
-    @brief ANN Суперкласс нейронной сети.
+    @brief ANN Суперкласс абстрактной нейронной сети.
 */
 template<typename T>
 class ANN {
 public:
+    /// @brief Тип умного указателя на абстрактную сеть.
     using sPtr=std::shared_ptr<ANN<T>>;
-    /// режим работы нейронной сети
-    enum WorkModes{
-	TrainMode, ///< режим обучения
-	WorkMode,  ///< режим прямого прохождения сигнала (градиент не рассчитывается)
-	UnknownMode ///< неопределенное состояние
-    };
-    ANN() : lockTrain_{false}, mode_{UnknownMode} {};
+    /// @brief Конструктор по умолчанию.
+    ANN() : lockTrain_{false} {};
+    /// @brief Конструктор "следующего слоя".
     ANN(ANN*) : ANN() {};
+    /// @brief Деструктор.
     virtual ~ANN() = default;
 
-    virtual void setMode(WorkModes mode) { mode_=mode; };
-    WorkModes getMode() { return mode_; };
-
+    /// @brief Блокировка обучения сети/подсети.
     void lockTrain() { lockTrain_=true; };
+    /// @brief Разблокировка обучения сети/подсети.
     void unlockTrain() { lockTrain_=false; };
+    /// @return true, если обучение разблокировано.
     bool isTrainable() { return !lockTrain_; };
 
-
+    /// @brief Возвращает значение выхода.
+    /// @param ind -- номер выхода.
+    /// @return выход с номером ind нейросети.
     virtual T getOutput(size_t ind)        final { return getOutputs()->raw(ind); };
+    /// @brief Установить целевое значение для выхода нейросети.
+    /// @param ind -- номер выхода;
+    /// @param val -- целевое значение.
+    /// @return невязка выхода.
     virtual T setOutput(size_t ind, T val) final { return (getOutputErrors()->raw(ind)=val-getOutputs()->raw(ind)); };
 
+    /// @brief Возвращает значение входа.
+    /// @param ind -- номер входа.
+    /// @return значение входа с номером ind нейросети.
     virtual T getInput(size_t ind)         final { return getInputs()->raw(ind); };
+    /// @brief Установить вход нейросети.
+    /// @param ind -- номер входа;
+    /// @param val -- значение входного сигнала.
+    /// @return входной сигнал.
     virtual T setInput(size_t ind, T val)  final { return (getInputs()->raw(ind)=val); };
-
+    /// @brief Установка невязки для заданного выхода нейросети;
+    /// @param ind -- номер выхода сети;
+    /// @param val -- невязка выхода.
+    /// @return невязка выхода.
     virtual T setError(size_t ind, T val)  final { return (getOutputErrors()->raw(ind)=val); };
+    /// @brief Добавление к невязке по выходу ind сети значения val.
+    /// @param ind -- номер выхода;
+    /// @param val -- прибавляемое значение невязки.
+    /// @return новое значение невязки по данному выходу.
     virtual T appendError(size_t ind, T val)  final { return (getOutputErrors()->raw(ind)+=val); };
-
+    /// @return входы нейросети в виде тензора.
     virtual Tensor<T> getInputs()=0;
+    /// @return выходной тензор нейросети.
     virtual Tensor<T> getOutputs()=0;
+    /// @return тензор входных невязок нейросети.
     virtual Tensor<T> getInputErrors()=0;
+    /// @return тензор выходных невязок нейросети.
     virtual Tensor<T> getOutputErrors()=0;
-
+    /// @return Полное число входов сети.
     virtual size_t getNumInputs()  final { return getInputs()->size(); };
+    /// @return Полное число выходов сети.
     virtual size_t getNumOutputs() final { return getOutputs()->size(); };
-    virtual void forward()=0; ///< прямое распространение сигналов по сети
-    /// обратное распространение сигналов по сети
-    virtual void backward() { 
-	if(mode_==UnknownMode)
-	    throw std::runtime_error("ANN::backward(): Не задан режим работы ИНС");
-    };
-    /// начало батча - обнуление аккумулятора градиента
-    virtual void batchBegin() { 
-	if(mode_==UnknownMode)
-	    throw std::runtime_error("ANN::batchBegin(): Не задан режим работы ИНС");
-    };
-
-    virtual void batchEnd() =0; ///< конец батча - здесь происходит обучение
-    /// назначение Учителя
-    virtual void setTutor(typename AbstractTutor<T>::uPtr) {}; 
+    /// @brief Прямое распространение сигналов по сети.
+    virtual void forward()=0; 
+    /// @brief Обратное распространение сигналов по сети.
+    virtual void backward()=0;
+    /// @brief Начало батча - обнуление аккумулятора градиента.
+    virtual void batchBegin()=0;
+    /// @brief Конец батча - здесь происходит обучение.
+    virtual void batchEnd() =0; 
+    /// Назначение Учителя.
+    virtual void setTutor(typename AbstractTutor<T>::uPtr) = 0; 
 
 private:
-    WorkModes mode_;
+    /// @brief Приватный флаг блокировки обучения сети.
     bool lockTrain_;
 };
 

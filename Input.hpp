@@ -7,7 +7,7 @@
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
 /**
-    @brief Input - входной слой нейронной сети, предназначен для передачи данны внутрь сети.
+    @brief Input - Входной слой нейронной сети, предназначен для передачи данных внутрь сети.
 */
 template<typename T>
 class Input: public ANN<T> {
@@ -36,7 +36,13 @@ public:
 
     void forward() override {
     };
+    void backward() override {
+    };
+    void batchBegin() override {
+    };
     void batchEnd() override {
+    };
+    void setTutor(typename AbstractTutor<T>::uPtr) override final {
     };
 private:
     // хранилище данных и псевдонимы для тензоров

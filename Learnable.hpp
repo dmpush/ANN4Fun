@@ -29,15 +29,13 @@ public:
     auto getTutor() { return tutor_; };
 
     void backward() override {
-	ANN<T>::backward();
 	tutor_->backward();
     };
 
-    void batchBegin() override {
-	ANN<T>::batchBegin();
+    void batchBegin() override final {
 	tutor_->batchBegin();
     };
-    void batchEnd() override {
+    void batchEnd() override final {
 	if(ANN<T>::isTrainable())
 	    tutor_->batchEnd();
     };

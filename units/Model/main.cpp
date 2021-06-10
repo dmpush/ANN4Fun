@@ -23,8 +23,6 @@ void test1() {
 	model(1)->setTutor(std::make_unique<SimpleTutor<T>>(0.1));
 
 	for(int i=0; i<1000; i++) {
-	    model.setMode(ANN<T>::TrainMode);
-
 	    model.batchBegin();
 
 	    model.setInput(0, 0.0);
@@ -46,7 +44,6 @@ void test1() {
 	    model.batchEnd();
 
 	};
-	model.setMode(ANN<T>::WorkMode);
 	model.setInput(0, 0.0);
 	model.setInput(1, 1.0);
 	model.forward();
@@ -80,8 +77,6 @@ void testComposition() {
 	model. template addLayer<Layer<T>>({3});
 
 	for(int i=0; i<1000; i++) {
-	    model.setMode(ANN<T>::TrainMode);
-
 	    model.batchBegin();
 
 	    model.setInput(0, 0.0);
@@ -103,7 +98,6 @@ void testComposition() {
 	    model.batchEnd();
 
 	};
-	model.setMode(ANN<T>::WorkMode);
 	model.setInput(0, 0.0);
 	model.setInput(1, 1.0);
 	model.forward();
