@@ -6,6 +6,7 @@ all:
 	make -C ReLU
 	make -C Wire
 	make -C Reshape
+	make -C SoftMax
 run:
 	clear
 	make -C DataHolder run
@@ -15,6 +16,7 @@ run:
 	make -C ReLU run
 	make -C Wire run
 	make -C Reshape run
+	make -C SoftMax run
 	echo 'Тестирование удачно завершено!'
 clean:
 	make -C DataHolder clean
@@ -24,4 +26,5 @@ clean:
 	make -C ReLU clean
 	make -C Wire clean
 	make -C Reshape clean
+	make -C SoftMax clean
 

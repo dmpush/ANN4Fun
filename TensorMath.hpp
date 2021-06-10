@@ -11,6 +11,8 @@
 namespace tensormath {
 
 /// @brief sum() - поэлементная сумма двух тензоров с записью в третий тензор: res=A+B
+/// @param A,B - слагаемые
+/// @param res - сумма
 template<typename T>
 void sum   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
     if(res->dim()!=A->dim() || res->dim()!=B->dim())

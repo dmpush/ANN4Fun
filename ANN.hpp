@@ -12,9 +12,14 @@ template<typename T>
 class ANN {
 public:
     using sPtr=std::shared_ptr<ANN<T>>;
-    enum WorkModes{TrainMode, WorkMode, UnknownMode};
+    /// режим работы нейронной сети
+    enum WorkModes{
+	TrainMode, ///< режим обучения
+	WorkMode,  ///< режим прямого прохождения сигнала (градиент не рассчитывается)
+	UnknownMode ///< неопределенное состояние
+    };
     ANN() : lockTrain_{false}, mode_{UnknownMode} {};
-    ANN(ANN*) {};
+    ANN(ANN*) : ANN() {};
     virtual ~ANN() = default;
 
     virtual void setMode(WorkModes mode) { mode_=mode; };
