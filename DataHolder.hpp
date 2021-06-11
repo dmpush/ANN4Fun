@@ -42,6 +42,8 @@ public:
 	    offset_=0;
 	};
 
+        explicit Tensor(DataHolder *holder) : holder_(holder), size_{0}, dims_{}, offset_{0} {};
+
 	Tensor(const Tensor&) = delete;
         virtual ~Tensor()=default;
 
@@ -109,8 +111,13 @@ public:
     };
 
     /// добавляет в хранилище пару имя тензора/форма тензора
-    void append(std::string name, std::vector<size_t> dims) {
+    void append(std::string name, const std::vector<size_t>& dims) {
 	auto obj=std::make_shared<Tensor>(this, dims);
+	append(name, obj);
+    };
+    /// добавляет пустой тензор 
+    void append(std::string name) {
+	auto obj=std::make_shared<Tensor>(this);
 	append(name, obj);
     };
     /// аллокация памяти хранилища
