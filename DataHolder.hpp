@@ -125,13 +125,6 @@ public:
     };
     /// количество чисел в хранилище
     size_t size() { return data_.size(); };
-    /// оператор  A+=h*B
-    void update(typename DataHolder<T>::sPtr B, T h) {
-	if(size()!=B->size())
-	    throw std::runtime_error("Градиент имеет неправильный размер");
-	for(size_t i=0; i<size(); i++)
-	data_[i] += h*B->data_[i];
-    };
     /// создание полной копии хранилища
     void clone(typename DataHolder<T>::sPtr src) {
 	for(auto [name, obj] : src->objects_) {

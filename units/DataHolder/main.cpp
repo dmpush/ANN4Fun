@@ -58,15 +58,6 @@ void testExceptions() {
     holder2->append("X", {4,4});
     holder2->build();
 
-    cout<<"Проверка update() на исключения..."<<endl;
-    hasException=false;
-    try {
-	holder1->update(holder2, 0.1);
-    } catch(std::runtime_error e) {
-	exceptMsg<T>(e);
-	hasException=true;
-    };
-    assert(hasException);
 
 };
 
@@ -146,24 +137,6 @@ void testFill() {
 };
 
 
-template<typename T>
-void testUpdate() {
-    cout<<"Проверка операции update()...";
-    auto holder1=std::make_shared<DataHolder<T>>();
-    holder1->append("some", {100});
-    holder1->build();
-
-    auto holder2=std::make_shared<DataHolder<T>>();
-    holder2->clone(holder1);
-    holder1->fill(static_cast<T>(1));
-    holder2->fill(static_cast<T>(2));
-    holder1->update(holder2, 0.1);
-    for(size_t i=0; i<holder1->size(); i++)
-	assert( std::abs( static_cast<double>(holder1->get("some")->val({i})) - 1.2) < 0.05);
-
-    cout<<"ok."<<endl;
-};
-
 
 
 template<typename T>
@@ -172,7 +145,6 @@ void test() {
     testClone<T>();
     testExceptions<T>();
     testFill<T>();
-    testUpdate<T>();
 };
 
 

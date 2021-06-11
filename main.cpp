@@ -18,7 +18,8 @@ int main()
 	model.addLayer<ReLU<float>>();
 
 //	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
-	model.setTutor<SimpleTutor<float>>(0.1);
+	std::vector<float> L={0.0f,0.00001f};
+	model.setTutor<SimpleTutor<float>>(0.1f, L);
 
 	for(int i=0; i<1000; i++) {
 	    model.batchBegin();
