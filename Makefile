@@ -7,6 +7,7 @@ run:
 	./test
 clean:
 	make -C units clean
+	make -C examples clean
 	$(RM) -r docs
 	$(RM) $(TARGET)
 	$(RM) callgrind.out*
@@ -19,5 +20,7 @@ view:
 unit:
 	make -C units
 	make -C units run
+	make -C examples
+	make -C examples run
 doc:
 	doxygen
