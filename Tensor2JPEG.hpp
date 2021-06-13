@@ -44,10 +44,7 @@ void toJPEG(Tensor<T> tensor, std::string fname) {
 	    m1=std::min(m1, tensor->raw(ind));
 	    m2=std::max(m2, tensor->raw(ind));
 	};
-
-	std::cout<<m1<<", "<<m2<<std::endl;
-
-
+//	std::cout<<m1<<", "<<m2<<std::endl;
         size_t ind=0;
         for(size_t j=0; j<height; j++) 
 	    for(size_t i=0; i<width; i++) {

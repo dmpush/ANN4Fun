@@ -8,6 +8,7 @@ all:
 	make -C Reshape
 	make -C SoftMax
 	make -C Generator
+	make -C Tensor2JPEG
 run:
 	clear
 	make -C DataHolder run
@@ -19,6 +20,7 @@ run:
 	make -C Reshape run
 	make -C SoftMax run
 	make -C Generator run
+	make -C Tensor2JPEG run
 	echo 'Тестирование удачно завершено!'
 clean:
 	make -C DataHolder clean
@@ -30,4 +32,5 @@ clean:
 	make -C Reshape clean
 	make -C SoftMax clean
 	make -C Generator clean
+	make -C Tensor2JPEG clean
 
