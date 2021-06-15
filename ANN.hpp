@@ -2,6 +2,7 @@
 #define __ANN_HPP__
 
 #include <stdexcept>
+#include <cassert>
 #include <memory>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
@@ -35,7 +36,10 @@ public:
     /// @param ind -- номер выхода;
     /// @param val -- целевое значение.
     /// @return невязка выхода.
-    virtual T setOutput(size_t ind, T val) final { return (getOutputErrors()->raw(ind)=val-getOutputs()->raw(ind)); };
+    virtual T setOutput(size_t ind, T val) final { 
+	assert(ind<getOutputs()->size());
+	return (getOutputErrors()->raw(ind)=val-getOutputs()->raw(ind)); 
+    };
 
     /// @brief Возвращает значение входа.
     /// @param ind -- номер входа.
@@ -45,7 +49,10 @@ public:
     /// @param ind -- номер входа;
     /// @param val -- значение входного сигнала.
     /// @return входной сигнал.
-    virtual T setInput(size_t ind, T val)  final { return (getInputs()->raw(ind)=val); };
+    virtual T setInput(size_t ind, T val)  final { 
+	assert(ind<getInputs()->size());
+	return (getInputs()->raw(ind)=val); 
+    };
     /// @brief Установка невязки для заданного выхода нейросети;
     /// @param ind -- номер выхода сети;
     /// @param val -- невязка выхода.
@@ -78,7 +85,8 @@ public:
     virtual void batchEnd() =0; 
     /// Назначение Учителя.
     virtual void setTutor(typename AbstractTutor<T>::uPtr) = 0; 
-
+    /// отладочная информация
+    virtual void dump() = 0;
 private:
     /// @brief Приватный флаг блокировки обучения сети.
     bool lockTrain_;

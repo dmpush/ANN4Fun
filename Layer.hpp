@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <stdexcept>
+#include <iostream>
 
 #include <Learnable.hpp>
 #include <DataHolder.hpp>
@@ -30,7 +31,6 @@ public:
 	Learnable<T>::getParams()->append("W", {Nout[0], Nin});
 	Learnable<T>::getParams()->append("C", {Nout[0]});
 	Learnable<T>::getParams()->build();
-	Learnable<T>::getParams()->fill(0.1);
 
 	Learnable<T>::getGrad()->clone( Learnable<T>::getParams() );
 	Learnable<T>::setTutor( std::make_unique<SimpleTutor<T>>() );
@@ -46,6 +46,10 @@ public:
 
 	dX_=Learnable<T>::getInputErrors();
 	dY_=Learnable<T>::getOutputErrors();
+
+//	Learnable<T>::getParams()->fill(0.1);
+	tensormath::gaussianNoise<T>(0,0.1, W_);
+	tensormath::gaussianNoise<T>(0,0.1, C_);
     };
 
 
@@ -60,10 +64,15 @@ public:
 	// градиент синаптической матрицы - внешнее произведение входов и ошибок по выходам
 	tensormath::extmulapp<T>(dY_, X_, dW_);
 	// градиент смещений нейронов
-	tensormath::copy<T>( dY_, dC_);
+	tensormath::append<T>( dY_, dC_);
 	Learnable<T>::backward();
     };
-
+    void dump() override {
+	std::cout<<"Layer:"<<std::endl;
+	Learnable<T>::getParams()->dump();
+	Learnable<T>::getGrad()->dump();
+	Successor<T>::dump();
+    };
 
 
 private:

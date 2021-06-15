@@ -6,6 +6,7 @@
 #include <memory>
 #include <concepts>
 #include <stdexcept>
+#include <iostream>
 
 #include <ANN.hpp>
 #include <DataHolder.hpp>
@@ -91,6 +92,15 @@ public:
 
     void setTutor(typename AbstractTutor<T>::uPtr) override final {
 	throw std::runtime_error("Невозможно установить одного Учителя для всех компонент сети!");
+    };
+
+    void dump() override {
+	std::cout<<"Model:"<<std::endl;
+	for(auto it: layers_) {
+	    it->dump();
+	};
+	getInputs()->dump();
+	getOutputs()->dump();
     };
     
 

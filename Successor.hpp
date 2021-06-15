@@ -1,6 +1,7 @@
 #ifndef __SUCCESSOR_HPP__
 #define __SUCCESSOR_HPP__
 
+#include <iostream>
 #include <vector>
 #include <stdexcept>
 #include <ANN.hpp>
@@ -39,7 +40,12 @@ public:
     Tensor<T>  getOutputs() override  { return Y_; };
     Tensor<T>  getInputErrors()  override { return dX_; };
     Tensor<T>  getOutputErrors() override { return dY_; };
-
+    void dump() override {
+//	std::cout<<"Successor:"<<std::endl;
+	X_->dump();
+	dX_->dump();
+	holder_->dump();
+    };
 
 
 

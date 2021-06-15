@@ -23,6 +23,12 @@ public:
 	grad_{std::make_shared<DataHolder<T>>()},
 	Successor<T>(ann,Nout) {
     };
+    /// @brief конструктор для параметризированных функций активации
+    explicit Learnable(ANN<T>* ann) : 
+	params_{std::make_shared<DataHolder<T>>()},
+	grad_{std::make_shared<DataHolder<T>>()},
+	Successor<T>(ann) {
+    };
     ~Learnable() = default;
 
 

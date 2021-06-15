@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <cmath>
 
 #include <ANN.hpp>
 #include <Successor.hpp>
@@ -31,10 +32,13 @@ public:
 	T norm{0};
 	for(size_t i=0; i<X_->size(); i++) {
 	    Y_->raw(i) = static_cast<T>( std::exp(X_->raw(i)) );
+	    assert(!std::isnan(Y_->raw(i)));
 	    norm += Y_->raw(i);
+	    assert(!std::isnan(norm));
 	};
-	for(size_t i=0; i<X_->size(); i++) 
+	for(size_t i=0; i<X_->size(); i++) {
 	    Y_->raw(i) = Y_->raw(i)/norm;
+	}
     };
     void backward() override {
 	for(size_t i=0; i<Y_->size(); i++) {

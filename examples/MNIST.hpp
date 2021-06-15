@@ -9,6 +9,7 @@
 #include <memory>
 #include <random>
 #include <cassert>
+#include <DataHolder.hpp>
 
 template <class T>
 void endswap(T *objp)

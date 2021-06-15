@@ -13,12 +13,11 @@
 using namespace std;
 
 template<typename T>
-void test1() {
-    cout<<"Проверка ReLU<"<<typeid(T).name()<<"> на двухслойной сети...";
+bool task1() {
     bool hasException{false};
     try {
 	Model<T> model({2});
-	model. template addLayer<Layer<T>>({2});
+	model. template addLayer<Layer<T>>({5});
 	model. template addLayer<ReLU<T>>();
 	model. template addLayer<Layer<T>>({3});
 	model. template addLayer<ReLU<T>>();
@@ -50,26 +49,39 @@ void test1() {
 	model.setInput(0, 0.0);
 	model.setInput(1, 1.0);
 	model.forward();
-	assert(std::abs(1.0-model.getOutput(0))<0.01);
-	assert(std::abs(2.0-model.getOutput(1))<0.01);
-	assert(std::abs(3.0-model.getOutput(2))<0.01);
+	if(std::abs(1.0-model.getOutput(0))>=0.01)
+	    return false;
+	if(std::abs(2.0-model.getOutput(1))>=0.01)
+	    return false;
+	if(std::abs(3.0-model.getOutput(2))>=0.01)
+	    return false;
 	model.setInput(0, 1.0);
 	model.setInput(1, 0.0);
 	model.forward();
-	assert(std::abs(3.14-model.getOutput(0))<0.01);
-	assert(std::abs(2.71-model.getOutput(1))<0.01);
-	assert(std::abs(1.41-model.getOutput(2))<0.01);
+	if(std::abs(3.14-model.getOutput(0))>=0.01)
+	    return false;
+	if(std::abs(2.71-model.getOutput(1))>=0.01)
+	    return false;
+	if(std::abs(1.41-model.getOutput(2))>=0.01)
+	    return false;
     } catch(std::runtime_error ex) {
 	hasException=true;
 	cout<<ex.what()<<endl;
     };
-    assert( ! hasException);
-    cout<<"ok."<<endl;
+    if(  hasException)
+	return false;
+    return true;
 };
 
 template<typename T>
 void test() {
-    test1<T>();
+    cout<<"Проверка ReLU<"<<typeid(T).name()<<"> на двухслойной сети: ";
+    size_t cnt=0;
+    for(size_t k=0; k<100; k++)
+	cnt+=task1<T>() ? 1 : 0;
+    std:;cout<<cnt<<" успешных из 100..";
+    assert(cnt>10);
+    cout<<"ok."<<endl;
 };
 
 int main()
@@ -77,6 +89,7 @@ int main()
     test<float>();
     test<double>();
     test<long double>();
+    cout<<"Ok."<<endl;
     return 0;
 };
 

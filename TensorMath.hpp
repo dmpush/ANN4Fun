@@ -30,6 +30,7 @@ void append   (Tensor<T> A, Tensor<T> res) {
 	throw std::runtime_error("append(): Размерности тензоров различны");
     if(res->size()!=A->size() )
 	throw std::runtime_error("append(): Размеры тензоров различны");
+    #pragma omp parallel for
     for(size_t i=0; i<res->size(); i++)
 	res->raw(i) = res->raw(i) + A->raw(i);
 };
@@ -56,6 +57,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		// умножение вектора-столбца на матрицу
 		if(A->size() != dimsB[1] || dimsB[0]!=res->size() )
 		    throw std::runtime_error("Вектор и матрица не сцеплены");
+		#pragma omp parallel for
 		for(size_t i=0; i<dimsB[0]; i++) {
 		    T s{0};
 		    for(size_t j=0; j<dimsB[1]; j++)
@@ -66,6 +68,7 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		// умножение матрицы на вектор-столбец
 		if(dimsA[0]!=B->size() || dimsA[1]!=res->size())
 		    throw std::runtime_error("Матрица и вектор не сцеплены");
+		#pragma omp parallel for
 		for(size_t i=0; i<dimsA[1]; i++) {
 		    T s{0};
 		    for(size_t j=0; j<dimsA[0]; j++)
@@ -81,6 +84,7 @@ template<typename T>
 void copy  (Tensor<T> src, Tensor<T> dest) {
     if(src->size()!=dest->size())
 	throw  std::runtime_error("copy(): тензоры имеют разные размеры");
+    #pragma omp parallel for
     for(size_t i=0; i<src->size(); i++)
 	dest->raw(i) = src->raw(i);
 };
@@ -95,10 +99,18 @@ void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
     
     if(dimsA[0]!=dimsC[0] || dimsB[0] != dimsC[1])
 	throw std::runtime_error("extmulapp(): входные тензоны не согласованны с выходным");
+    #pragma omp parallel for
     for(size_t i=0; i<dimsC[0]; i++)
 	for(size_t j=0; j<dimsC[1]; j++)
 	    res->val({i,j}) = res->val({i,j}) + A->raw(i) * B->raw(j);
 };
+
+template<typename T>
+void gaussianNoise(T M, T S, Tensor<T> res) {
+    std::normal_distribution<T> gauss{M,S};
+    for(size_t i=0; i<res->size(); i++)
+	res->raw(i) = gauss(res->getHolder()->rdev_);
+    };
 
 };//namespace
 #endif

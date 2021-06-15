@@ -1,6 +1,7 @@
 #ifndef DATAHOLDER_HPP
 #define DATAHOLDER_HPP
 
+#include <random>
 #include <map>
 #include <memory>
 #include <string>
@@ -47,6 +48,7 @@ public:
 	Tensor(const Tensor&) = delete;
         virtual ~Tensor()=default;
 
+	auto getHolder() { return holder_; };
 	const size_t dim() { return dims_.size(); };
 	const size_t size() { return size_; };
 	const auto dims() { return dims_; };
@@ -79,6 +81,28 @@ public:
 	    for(auto i: dims_)
 		std::cout<<i<<" ";
 	    std::cout<<std::endl;
+	};
+	void dump() {
+	    if(dim()==1) {
+		std::cout<<"{";
+		for(size_t k=0; k<size(); k++)
+		    std::cout<<raw(k)<<( k+1==size() ? "" : ", ");
+		std::cout<<"}"<<std::endl;
+	    }
+	     else if(dim()==2) {
+		std::cout<<"{";
+		for(size_t q=0; q<dims_[1]; q++) {
+		    std::cout<<"{";
+		    for(size_t p=0; p<dims_[0]; p++)
+			std::cout<<val({p,q})<<( p+1==dims_[0] ? "" : ", ");
+			std::cout<<"}"<<std::endl;
+		    };
+
+		std::cout<<"}"<<std::endl;
+	    }
+	    else {
+		std::cout<<"Отображение тензора не релизованно."<<std::endl;
+	    };
 	};
 
 	void show() {
@@ -155,8 +179,15 @@ public:
 	    o->description();
 	};
     };
+    void dump() {
+	for(auto [n,o]: objects_) {
+	    std::cout<<n<<"=";
+	    o->dump();
+	};
+    };
     /// true, если хранилище пустое или неинициализированное командой build()
     bool isEmpty() { return size()==0; };
+    std::random_device rdev_;
 private:
     void append(std::string name, typename Tensor::sPtr obj) {
         objects_[name]=obj;
@@ -164,9 +195,8 @@ private:
     std::vector<T> data_;
     std::map<std::string, typename Tensor::sPtr> objects_;
 
-
 }; //class
 template <typename T>
     using Tensor=typename DataHolder<T>::Tensor::sPtr;
-
+    
 #endif

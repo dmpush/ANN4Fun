@@ -2,7 +2,7 @@ RM=rm -f
 TARGET=test
 all:
 	clear
-	clang++ -std=c++20 -static -g -I . main.cpp -o $(TARGET)
+	g++ -std=c++20 -static -g -I . -lgomp -fopenmp main.cpp -o $(TARGET)
 run:
 	./test
 clean:

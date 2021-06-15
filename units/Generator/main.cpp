@@ -27,7 +27,8 @@ void test1() {
 
     hasException=false;
     try {
-	auto  gen=std::make_shared<Generator<T>> ( std::vector<size_t>({10}) );
+	std::vector<size_t> shape={10};
+	auto  gen=std::make_shared<Generator<T>> ( 10 );
 	assert(gen->getInputs()->dim() == 0);
 	assert(gen->getNumInputs() == 0);
 	assert(gen->getNumOutputs() == 10);

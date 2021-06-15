@@ -14,7 +14,7 @@
 template<typename T>
 class Generator: public ANN<T> {
 public:
-    Generator(const std::vector<size_t>& Nin) : random_{}, ANN<T>() {
+    explicit Generator(const std::vector<size_t>& Nin) : random_{}, ANN<T>() {
 	// сеть является владельцем своих входов и выходов
 	holder_=std::make_unique<DataHolder<T>>();
 	holder_->append("X", Nin);
@@ -27,6 +27,8 @@ public:
 	holder_->fill(T(0));
 //	holder_->description();
     };
+
+    explicit Generator(size_t Nin) : Generator<T>(std::vector({Nin})) {};
     Generator(ANN<T>*) = delete;
     virtual ~Generator() = default;
 
@@ -51,6 +53,10 @@ public:
     void batchEnd() override {
     };
     void setTutor(typename AbstractTutor<T>::uPtr) override final {
+    };
+    void dump() override  {
+	std::cout<<"Generator:"<<std::endl;
+	holder_->dump();
     };
 private:
     // хранилище данных и псевдонимы для тензоров

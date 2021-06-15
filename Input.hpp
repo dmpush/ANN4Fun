@@ -1,6 +1,7 @@
 #ifndef __INPUT_HPP__
 #define __INPUT_HPP__
 
+#include <iostream>
 #include <vector>
 #include <stdexcept>
 #include <ANN.hpp>
@@ -43,6 +44,10 @@ public:
     void batchEnd() override {
     };
     void setTutor(typename AbstractTutor<T>::uPtr) override final {
+    };
+    void dump()  override {
+	std::cout<<"Input:"<<std::endl;
+	holder_->dump();
     };
 private:
     // хранилище данных и псевдонимы для тензоров

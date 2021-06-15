@@ -9,6 +9,8 @@ all:
 	make -C SoftMax
 	make -C Generator
 	make -C Tensor2JPEG
+	make -C Gain
+	make -C Arctan
 run:
 	clear
 	make -C DataHolder run
@@ -21,6 +23,8 @@ run:
 	make -C SoftMax run
 	make -C Generator run
 	make -C Tensor2JPEG run
+	make -C Gain run
+	make -C Arctan run
 	echo 'Тестирование удачно завершено!'
 clean:
 	make -C DataHolder clean
@@ -33,4 +37,5 @@ clean:
 	make -C SoftMax clean
 	make -C Generator clean
 	make -C Tensor2JPEG clean
-
+	make -C Gain clean
+	make -C Arctan clean
