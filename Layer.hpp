@@ -1,6 +1,7 @@
 #ifndef __LAYER_HPP_
 #define __LAYER_HPP_
 
+#include <cmath>
 #include <vector>
 #include <memory>
 #include <stdexcept>
@@ -48,8 +49,10 @@ public:
 	dY_=Learnable<T>::getOutputErrors();
 
 //	Learnable<T>::getParams()->fill(0.1);
-	tensormath::gaussianNoise<T>(0,0.1, W_);
-	tensormath::gaussianNoise<T>(0,0.1, C_);
+	double S=2.0/static_cast<double>(Learnable<T>::getNumInputs());
+//	tensormath::gaussianNoise<T>(0, std::sqrt(S),  W_);
+	tensormath::gaussianNoise<T>(0, std::sqrt(S/2.0),  W_);
+	tensormath::gaussianNoise<T>(0, 1e-9, C_);
     };
 
 

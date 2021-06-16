@@ -11,6 +11,9 @@ all:
 	make -C Tensor2JPEG
 	make -C Gain
 	make -C Arctan
+	make -C ReLUx
+	make -C ELU
+	make -C SELU
 run:
 	clear
 	make -C DataHolder run
@@ -25,6 +28,9 @@ run:
 	make -C Tensor2JPEG run
 	make -C Gain run
 	make -C Arctan run
+	make -C ReLUx run
+	make -C ELU run
+	make -C SELU run
 	echo 'Тестирование удачно завершено!'
 clean:
 	make -C DataHolder clean
@@ -39,3 +45,7 @@ clean:
 	make -C Tensor2JPEG clean
 	make -C Gain clean
 	make -C Arctan clean
+	make -C ReLUx clean
+	make -C ELU clean
+	make -C SELU clean
+

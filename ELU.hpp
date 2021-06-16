@@ -1,10 +1,11 @@
-#ifndef __RELU_HPP__
-#define __RELU_HPP__
+#ifndef __ELU_HPP__
+#define __ELU_HPP__
 
 #include <stdexcept>
 #include <string>
 #include <memory>
 #include <vector>
+#include <cmath>
 
 #include <ANN.hpp>
 #include <Successor.hpp>
@@ -12,29 +13,34 @@
 #include <AbstractTutor.hpp>
 #include <TensorMath.hpp>
 /**
-    @brief ReLU - простая функция активации - выпрямленная линейная функция.
+    @brief ELU - Exponential linear unit.
 */
 template<typename T>
-class ReLU : public Successor<T> {
+class ELU : public Successor<T> {
 public:
-    ReLU() = delete;
-    ReLU(const ReLU&) = delete;
-    explicit ReLU(ANN<T>* ann) : Successor<T>(ann) {
+    ELU() = delete;
+    ELU(const ELU&) = delete;
+    explicit ELU(ANN<T>* ann, double alpha=1.0) : alpha_(alpha), Successor<T>(ann) {
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
 	dY_=Successor<T>::getOutputErrors();
     };
-    ~ReLU() = default;
+    ~ELU() = default;
 
 
     void forward() override {
-	for(size_t i=0; i<X_->size(); i++)
-	    Y_->raw(i) = X_->raw(i) > T(0) ? X_->raw(i) : T(0);
+	for(size_t i=0; i<X_->size(); i++) {
+	    double x=X_->raw(i);
+	    Y_->raw(i) = x < 0.0 ? alpha_*(std::exp(x) - 1.0) : x;
+	};
     };
     void backward() override {
-	for(size_t i=0; i<X_->size(); i++)
-	    dX_->raw(i) =  X_->raw(i) > T(0)? dY_->raw(i) : T(0);
+	for(size_t i=0; i<X_->size(); i++) {
+	    double x=X_->raw(i);
+	    double y=Y_->raw(i);
+	    dX_->raw(i) =  ( x < 0 ? alpha_+ y : 1.0 ) * dY_->raw(i);
+	};
     };
     void batchBegin() override {
     };
@@ -47,6 +53,7 @@ public:
 private:
     Tensor<T> X_, Y_;
     Tensor<T> dX_, dY_;
+    double alpha_;
 protected:
 };
 

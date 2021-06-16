@@ -1,6 +1,7 @@
 #ifndef __TENSOR_MATH_HPP__
 #define __TENSOR_MATH_HPP__
 
+#include <functional>
 #include <DataHolder.hpp>
 
 /**
@@ -111,6 +112,12 @@ void gaussianNoise(T M, T S, Tensor<T> res) {
     for(size_t i=0; i<res->size(); i++)
 	res->raw(i) = gauss(res->getHolder()->rdev_);
     };
+
+template<typename T>
+void apply(const std::function<T(T)>&func, Tensor<T> res) {
+    for(size_t i=0; i<res->size(); i++)
+	res->raw(i) = func(res->raw(i));
+};
 
 };//namespace
 #endif

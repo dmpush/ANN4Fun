@@ -47,9 +47,9 @@ public:
     };
 
 
-    template<Derived<Succession<T>> AnnType>
-    void addLayer() {
-	layers_.push_back(std::make_shared<AnnType>(layers_.back().get() ) );
+    template<Derived<Succession<T>> AnnType, typename... Args>
+    void addLayer(Args... args) {
+	layers_.push_back(std::make_shared<AnnType>(layers_.back().get(), args... ) );
     };
 
     void forward() override {

@@ -5,7 +5,7 @@
 #include <Input.hpp>
 #include <Layer.hpp>
 #include <Model.hpp>
-#include <ReLU.hpp>
+#include <SELU.hpp>
 
 using namespace std;
 int main()
@@ -13,13 +13,13 @@ int main()
     try {
 	Model<float> model({2});
 	model.addLayer<Layer<float>>({2});
-	model.addLayer<ReLU<float>>();
+	model.addLayer<SELU<float>>();
 	model.addLayer<Layer<float>>({3});
-	model.addLayer<ReLU<float>>();
+	model.addLayer<SELU<float>>();
 
 //	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
-	std::vector<float> L={0.0f,0.00001f};
-	model.setTutor<SimpleTutor<float>>(0.1f, L);
+//	std::vector<float> L={0.0f,0.00001f};
+//	model.setTutor<SimpleTutor<float>>(0.1f, L);
 
 	for(int i=0; i<1000; i++) {
 	    model.batchBegin();

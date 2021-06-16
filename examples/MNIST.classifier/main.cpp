@@ -35,7 +35,7 @@ auto  getModel1() {
     model->template addLayer<Layer<T>>({25});
     model->template addLayer<ReLU<T>>();
     model->template addLayer<Layer<T>>({10});
-    model->template addLayer<Arctan<T>>();
+//    model->template addLayer<Arctan<T>>();
     model->template addLayer<SoftMax<T>>();
     return model;
 };

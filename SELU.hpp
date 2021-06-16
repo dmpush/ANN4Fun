@@ -1,46 +1,42 @@
-#ifndef __ARCTAN_HPP__
-#define __ARCTAN_HPP__
+#ifndef __SELU_HPP__
+#define __SELU_HPP__
 
 #include <stdexcept>
 #include <string>
 #include <memory>
 #include <vector>
 #include <cmath>
-#include <numbers>
 
 #include <ANN.hpp>
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
 #include <TensorMath.hpp>
-
-/** 
-    @brief Arctan - активаторная функция - арктангенс.f(x)=a*arctan(x/a)
+/**
+    @brief SELU - Scaled Exponential linear unit.
 */
 template<typename T>
-class Arctan : public Successor<T> {
-    /// @brief коэфф-т масштабирования на диапазон (-1,1). Вблизи нуля f(x)~x
-    const T scale_;
+class SELU : public Successor<T> {
 public:
-    Arctan() = delete;
-    Arctan(const Arctan&) = delete;
-    explicit Arctan(ANN<T>* ann) : scale_{2.0/std::numbers::pi}, Successor<T>(ann) {
+    SELU() = delete;
+    SELU(const SELU&) = delete;
+    explicit SELU(ANN<T>* ann) : alpha_(1.67326), lambda_(1.0507), Successor<T>(ann) {
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
 	dY_=Successor<T>::getOutputErrors();
     };
-    ~Arctan() = default;
+    ~SELU() = default;
 
 
     void forward() override {
-	for(size_t i=0; i<X_->size(); i++)
-	    Y_->raw(i) = std::atan(X_->raw(i)/scale_) * scale_;
+	for(size_t i=0; i<X_->size(); i++) {
+	    Y_->raw(i) = f( X_->raw(i) );
+	};
     };
     void backward() override {
 	for(size_t i=0; i<X_->size(); i++) {
-	    auto x = X_->raw(i) / scale_;
-	    dX_->raw(i) = dY_->raw(i) / (1.0 + x*x);
+	    dX_->raw(i) =  df(X_->raw(i)) * dY_->raw(i);
 	};
     };
     void batchBegin() override {
@@ -50,9 +46,14 @@ public:
     void setTutor(typename AbstractTutor<T>::uPtr) override {
     };
 
+
 private:
+    inline double f(double x) { return lambda_*(x<0.0 ? alpha_*(std::exp(x)-1.0) : x); };
+    inline double df(double x) { return lambda_*(x<0.0 ? alpha_*std::exp(x) : 1.0 ); };
     Tensor<T> X_, Y_;
     Tensor<T> dX_, dY_;
+    double alpha_;
+    double lambda_;
 protected:
 };
 
