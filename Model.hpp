@@ -25,8 +25,7 @@ concept Derived= std::is_base_of<B, D>::value;
 template<typename T>
 class Model : public Succession<T> {
 public:
-
-    template<typename R>
+    using sPtr=std::shared_ptr<Model<T>>;
 
     Model() : layers_{} {};
     Model(const std::vector<size_t>& shape) : layers_{}, Succession<T>() {

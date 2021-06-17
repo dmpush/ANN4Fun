@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cassert>
 #include <string>
 #include <DataHolder.hpp>
 #include <SimpleTutor.hpp>
@@ -6,6 +7,7 @@
 #include <Layer.hpp>
 #include <Model.hpp>
 #include <SELU.hpp>
+#include <Assertion.hpp>
 
 using namespace std;
 int main()
@@ -13,6 +15,7 @@ int main()
     try {
 	Model<float> model({2});
 	model.addLayer<Layer<float>>({2});
+//	model.template addLayer<Assertion<float>>([](float x){ assert(x<1); });
 	model.addLayer<SELU<float>>();
 	model.addLayer<Layer<float>>({3});
 	model.addLayer<SELU<float>>();

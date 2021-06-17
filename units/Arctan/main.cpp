@@ -4,6 +4,8 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <memory>
+#include <functional>
 
 #include <DataHolder.hpp>
 #include <SimpleTutor.hpp>
@@ -14,114 +16,92 @@
 #include <ReLU.hpp>
 #include <Gain.hpp>
 
-template<typename T>
-T OR(T x, T y) { return std::max(x,y); };
-template<typename T>
-T AND(T x, T y) { return std::min(x,y); };
-template<typename T>
-T NOT(T x) { return  - x; };
-template<typename T>
-T XOR(T x, T y) { return OR(AND(x, NOT(y)), AND(NOT(x), y)) ; };
-
-using namespace std;
-
-
-
+#include <Assertion.hpp>
+#include <TestXOR.hpp>
+#include <TestGains.hpp>
 
 template<typename T>
-bool taskXOR() {
-    std::vector<float> x{-1.0, +1.0, -1.0, +1.0};
-    std::vector<float> y{-1.0, -1.0, +1.0, +1.0};
-    bool hasException{false};
-    try {
-	
-	Model<T> model({2});
-	model. template addLayer<Layer<T>>({7});
-	model. template addLayer<Arctan<T>>();
-	model. template addLayer<Layer<T>>({5});
-	model. template addLayer<Arctan<T>>();
-	model. template addLayer<Layer<T>>({3});
-	model. template addLayer<Arctan<T>>();
-
-
-	for(size_t i=0; i<1000; i++) {
-	    model.batchBegin();
-	    for(size_t k=0; k<4; k++) {
-		model.setInput(0, x[k]);
-		model.setInput(1, y[k]);
-		model.forward();
-		model.setOutput(0, AND(x[k], y[k])*0.9); //AND
-		model.setOutput(1, OR (x[k], y[k])*0.9); //OR
-		model.setOutput(2, XOR(x[k], y[k])*0.9); //XOR
-		model.backward();
-	    };
-	    model.batchEnd();
+class ArctanXOR : public TestXOR<T> {
+public:
+    std::shared_ptr<Model<T>> buildModel() override {
+	std::vector<size_t> inputShape{2};
+	std::function<void(T)> validValue=[](T x) { 
+	    assert(!std::isnan(x));
+	    assert(!std::isinf(x));
 	};
-	// проверка
-	for(size_t k=0; k<x.size(); k++) {
-	    model.setInput(0, x[k]);
-	    model.setInput(1, y[k]);
-	    model.forward();
-	    if(  std::abs(AND(x[k], y[k])-model.getOutput(0))>=0.3 )
-		return false;
-	    if(  std::abs(OR (x[k], y[k])-model.getOutput(1))>=0.3 )
-		return false;
-	    if(  std::abs(XOR(x[k], y[k])-model.getOutput(2))>=0.3 )
-		return false;
-	};
-    } catch(std::runtime_error ex) {
-	hasException=true;
-	cout<<ex.what()<<endl;
+	auto model=std::make_shared<Model<T>> (inputShape);
+	model-> template addLayer<Layer<T>>({7});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Arctan<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Layer<T>>({5});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Arctan<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Layer<T>>({3});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Arctan<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	return model;
     };
-    if( hasException ) 
-	return false;
-//    cout<<"ok."<<endl;
-    return true;
+    bool assertion() override {
+	return TestXOR<T>::getErrorMeanSquare()<0.1;
+    };
 };
 
 template<typename T>
-void test2() {
-    cout<<"Проверка Arctan<"<<typeid(T).name()<<"> на простых усилителях Gain...";
-    bool hasException{false};
-    try {
-	Model<T> model({2});
-	model. template addLayer<Gain<T>>();
-	model. template addLayer<Arctan<T>>();
-	for(int i=0; i<1000; i++) {
-	    model.batchBegin();
-	    model.setInput(0, +1.0);
-	    model.setInput(1, -1.0);
-	    model.forward();
-	    model.setOutput(0, -0.314); 
-	    model.setOutput(1, +0.271); 
-	    model.backward();
-	    model.batchEnd();
+class ArctanGains: public TestGains<T> {
+public:
+    std::shared_ptr<Model<T>> buildModel() override {
+	std::vector<size_t> inputShape{2};
+	std::function<void(T)> validValue=[](T x) { 
+	    assert(!std::isnan(x));
+	    assert(!std::isinf(x));
 	};
-	model.setInput(0, +1.0);
-	model.setInput(1, -1.0);
-	model.forward();
-	assert(  std::abs(-0.314 - model.getOutput(0))<0.1 );
-	assert(  std::abs(+0.271 - model.getOutput(1))<0.1 );
-
-    
-    } catch(std::runtime_error ex) {
-	hasException=true;
-	cout<<ex.what()<<endl;
+	auto model=std::make_shared<Model<T>> (inputShape);
+	model-> template addLayer<Layer<T>>({2});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Arctan<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Layer<T>>({3});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Arctan<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Layer<T>>({4});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Arctan<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	return model;
     };
-    assert(! hasException );
-    cout<<"ok."<<endl;
+    bool assertion() override {
+	return TestXOR<T>::getErrorMeanSquare()<0.1;
+    };
 };
+
+
 
 template<typename T>
 void test1() {
     cout<<"Проверка Arctan<"<<typeid(T).name()<<"> на логических функциях: ";
-    size_t cnt=0;
-    for(size_t k=0; k<100; k++)
-	cnt += taskXOR<T>() ? 1u : 0u;
-    std::cout<<"пройдено тестов "<<cnt<<" из 100...";
-    assert(cnt>=50);
+    ArctanXOR<T> test;
+    auto cnt=test.run();
+    cout<<cnt<<" из 100...";
+    assert(cnt>=10);
     std::cout<<"ok."<<std::endl;
 };
+
+template<typename T>
+void test2() {
+    cout<<"Проверка Arctan<"<<typeid(T).name()<<"> на усилителях: ";
+    ArctanGains<T> test;
+    auto cnt=test.run();
+    cout<<cnt<<" из 100...";
+    assert(cnt>=10);
+    std::cout<<"ok."<<std::endl;
+};
+
+
+
 
 template<typename T>
 void test() {
