@@ -30,9 +30,33 @@ void test1() {
     std::cout<<"ok."<<std::endl;
 };
 
+
+template <typename T>
+void test2() {
+    auto tname=typeid(T).name();
+    std::cout<<"Tensor<"<<tname<<"> to JPEG...";
+    DataHolder<T> dh;
+    dh.append("X", {640,240,3});
+    dh.build();
+    auto X=dh.get("X");
+    auto dims=X->dims();
+    for(size_t i=0; i<dims[0]; i++)
+	for(size_t j=0; j<dims[1]; j++) {
+	    float x=static_cast<float>((int)i-(int)dims[0]/2)/static_cast<float>(dims[0]);
+	    float y=static_cast<float>((int)j-(int)dims[1]/2)/static_cast<float>(dims[1]);
+	    auto A=(x*x+y*y)/0.25;
+	    X->val({i,j,0})= (x*x+y*y)*(A<1.0 ? 1.0 : 0.0);
+	    X->val({i,j,1})= (x*x+y*y)*(A<0.75 ? 1.0 : 0.0);
+	    X->val({i,j,2})= (x*x+y*y)*(A<0.5 ? 1.0 : 0.0);
+	};
+    tensormath::toJPEG<T>(X, "test-2-"+std::string(tname)+".jpg");
+    std::cout<<"ok."<<std::endl;
+};
+
 template <typename T>
 void test() {
     test1<T>();
+    test2<T>();
 };
 int main()
 {

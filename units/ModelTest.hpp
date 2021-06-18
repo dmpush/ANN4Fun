@@ -24,7 +24,8 @@ public:
     ModelTest(size_t numBatches=100, size_t batchSize=10) :
 	num_batches_(numBatches),
 	batch_size_(batchSize),
-	rdev_{},
+	seed_{},
+	rdev_{seed_()},
 	uniform_(0.0, 1.0),
 	normal_(0.0, 1.0) {
 	};
@@ -139,7 +140,8 @@ private:
     double error_mse_;
     size_t batch_size_;
     size_t num_batches_;
-    std::random_device rdev_;
+    std::random_device seed_;
+    std::mt19937 rdev_;
     std::uniform_real_distribution<double> uniform_;
     std::normal_distribution<double> normal_;
 };

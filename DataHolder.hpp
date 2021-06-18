@@ -122,7 +122,7 @@ public:
     //-------------------------------------------------------------------
 
     DataHolder(const DataHolder&) = delete;
-    DataHolder() = default;
+    DataHolder() : seed_{}, rdev_{seed_()}, uniform_{0.0,1.0}, normal_{0.0, 1.0} {};
     virtual ~DataHolder() = default;
     /// модификация данных напрямую
     T& raw(size_t ind) { return data_[ind]; }; 
@@ -185,10 +185,15 @@ public:
 	    o->dump();
 	};
     };
+    T uniformNoise()  { return static_cast<T>( uniform_(rdev_) ); };
+    T gaussianNoise() { return static_cast<T>( normal_ (rdev_) ); };
     /// true, если хранилище пустое или неинициализированное командой build()
     bool isEmpty() { return size()==0; };
-    std::random_device rdev_;
 private:
+    std::random_device seed_;
+    std::mt19937 rdev_;
+    std::uniform_real_distribution<double> uniform_;
+    std::normal_distribution<double> normal_;
     void append(std::string name, typename Tensor::sPtr obj) {
         objects_[name]=obj;
     };

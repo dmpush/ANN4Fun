@@ -20,8 +20,8 @@ view:
 	qcachegrind 
 unit:
 	make -C units
-	make -C units run
 	make -C examples
+	make -C units run
 	make -C examples run
 doc:
 	doxygen

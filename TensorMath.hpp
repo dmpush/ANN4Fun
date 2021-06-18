@@ -108,9 +108,16 @@ void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
 
 template<typename T>
 void gaussianNoise(T M, T S, Tensor<T> res) {
-    std::normal_distribution<T> gauss{M,S};
+    auto holder=res->getHolder();
     for(size_t i=0; i<res->size(); i++)
-	res->raw(i) = gauss(res->getHolder()->rdev_);
+	res->raw(i) = holder->gaussianNoise()*S + M; ;
+    };
+
+template<typename T>
+void uniformNoise(double a, double b, Tensor<T> res) {
+    auto holder=res->getHolder();
+    for(size_t i=0; i<res->size(); i++)
+	res->raw(i) = holder->uniformNoise() * (b-a)+a;
     };
 
 template<typename T>

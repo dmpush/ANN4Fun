@@ -74,7 +74,7 @@ public:
 	return model;
     };
     bool assertion() override {
-	return TestXOR<T>::getErrorMeanSquare()<0.1;
+	return TestGains<T>::getErrorMeanSquare()<0.1;
     };
 };
 

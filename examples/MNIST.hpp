@@ -21,14 +21,15 @@ void endswap(T *objp)
 template <typename T>
 class MNIST
 {
-	std::random_device rdev_;
+	std::random_device seed_;
+	std::mt19937 rdev_;
 public:
-		struct Image
-		{
-		T data[28 * 28];
-		int label;
-		using sPtr=std::shared_ptr<Image>;
-		};
+	struct Image {
+	    T data[28 * 28];
+	    int label;
+	    using sPtr=std::shared_ptr<Image>;
+	};
+    using sPtr = std::shared_ptr<MNIST>;
 private:
 	class MNIST_set
 	{
@@ -88,15 +89,16 @@ private:
 		size_t numSamples() {
 			return images_.size();
 		}
+		auto begin() { return images_.begin(); };
+		auto end() { return images_.end(); };
 	}; // MNIST_set
 	std::shared_ptr<MNIST_set> train;
 	std::shared_ptr<MNIST_set> test;
 public:
 
-	MNIST(std::string path)
-	{
-		train = std::make_shared<MNIST_set>(this, path, "train");
-		test = std::make_shared<MNIST_set>(this, path, "t10k");
+	MNIST(std::string path) : seed_{}, rdev_{seed_()} {
+	    train = std::make_shared<MNIST_set>(this, path, "train");
+	    test  = std::make_shared<MNIST_set>(this, path, "t10k");
 	};
 
 	std::shared_ptr<MNIST_set> getTrainSet() { return train; };

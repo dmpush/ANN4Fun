@@ -3,18 +3,18 @@
 
 #include <vector>
 #include <stdexcept>
-#include <random>
 
 #include <ANN.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
+#include <TensorMath.hpp>
 /**
     @brief Generator - Входной слой нейронной сети, генерирующий случайный гауссов шум, предназначен для GAN.
 */
 template<typename T>
 class Generator: public ANN<T> {
 public:
-    explicit Generator(const std::vector<size_t>& Nin) : random_{}, ANN<T>() {
+    explicit Generator(const std::vector<size_t>& Nin) : ANN<T>() {
 	// сеть является владельцем своих входов и выходов
 	holder_=std::make_unique<DataHolder<T>>();
 	holder_->append("X", Nin);
@@ -41,10 +41,7 @@ public:
     Tensor<T>  getOutputErrors() override { return dX_; };
 
     void forward() override {
-	std::normal_distribution<double> generator{0.0, 1.0};
-	for(size_t i=0; i<X_->size(); i++) {
-	    X_->raw(i)= static_cast<T>(generator(random_));
-	};
+	tensormath::gaussianNoise<T>(0.0, 1.0, X_);
     };
     void backward() override {
     };
@@ -64,7 +61,6 @@ private:
     Tensor<T> X_;
     Tensor<T> dX_;
     Tensor<T> fake_;
-    std::random_device random_;
 };
 
 #endif
