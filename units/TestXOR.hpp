@@ -18,7 +18,7 @@ using namespace std;
 template<typename T>
 class TestXOR : public ModelTest<T> {
 public:
-    TestXOR() : scale_(0.9), offset_(0.0), ModelTest<T>() {};
+    TestXOR() : ModelTest<T>(), scale_(0.9), offset_(0.0)  {};
     ~TestXOR() = default;
 
     virtual std::vector<T> getOutput(const std::vector<T> in) override {

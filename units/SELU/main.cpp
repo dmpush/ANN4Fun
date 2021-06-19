@@ -79,7 +79,7 @@ void test() {
     size_t cnt=0;
     for(size_t k=0; k<100; k++)
 	cnt+=task1<T>() ? 1 : 0;
-    std:;cout<<cnt<<" успешных из 100..";
+    std::cout<<cnt<<" успешных из 100..";
     assert(cnt>10);
     cout<<"ok."<<endl;
 };

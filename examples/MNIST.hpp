@@ -26,7 +26,7 @@ class MNIST
 public:
 	struct Image {
 	    T data[28 * 28];
-	    int label;
+	    size_t label;
 	    using sPtr=std::shared_ptr<Image>;
 	};
     using sPtr = std::shared_ptr<MNIST>;
@@ -58,7 +58,7 @@ private:
 			assert(picHeight==28);
 			images_.resize(numItems);
 			uint8_t img[28 * 28];
-			for (size_t i = 0; i < numItems; i++){
+			for (int i = 0; i < numItems; i++){
 				file.read((char *)&img, 28 * 28);
 				////	    endswap(img);
 				images_[i] = std::make_shared<Image>();
@@ -76,7 +76,7 @@ private:
 			file.read((char *)&numItems, sizeof(int32_t));
 			endswap(&numItems);
 			assert(numItems==60000 || numItems==10000);
-			for (size_t i = 0; i < numItems; i++) {
+			for (int i = 0; i < numItems; i++) {
 				char label;
 				file.read((char *)&label, 1);
 				images_[i]->label = static_cast<int>(label);

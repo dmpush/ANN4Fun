@@ -11,9 +11,9 @@
 namespace tensormath {
 template<typename T>
 void toJPEG(Tensor<T> tensor, std::string fname) {
-    int width{0};
-    int height{0};
-    int bytes_per_pixel{3};   // 1
+    size_t width{0};
+    size_t height{0};
+    size_t bytes_per_pixel{3};   // 1
     auto color_space{JCS_RGB}; // JCS_GRAYSCALE
 
     struct jpeg_compress_struct cinfo;
@@ -22,9 +22,9 @@ void toJPEG(Tensor<T> tensor, std::string fname) {
     FILE *outfile = fopen( fname.c_str(), "wb" );
     if(!outfile)
 	throw std::runtime_error("Не могу создать файл JPG");
-	cinfo.err = jpeg_std_error( &jerr );
-	jpeg_create_compress(&cinfo);
-	jpeg_stdio_dest(&cinfo, outfile);
+    cinfo.err = jpeg_std_error( &jerr );
+    jpeg_create_compress(&cinfo);
+    jpeg_stdio_dest(&cinfo, outfile);
 
 
     if(tensor->dim()==2) {
@@ -54,8 +54,7 @@ void toJPEG(Tensor<T> tensor, std::string fname) {
                 buff[ind++]=c;
                 buff[ind++]=c;
 	    };
-	while( cinfo.next_scanline < cinfo.image_height )
-	{
+	while( cinfo.next_scanline < cinfo.image_height ) {
 		row_pointer[0] = &buff[ cinfo.next_scanline * cinfo.image_width *  cinfo.input_components];
 		jpeg_write_scanlines( &cinfo, row_pointer, 1 );
 	}

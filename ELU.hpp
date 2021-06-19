@@ -20,7 +20,7 @@ class ELU : public Successor<T> {
 public:
     ELU() = delete;
     ELU(const ELU&) = delete;
-    explicit ELU(ANN<T>* ann, double alpha=1.0) : alpha_(alpha), Successor<T>(ann) {
+    explicit ELU(ANN<T>* ann, double alpha=1.0) : Successor<T>(ann), alpha_(alpha) {
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();

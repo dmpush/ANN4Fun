@@ -28,11 +28,11 @@ public:
     using sPtr=std::shared_ptr<Model<T>>;
 
     Model() : layers_{} {};
-    Model(const std::vector<size_t>& shape) : layers_{}, Succession<T>() {
+    Model(const std::vector<size_t>& shape) : Succession<T>(), layers_{} {
 	layers_.push_back(std::make_shared<Input<T>>(shape));
     };
     /// @brief конструктор композиции
-    Model(ANN<T> *ann) : layers_{}, Succession<T>(ann) {
+    Model(ANN<T> *ann) : Succession<T>(ann), layers_{} {
 	layers_.push_back(std::make_shared<Wire<T>>(ann));
     };
 

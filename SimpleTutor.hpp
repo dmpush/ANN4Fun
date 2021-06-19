@@ -12,7 +12,7 @@ class SimpleTutor : public AbstractTutor<T> {
     T dt_;
 public:
     SimpleTutor(const SimpleTutor&) = delete;
-    SimpleTutor(T dt=static_cast<T>(0.1f)) : dt_(dt),  AbstractTutor<T>() {};
+    SimpleTutor(T dt=static_cast<T>(0.1f)) : AbstractTutor<T>(), dt_(dt)   {};
     SimpleTutor(T dt, const std::vector<T>& lambdas) : dt_(dt),  AbstractTutor<T>(lambdas) {};
     ~SimpleTutor() = default;
 

@@ -92,7 +92,7 @@ void copy  (Tensor<T> src, Tensor<T> dest) {
 /// @brief extmulapp() внешнее произведение двух векторов c добавлением к двухмерной матрице: res+=A*B
 template<typename T>
 void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
-    if(A->dim()!=1 && B->dim()!=1 || res->dim()!=2) 
+    if(A->dim()!=1 || B->dim()!=1 || res->dim()!=2) 
 	throw std::runtime_error("extmul(): входные тензоры должны быть векторами, а выходной - матрицей");
     auto dimsA=A->dims();
     auto dimsB=B->dims();

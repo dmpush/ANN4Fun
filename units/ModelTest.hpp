@@ -22,8 +22,8 @@ template<typename T>
 class ModelTest {
 public:
     ModelTest(size_t numBatches=100, size_t batchSize=10) :
-	num_batches_(numBatches),
 	batch_size_(batchSize),
+	num_batches_(numBatches),
 	seed_{},
 	rdev_{seed_()},
 	uniform_(0.0, 1.0),

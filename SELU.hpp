@@ -20,7 +20,8 @@ class SELU : public Successor<T> {
 public:
     SELU() = delete;
     SELU(const SELU&) = delete;
-    explicit SELU(ANN<T>* ann) : alpha_(1.67326), lambda_(1.0507), Successor<T>(ann) {
+    explicit SELU(ANN<T>* ann) : Successor<T>(ann), 
+    alpha_(1.67326), lambda_(1.0507) {
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();

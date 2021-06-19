@@ -23,9 +23,9 @@ public:
     Assertion() = delete;
     Assertion(const Assertion&) = delete;
     explicit Assertion(ANN<T>* ann, const std::function<void(T)>& fwd, const std::function<void(T)>& bwd=[](T){} ) : 
+	Successor<T>(ann),
 	fwd_(fwd), 
-	bwd_(bwd), 
-	Successor<T>(ann) {
+	bwd_(bwd) {
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();

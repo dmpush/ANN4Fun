@@ -19,12 +19,10 @@
 */
 template<typename T>
 class Arctan : public Successor<T> {
-    /// @brief коэфф-т масштабирования на диапазон (-1,1). Вблизи нуля f(x)~x
-    const T scale_;
 public:
     Arctan() = delete;
     Arctan(const Arctan&) = delete;
-    explicit Arctan(ANN<T>* ann) : scale_{2.0/std::numbers::pi}, Successor<T>(ann) {
+    explicit Arctan(ANN<T>* ann) : Successor<T>(ann), scale_{2.0/std::numbers::pi}  {
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
@@ -53,6 +51,8 @@ public:
 private:
     Tensor<T> X_, Y_;
     Tensor<T> dX_, dY_;
+    /// @brief коэфф-т масштабирования на диапазон (-1,1). Вблизи нуля f(x)~x
+    const T scale_;
 protected:
 };
 

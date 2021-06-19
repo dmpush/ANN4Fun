@@ -13,9 +13,9 @@ template<typename T>
 class AbstractTutor {
 protected:
     std::vector<T> lambdas_; ///< Коэфф-ты регуляризации
-    size_t sampleCount_; ///< счетчик семплов внутри батча
     typename DataHolder<T>::sPtr param_;///< хранилище параметров сети
     typename DataHolder<T>::sPtr grad_; ///< аккумулятор градиента
+    size_t sampleCount_; ///< счетчик семплов внутри батча
 public:
     using uPtr=std::unique_ptr<AbstractTutor<T>>;
     AbstractTutor() : param_{}, grad_{}, sampleCount_{0} {};

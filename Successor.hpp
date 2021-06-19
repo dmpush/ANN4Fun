@@ -15,7 +15,7 @@
 template<typename T>
 class Successor : public Succession<T> {
 public:
-    Successor(ANN<T> *ann, std::vector<size_t> Nout) : precursor_(ann), Succession<T>(ann) {
+    Successor(ANN<T> *ann, std::vector<size_t> Nout) : Succession<T>(ann), precursor_(ann)  {
 	// сеть является владельцем своих входов и выходов
 	holder_=std::make_unique<DataHolder<T>>();
 	holder_->append("Y", Nout);

@@ -18,16 +18,15 @@ class Learnable : public Successor<T> {
 public:
     Learnable() = delete;
     Learnable(const Learnable&) = delete;
-    explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) : 
+    explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) :
+	Successor<T>(ann,Nout),
 	params_{std::make_shared<DataHolder<T>>()},
-	grad_{std::make_shared<DataHolder<T>>()},
-	Successor<T>(ann,Nout) {
+	grad_{std::make_shared<DataHolder<T>>()} {
     };
     /// @brief конструктор для параметризированных функций активации
-    explicit Learnable(ANN<T>* ann) : 
+    explicit Learnable(ANN<T>* ann) : Successor<T>(ann),
 	params_{std::make_shared<DataHolder<T>>()},
-	grad_{std::make_shared<DataHolder<T>>()},
-	Successor<T>(ann) {
+	grad_{std::make_shared<DataHolder<T>>()} {
     };
     ~Learnable() = default;
 

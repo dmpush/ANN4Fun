@@ -22,10 +22,9 @@ class ReLUx : public Successor<T> {
 public:
     ReLUx() = delete;
     ReLUx(const ReLUx&) = delete;
-    explicit ReLUx(ANN<T>* ann) : 
-	    offset_{0.77689267459685207307}, 
-	    scale_{2.68442669991475435509},
-	    Successor<T>(ann) {
+    explicit ReLUx(ANN<T>* ann) : Successor<T>(ann),
+	    offset_{0.77689267459685207307},
+	    scale_{2.68442669991475435509} {
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();

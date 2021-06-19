@@ -43,7 +43,7 @@ public:
 	    offset_=0;
 	};
 
-        explicit Tensor(DataHolder *holder) : holder_(holder), size_{0}, dims_{}, offset_{0} {};
+        explicit Tensor(DataHolder *holder) : holder_(holder), dims_{},  offset_{0}, size_{0} {};
 
 	Tensor(const Tensor&) = delete;
         virtual ~Tensor()=default;
@@ -95,8 +95,8 @@ public:
 		    std::cout<<"{";
 		    for(size_t p=0; p<dims_[0]; p++)
 			std::cout<<val({p,q})<<( p+1==dims_[0] ? "" : ", ");
-			std::cout<<"}"<<std::endl;
-		    };
+		    std::cout<<"}"<<std::endl;
+		};
 
 		std::cout<<"}"<<std::endl;
 	    }
