@@ -1,5 +1,5 @@
-#ifndef __MODEL_XOR_HPP_
-#define __MODEL_XOR_HPP_
+#ifndef __MODEL_TEST_HPP_
+#define __MODEL_TEST_HPP_
 
 #include <iostream>
 #include <string>
@@ -22,10 +22,10 @@ template<typename T>
 class ModelTest {
 public:
     ModelTest(size_t numBatches=100, size_t batchSize=10) :
-	batch_size_(batchSize),
-	num_batches_(numBatches),
 	seed_{},
 	rdev_{seed_()},
+	batch_size_(batchSize),
+	num_batches_(numBatches),
 	uniform_(0.0, 1.0),
 	normal_(0.0, 1.0) {
 	};
@@ -45,7 +45,7 @@ public:
     /// @brief Пользовательский обработчик, вызывается для моделей по завершении тестирования.
     /// Предназначен для операций вроде формирования лога, записи модели/данных в файл и т.д.
     /// @param model модель;
-    virtual void onTunedModel( typename Model<T>::sPtr model) {};
+    virtual void onTunedModel( typename Model<T>::sPtr) {};
     /// @brief виртуальный метод-конструктор создания модели ИНС.
     virtual typename Model<T>::sPtr buildModel() = 0;
     /// @brief виртуальный предикат - условие прохождения теста модели.
@@ -60,7 +60,12 @@ public:
     };
     /// @brief метод генерации выходов обучающих примеров по входам.
     virtual std::vector<T> getOutput(const std::vector<T> in) = 0;
-
+    /// @brief
+    /// @returns
+    virtual size_t getNumInputs() = 0;
+    /// @brief
+    /// @returns
+    virtual size_t getNumOutputs() = 0;
     /// @brief Прогоны тестирования.
     /// @param repeats  число прогонов теста.
     size_t run(size_t repeats=100) {
@@ -88,15 +93,13 @@ private:
     bool step() {
 	try {
 	    auto model=buildModel();
-	    auto inputs=getInput();
-	    auto outputs=getOutput(inputs);
-	    assert(model->getNumInputs() == inputs.size());
-	    assert(model->getNumOutputs() == outputs.size());
+	    assert(model->getNumInputs() == getNumInputs());
+	    assert(model->getNumOutputs() == getNumOutputs());
 	    for(size_t i=0; i<num_batches_; i++) {
 		model->batchBegin();
 		for(size_t k=0; k<batch_size_; k++) {
-		    inputs=getInput();
-		    outputs=getOutput(inputs);
+		    auto inputs=getInput();
+		    auto outputs=getOutput(inputs);
 
 		    for(size_t p=0; p<inputs.size(); p++)
 			model->setInput(p, inputs[p]);
@@ -111,8 +114,8 @@ private:
 	    error_max_=0;
 	    error_mse_=0;
 	    for(size_t k=0; k<100; k++) {
-		inputs=getInput();
-		outputs=getOutput(inputs);
+		auto inputs=getInput();
+		auto outputs=getOutput(inputs);
 
 		for(size_t p=0; p<inputs.size(); p++)
 		    model->setInput(p, inputs[p]);
@@ -136,12 +139,14 @@ private:
 	return true;
     }; // step
     
+protected:
+    std::random_device seed_;
+    std::mt19937 rdev_;
+private:
     double error_max_;
     double error_mse_;
     size_t batch_size_;
     size_t num_batches_;
-    std::random_device seed_;
-    std::mt19937 rdev_;
     std::uniform_real_distribution<double> uniform_;
     std::normal_distribution<double> normal_;
 };

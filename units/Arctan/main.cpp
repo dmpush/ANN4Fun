@@ -24,12 +24,13 @@ template<typename T>
 class ArctanXOR : public TestXOR<T> {
 public:
     std::shared_ptr<Model<T>> buildModel() override {
-	std::vector<size_t> inputShape{2};
+	std::vector<size_t> inputShape{TestXOR<T>::getNumInputs()};
+	std::vector<size_t> outputShape{TestXOR<T>::getNumOutputs()};
 	std::function<void(T)> validValue=[](T x) { 
 	    assert(!std::isnan(x));
 	    assert(!std::isinf(x));
 	};
-	auto model=std::make_shared<Model<T>> (inputShape);
+	auto model=std::make_shared<Model<T>> ( inputShape );
 	model-> template addLayer<Layer<T>>({7});
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
 	model-> template addLayer<Arctan<T>>();
@@ -38,7 +39,7 @@ public:
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
 	model-> template addLayer<Arctan<T>>();
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
-	model-> template addLayer<Layer<T>>({3});
+	model-> template addLayer<Layer<T>>( outputShape );
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
 	model-> template addLayer<Arctan<T>>();
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
@@ -53,7 +54,8 @@ template<typename T>
 class ArctanGains: public TestGains<T> {
 public:
     std::shared_ptr<Model<T>> buildModel() override {
-	std::vector<size_t> inputShape{2};
+	std::vector<size_t> inputShape{TestGains<T>::getNumInputs()};
+	std::vector<size_t> outputShape{TestGains<T>::getNumOutputs()};
 	std::function<void(T)> validValue=[](T x) { 
 	    assert(!std::isnan(x));
 	    assert(!std::isinf(x));
@@ -67,7 +69,7 @@ public:
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
 	model-> template addLayer<Arctan<T>>();
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
-	model-> template addLayer<Layer<T>>({4});
+	model-> template addLayer<Layer<T>>( outputShape );
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
 	model-> template addLayer<Arctan<T>>();
 	model-> template addLayer<Assertion<T>>(validValue, validValue);

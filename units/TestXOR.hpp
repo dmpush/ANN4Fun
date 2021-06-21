@@ -28,7 +28,8 @@ public:
 	out[2]= XOR(in[0], in[1])*scale_+offset_;
 	return out;
     };
-
+    size_t getNumInputs()  override { return 2u; };
+    size_t getNumOutputs() override { return 3u; };
 private:
     T scale_, offset_;
     T NOT(T x) { return  - x; };

@@ -2,7 +2,7 @@ RM=rm -f
 TARGET=unit
 all:
 #	clear
-	clang++ -Wall -std=c++20 -g -I .. -I ../../ -ljpeg main.cpp -o $(TARGET)
+	clang++ -Wall -Wextra -std=c++20 -g -I .. -I ../../ -ljpeg main.cpp -o $(TARGET)
 
 run:
 	./$(TARGET)

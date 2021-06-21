@@ -12,8 +12,8 @@
 namespace tensormath {
 
 /// @brief sum() - поэлементная сумма двух тензоров с записью в третий тензор: res=A+B
-/// @param A,B - слагаемые
-/// @param res - сумма
+/// @param[in] A,B - слагаемые
+/// @param[out] res - сумма, res=A+B
 template<typename T>
 void sum   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
     if(res->dim()!=A->dim() || res->dim()!=B->dim())
@@ -25,6 +25,8 @@ void sum   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 };
 
 /// @brief append() - операция += для тензоров: res+=A
+/// @param[in] A -- аргумент
+/// @param[out] res --  аккумулятор, res+=A
 template<typename T>
 void append   (Tensor<T> A, Tensor<T> res) {
     if(res->dim()!=A->dim() )
@@ -40,6 +42,8 @@ void append   (Tensor<T> A, Tensor<T> res) {
 
 
 ///  @brief mul() -  Умножение матриц, векторов и матриц, и т.д.: res=A*B
+/// @param[in] A,B -- сомножители
+/// @param[out] res -- результат умножения. res=A*B
 template<typename T>
 void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 	    auto dimsA=A->dims();
@@ -80,7 +84,9 @@ void mul   (Tensor<T> A, Tensor<T> B, Tensor<T> res) {
 		throw  std::runtime_error("Умножение не релизовано");
 	    };
 };
-/// @brief copy() - название говорит само за себя. Копирование тензоров: dest=src
+/// @brief copy() - название говорит само за себя. Копирование тензоров.
+/// @param[in] src -- источник
+/// @param[out] dest -- приемник, dest=src
 template<typename T>
 void copy  (Tensor<T> src, Tensor<T> dest) {
     if(src->size()!=dest->size())
@@ -90,6 +96,8 @@ void copy  (Tensor<T> src, Tensor<T> dest) {
 	dest->raw(i) = src->raw(i);
 };
 /// @brief extmulapp() внешнее произведение двух векторов c добавлением к двухмерной матрице: res+=A*B
+/// @param[in] A,B -- сомножители
+/// @param[out] res -- аккумулятор, res+=A*B
 template<typename T>
 void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
     if(A->dim()!=1 || B->dim()!=1 || res->dim()!=2) 
@@ -105,7 +113,10 @@ void extmulapp(Tensor<T> A,Tensor<T> B, Tensor<T> res) {
 	for(size_t j=0; j<dimsC[1]; j++)
 	    res->val({i,j}) = res->val({i,j}) + A->raw(i) * B->raw(j);
 };
-
+/// @brief gaussianNoise - заполнение тензора шумом Гаусса
+/// @param[in] M -- математическое ожидание
+/// @param[in] S -- среднеквадатичное отклонение
+/// @param[out] res -- тензор-приемник шума
 template<typename T>
 void gaussianNoise(T M, T S, Tensor<T> res) {
     auto holder=res->getHolder();
@@ -113,13 +124,19 @@ void gaussianNoise(T M, T S, Tensor<T> res) {
 	res->raw(i) = holder->gaussianNoise()*S + M; ;
     };
 
+/// @brief uniformNoise - заполнение тензора шумом Гаусса
+/// @param[in] a -- нижняя граница значений шума
+/// @param[in] b -- верхняя граница значений шума
+/// @param[out] res -- тензор-приемник шума
 template<typename T>
 void uniformNoise(double a, double b, Tensor<T> res) {
     auto holder=res->getHolder();
     for(size_t i=0; i<res->size(); i++)
 	res->raw(i) = holder->uniformNoise() * (b-a)+a;
     };
-
+/// @brief apply -- применение функции ко всем элементам тензора
+/// @param[in] func -- функция
+/// @param[out] res -- тензор, над которым производится манипуляция
 template<typename T>
 void apply(const std::function<T(T)>&func, Tensor<T> res) {
     for(size_t i=0; i<res->size(); i++)

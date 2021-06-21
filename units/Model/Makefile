@@ -2,8 +2,8 @@ RM=rm -f
 TARGET=unit
 all:
 	clear
-	clang++ -Wall -std=c++20 -static -m32 -g -I ../.. main.cpp -o $(TARGET).32
-	clang++ -Wall -std=c++20 -static -m64 -g -I ../.. main.cpp -o $(TARGET).64
+	clang++ -Wall -Wextra -std=c++20 -static -m32 -g -I ../.. main.cpp -o $(TARGET).32
+	clang++ -Wall -Wextra -std=c++20 -static -m64 -g -I ../.. main.cpp -o $(TARGET).64
 run:
 	make run32
 	make run64

@@ -29,6 +29,8 @@ public:
 	out[3]= -in[1];
 	return out;
     };
+    size_t getNumInputs()  override { return 2u; };
+    size_t getNumOutputs() override { return 4u; };
 
 private:
 };

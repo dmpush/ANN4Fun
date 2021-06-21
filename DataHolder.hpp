@@ -49,9 +49,9 @@ public:
         virtual ~Tensor()=default;
 
 	auto getHolder() { return holder_; };
-	const size_t dim() { return dims_.size(); };
-	const size_t size() { return size_; };
-	const auto dims() { return dims_; };
+	size_t dim()  const { return dims_.size(); };
+	size_t size() const { return size_; };
+	auto dims() const { return dims_; };
 
 	T& raw(size_t ind) { return holder_->raw(offset_+ind); };
 

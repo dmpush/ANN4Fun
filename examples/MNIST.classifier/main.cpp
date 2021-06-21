@@ -75,7 +75,7 @@ void train(typename MNIST<R>::sPtr mnist, typename Model<T>::sPtr model,  size_t
 };
 
 template<typename R, typename T>
-void test(typename MNIST<R>::sPtr mnist, typename Model<T>::sPtr model,  size_t batchSize=10) {
+void test(typename MNIST<R>::sPtr mnist, typename Model<T>::sPtr model) {
     auto testSet=mnist->getTestSet();
     size_t errors_count=0;
     for(auto it=testSet->begin(); it!=testSet->end(); it++) {
