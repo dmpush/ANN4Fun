@@ -8,6 +8,7 @@
 #include <random>
 #include <algorithm> //min,max
 #include <memory>
+#include <stdexcept>
 
 #include <DataHolder.hpp>
 #include <Model.hpp>
@@ -133,7 +134,7 @@ private:
 	    onTunedModel(model);
 	    if(!assertion())
 		return false;
-	} catch(std::runtime_error ex) {
+	} catch(std::runtime_error const &) {
 	    return false;
 	};
 	return true;

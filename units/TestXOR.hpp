@@ -21,7 +21,7 @@ public:
     TestXOR() : ModelTest<T>(), scale_(0.9), offset_(0.0)  {};
     ~TestXOR() = default;
 
-    virtual std::vector<T> getOutput(const std::vector<T> in) override {
+    std::vector<T> getOutput(const std::vector<T> in) override {
 	std::vector<T> out(3);
 	out[0]= AND(in[0], in[1])*scale_+offset_;
 	out[1]= OR (in[0], in[1])*scale_+offset_;

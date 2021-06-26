@@ -2,6 +2,10 @@
 #include <string>
 #include <cassert>
 #include <cmath>
+#include <algorithm>
+#include <vector>
+#include <memory>
+#include <functional>
 
 #include <DataHolder.hpp>
 #include <SimpleTutor.hpp>
@@ -9,79 +13,97 @@
 #include <Layer.hpp>
 #include <Model.hpp>
 #include <ReLU.hpp>
+#include <Gain.hpp>
 
-using namespace std;
+#include <Assertion.hpp>
+#include <TestXOR.hpp>
+#include <TestGains.hpp>
 
 template<typename T>
-bool task1() {
-    bool hasException{false};
-    try {
-	Model<T> model({2});
-	model. template addLayer<Layer<T>>({5});
-	model. template addLayer<ReLU<T>>();
-	model. template addLayer<Layer<T>>({3});
-	model. template addLayer<ReLU<T>>();
-
-	model(1)->setTutor(std::make_unique<SimpleTutor<T>>(0.1));
-
-	for(int i=0; i<1000; i++) {
-	    model.batchBegin();
-
-	    model.setInput(0, 0.0);
-	    model.setInput(1, 1.0);
-	    model.forward();
-	    model.setOutput(0, 1.0);
-	    model.setOutput(1, 2.0);
-	    model.setOutput(2, 3.0);
-	    model.backward();
-
-	    model.setInput(0, 1.0);
-	    model.setInput(1, 0.0);
-	    model.forward();
-	    model.setOutput(0, 3.14);
-	    model.setOutput(1, 2.71);
-	    model.setOutput(2, 1.41);
-	    model.backward();
-
-	    model.batchEnd();
-
+class ReLUxor : public TestXOR<T> {
+public:
+    std::shared_ptr<Model<T>> buildModel() override {
+	std::vector<size_t> inputShape{TestXOR<T>::getNumInputs()};
+	std::vector<size_t> outputShape{TestXOR<T>::getNumOutputs()};
+	std::function<void(T)> validValue=[](T x) { 
+	    assert(!std::isnan(x));
+	    assert(!std::isinf(x));
 	};
-	model.setInput(0, 0.0);
-	model.setInput(1, 1.0);
-	model.forward();
-	if(std::abs(1.0-model.getOutput(0))>=0.01)
-	    return false;
-	if(std::abs(2.0-model.getOutput(1))>=0.01)
-	    return false;
-	if(std::abs(3.0-model.getOutput(2))>=0.01)
-	    return false;
-	model.setInput(0, 1.0);
-	model.setInput(1, 0.0);
-	model.forward();
-	if(std::abs(3.14-model.getOutput(0))>=0.01)
-	    return false;
-	if(std::abs(2.71-model.getOutput(1))>=0.01)
-	    return false;
-	if(std::abs(1.41-model.getOutput(2))>=0.01)
-	    return false;
-    } catch(std::runtime_error ex) {
-	hasException=true;
-	cout<<ex.what()<<endl;
+	auto model=std::make_shared<Model<T>> ( inputShape );
+	model-> template addLayer<Layer<T>>({7});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<ReLU<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Layer<T>>({5});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<ReLU<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Layer<T>>( outputShape );
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	return model;
     };
-    if(  hasException)
-	return false;
-    return true;
+    bool assertion() override {
+	return TestXOR<T>::getErrorMeanSquare()<0.1;
+    };
 };
 
 template<typename T>
+class ReLUGains: public TestGains<T> {
+public:
+    std::shared_ptr<Model<T>> buildModel() override {
+	std::vector<size_t> inputShape{TestGains<T>::getNumInputs()};
+	std::vector<size_t> outputShape{TestGains<T>::getNumOutputs()};
+	std::function<void(T)> validValue=[](T x) { 
+	    assert(!std::isnan(x));
+	    assert(!std::isinf(x));
+	};
+	auto model=std::make_shared<Model<T>> (inputShape);
+	model-> template addLayer<Layer<T>>({3});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<ReLU<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Layer<T>>({5});
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<ReLU<T>>();
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model-> template addLayer<Layer<T>>( outputShape );
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	return model;
+    };
+    bool assertion() override {
+	return TestGains<T>::getErrorMeanSquare()<0.1;
+    };
+};
+
+
+
+template<typename T>
+void test1() {
+    cout<<"Проверка ReLU<"<<typeid(T).name()<<"> на логических функциях: ";
+    ReLUxor<T> test;
+    auto cnt=test.run();
+    cout<<cnt<<" из 100...";
+    assert(cnt>=10);
+    std::cout<<"ok."<<std::endl;
+};
+
+template<typename T>
+void test2() {
+    cout<<"Проверка ReLU<"<<typeid(T).name()<<"> на усилителях: ";
+    ReLUGains<T> test;
+    auto cnt=test.run();
+    cout<<cnt<<" из 100...";
+    assert(cnt>=10);
+    std::cout<<"ok."<<std::endl;
+};
+
+
+
+
+template<typename T>
 void test() {
-    cout<<"Проверка ReLU<"<<typeid(T).name()<<"> на двухслойной сети: ";
-    size_t cnt=0;
-    for(size_t k=0; k<100; k++)
-	cnt+=task1<T>() ? 1 : 0;
-    std::cout<<cnt<<" успешных из 100..";
-    assert(cnt>10);
-    cout<<"ok."<<endl;
+    test1<T>();
+    test2<T>();
 };
 
 int main()
@@ -89,7 +111,7 @@ int main()
     test<float>();
     test<double>();
     test<long double>();
-    cout<<"Ok."<<endl;
+    std::cout<<"Ok."<<std::endl;
     return 0;
 };
 

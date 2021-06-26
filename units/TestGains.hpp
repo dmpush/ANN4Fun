@@ -21,7 +21,7 @@ public:
     TestGains() : ModelTest<T>() {};
     ~TestGains() = default;
 
-    virtual std::vector<T> getOutput(const std::vector<T> in) override {
+    std::vector<T> getOutput(const std::vector<T> in) override {
 	std::vector<T> out(4);
 	out[0]= +in[0];
 	out[1]= +in[1];
