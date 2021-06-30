@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include <jpeglib.h>
 #include <algorithm>
-#include <DataHolder.hpp>
+#include <Tensor.hpp>
 #include <iostream>
 
 namespace tensormath {
 template<typename T>
-void toJPEG(Tensor<T> tensor, std::string fname) {
+void toJPEG(TensorPtr<T> tensor, std::string fname) {
     size_t width{0};
     size_t height{0};
     size_t bytes_per_pixel{3};   // 1

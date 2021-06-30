@@ -30,10 +30,10 @@ public:
 
 
 
-    Tensor<T>  getInputs()  override  { return X_; };
-    Tensor<T>  getOutputs() override  { return X_; };
-    Tensor<T>  getInputErrors()  override { return dX_; };
-    Tensor<T>  getOutputErrors() override { return dX_; };
+    TensorPtr<T>  getInputs()  override  { return X_; };
+    TensorPtr<T>  getOutputs() override  { return X_; };
+    TensorPtr<T>  getInputErrors()  override { return dX_; };
+    TensorPtr<T>  getOutputErrors() override { return dX_; };
 
     void forward() override {
     };
@@ -52,8 +52,8 @@ public:
 private:
     // хранилище данных и псевдонимы для тензоров
     typename DataHolder<T>::uPtr holder_;
-    Tensor<T> X_;
-    Tensor<T> dX_;
+    TensorPtr<T> X_;
+    TensorPtr<T> dX_;
 };
 
 #endif

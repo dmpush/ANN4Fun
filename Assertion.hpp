@@ -11,7 +11,7 @@
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 
 /** 
     @brief Assertion - Класс, провереяющий данные, проходящие через него.
@@ -37,12 +37,12 @@ public:
     void forward() override {
 	for(size_t i=0; i<X_->size(); i++)
 	    fwd_(X_->raw(i));
-	tensormath::copy<T>(X_, Y_);
+	Y_->copy(X_);
     };
     void backward() override {
 	for(size_t i=0; i<X_->size(); i++)
 	    bwd_(dY_->raw(i));
-	tensormath::copy<T>(dY_, dX_);
+	dX_->copy(dY_);
     };
     void batchBegin() override {
     };
@@ -52,8 +52,8 @@ public:
     };
 
 private:
-    Tensor<T> X_, Y_;
-    Tensor<T> dX_, dY_;
+    TensorPtr<T> X_, Y_;
+    TensorPtr<T> dX_, dY_;
     std::function<void(T)> fwd_, bwd_;
 protected:
 };

@@ -11,7 +11,7 @@
 #include <AbstractTutor.hpp>
 #include <SimpleTutor.hpp>
 #include <ANN.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 
 /**
     @brief Layer - классический слой нейронной сети - получает на вход вектор, умножает его на матрицу весов,
@@ -40,7 +40,7 @@ public:
 	dY_=Learnable<T>::getOutputErrors();
 
 //	Learnable<T>::getParams()->fill(1.0);
-	tensormath::gaussianNoise<T>(0.0, 0.1, K_);
+	K_->gaussianNoise(0.0, 0.1);
     };
 
 
@@ -69,8 +69,8 @@ public:
 
 private:
     // ссылки на тензоры для быстрого доступа
-    Tensor<T> K_, X_, Y_;
-    Tensor<T> dK_, dX_, dY_;
+    TensorPtr<T> K_, X_, Y_;
+    TensorPtr<T> dK_, dX_, dY_;
 };
 
 #endif

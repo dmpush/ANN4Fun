@@ -10,7 +10,7 @@
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 
 /** 
     @brief Wire - Простой класс соединительных "проводов". Основное назначение - участие в конструкторе композиции
@@ -31,10 +31,10 @@ public:
 
 
     void forward() override {
-	tensormath::copy<T>(X_, Y_);
+	Y_->copy(X_);
     };
     void backward() override {
-	tensormath::copy<T>(dY_, dX_);
+	dX_->copy(dY_);
     };
     void batchBegin() override {
     };
@@ -44,8 +44,8 @@ public:
     };
 
 private:
-    Tensor<T> X_, Y_;
-    Tensor<T> dX_, dY_;
+    TensorPtr<T> X_, Y_;
+    TensorPtr<T> dX_, dY_;
 protected:
 };
 

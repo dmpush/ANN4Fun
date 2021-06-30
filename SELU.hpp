@@ -11,7 +11,7 @@
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 /**
     @brief SELU - Scaled Exponential linear unit.
 */
@@ -51,8 +51,8 @@ public:
 private:
     inline double f(double x) { return lambda_*(x<0.0 ? alpha_*(std::exp(x)-1.0) : x); };
     inline double df(double x) { return lambda_*(x<0.0 ? alpha_*std::exp(x) : 1.0 ); };
-    Tensor<T> X_, Y_;
-    Tensor<T> dX_, dY_;
+    TensorPtr<T> X_, Y_;
+    TensorPtr<T> dX_, dY_;
     double alpha_;
     double lambda_;
 protected:

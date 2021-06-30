@@ -11,7 +11,7 @@
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 /**
     @brief ReLUx - вариан LeakyReLU с параметрами подогнанными таким образом, чтобы сохранялось нулевое среднее 
     и единичная сигма входного распределения.
@@ -51,8 +51,8 @@ public:
 
 
 private:
-    Tensor<T> X_, Y_;
-    Tensor<T> dX_, dY_;
+    TensorPtr<T> X_, Y_;
+    TensorPtr<T> dX_, dY_;
     T offset_, scale_;
 protected:
 };

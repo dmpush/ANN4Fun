@@ -7,7 +7,7 @@
 #include <ANN.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 /**
     @brief Generator - Входной слой нейронной сети, генерирующий случайный гауссов шум, предназначен для GAN.
 */
@@ -35,13 +35,13 @@ public:
 
 
 
-    Tensor<T>  getInputs()  override  { return fake_; };
-    Tensor<T>  getOutputs() override  { return X_; };
-    Tensor<T>  getInputErrors()  override { return fake_; };
-    Tensor<T>  getOutputErrors() override { return dX_; };
+    TensorPtr<T>  getInputs()  override  { return fake_; };
+    TensorPtr<T>  getOutputs() override  { return X_; };
+    TensorPtr<T>  getInputErrors()  override { return fake_; };
+    TensorPtr<T>  getOutputErrors() override { return dX_; };
 
     void forward() override {
-	tensormath::gaussianNoise<T>(0.0, 1.0, X_);
+	X_->gaussianNoise(0.0, 1.0);
     };
     void backward() override {
     };
@@ -58,9 +58,9 @@ public:
 private:
     // хранилище данных и псевдонимы для тензоров
     typename DataHolder<T>::uPtr holder_;
-    Tensor<T> X_;
-    Tensor<T> dX_;
-    Tensor<T> fake_;
+    TensorPtr<T> X_;
+    TensorPtr<T> dX_;
+    TensorPtr<T> fake_;
 };
 
 #endif

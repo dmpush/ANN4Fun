@@ -64,13 +64,13 @@ public:
     /// @return новое значение невязки по данному выходу.
     virtual T appendError(size_t ind, T val)  final { return (getOutputErrors()->raw(ind)+=val); };
     /// @return входы нейросети в виде тензора.
-    virtual Tensor<T> getInputs()=0;
+    virtual TensorPtr<T> getInputs()=0;
     /// @return выходной тензор нейросети.
-    virtual Tensor<T> getOutputs()=0;
+    virtual TensorPtr<T> getOutputs()=0;
     /// @return тензор входных невязок нейросети.
-    virtual Tensor<T> getInputErrors()=0;
+    virtual TensorPtr<T> getInputErrors()=0;
     /// @return тензор выходных невязок нейросети.
-    virtual Tensor<T> getOutputErrors()=0;
+    virtual TensorPtr<T> getOutputErrors()=0;
     /// @return Полное число входов сети.
     virtual size_t getNumInputs()  final { return getInputs()->size(); };
     /// @return Полное число выходов сети.

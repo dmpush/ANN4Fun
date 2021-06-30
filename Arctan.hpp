@@ -12,7 +12,7 @@
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 
 /** 
     @brief Arctan - активаторная функция - арктангенс.f(x)=a*arctan(x/a)
@@ -49,8 +49,8 @@ public:
     };
 
 private:
-    Tensor<T> X_, Y_;
-    Tensor<T> dX_, dY_;
+    TensorPtr<T> X_, Y_;
+    TensorPtr<T> dX_, dY_;
     /// @brief коэфф-т масштабирования на диапазон (-1,1). Вблизи нуля f(x)~x
     const T scale_;
 protected:

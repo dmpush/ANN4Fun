@@ -72,10 +72,10 @@ public:
     };
 
 
-    Tensor<T> getInputs()       override { return layers_.front()->getInputs(); };
-    Tensor<T> getInputErrors()  override { return layers_.front()->getInputErrors(); };
-    Tensor<T> getOutputs()      override { return layers_.back()->getOutputs(); };
-    Tensor<T> getOutputErrors() override { return layers_.back()->getOutputErrors(); };
+    TensorPtr<T> getInputs()       override { return layers_.front()->getInputs(); };
+    TensorPtr<T> getInputErrors()  override { return layers_.front()->getInputErrors(); };
+    TensorPtr<T> getOutputs()      override { return layers_.back()->getOutputs(); };
+    TensorPtr<T> getOutputErrors() override { return layers_.back()->getOutputErrors(); };
 
     typename ANN<T>::sPtr operator()(int index) {
 	return layers_[index];

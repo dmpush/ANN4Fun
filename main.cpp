@@ -8,6 +8,7 @@
 #include <Model.hpp>
 #include <SELU.hpp>
 #include <Assertion.hpp>
+#include <chrono>
 
 using namespace std;
 int main()
@@ -23,7 +24,10 @@ int main()
 //	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
 //	std::vector<float> L={0.0f,0.00001f};
 //	model.setTutor<SimpleTutor<float>>(0.1f, L);
-
+    using clock_t=std::chrono::high_resolution_clock;
+    using second_t=std::chrono::duration<double, std::ratio<1>>;
+    std::chrono::time_point<clock_t> ts;
+    ts=clock_t::now();
 	for(int i=0; i<1000; i++) {
 	    model.batchBegin();
 
@@ -64,7 +68,9 @@ int main()
 	cout<<    model.getInputErrors()->raw(1)<<" ";
 
 	cout<<endl;
+
     };
+    cout<<std::chrono::duration_cast<second_t>(clock_t::now() - ts).count() <<" sec"<<endl;
     } catch(std::runtime_error ex) {
 	cout<<ex.what()<<endl;
     };

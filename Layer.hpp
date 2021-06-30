@@ -12,7 +12,7 @@
 #include <AbstractTutor.hpp>
 #include <SimpleTutor.hpp>
 #include <ANN.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 
 /**
     @brief Layer - классический слой нейронной сети - получает на вход вектор, умножает его на матрицу весов,
@@ -50,24 +50,24 @@ public:
 
 //	Learnable<T>::getParams()->fill(0.1);
 	double S=2.0/static_cast<double>(Learnable<T>::getNumInputs());
-//	tensormath::gaussianNoise<T>(0, std::sqrt(S),  W_);
-	tensormath::gaussianNoise<T>(0, std::sqrt(S/2.0),  W_);
-	tensormath::gaussianNoise<T>(0, 1e-9, C_);
+//	W_->gaussianNoise<T>(0, std::sqrt(S));
+	W_->gaussianNoise(0, std::sqrt(S/2.0));
+	C_->gaussianNoise(0, 1e-9);
     };
 
 
     void forward() override {
-	tensormath::mul<T>(X_, W_, Y_);
-	tensormath::append<T>(C_, Y_);
+	Y_->mul(X_, W_);
+	Y_->append(C_);
     };
 
     void backward() override {
 	// ошибки по входам
-	tensormath::mul<T>(W_, dY_, dX_);
+	dX_->mul(W_, dY_);
 	// градиент синаптической матрицы - внешнее произведение входов и ошибок по выходам
-	tensormath::extmulapp<T>(dY_, X_, dW_);
+	dW_->extmulapp(dY_, X_);
 	// градиент смещений нейронов
-	tensormath::append<T>( dY_, dC_);
+	dC_->append( dY_);
 	Learnable<T>::backward();
     };
     void dump() override {
@@ -80,8 +80,8 @@ public:
 
 private:
     // ссылки на тензоры для быстрого доступа
-    Tensor<T> W_, C_, X_, Y_;
-    Tensor<T> dW_, dC_, dX_, dY_;
+    TensorPtr<T> W_, C_, X_, Y_;
+    TensorPtr<T> dW_, dC_, dX_, dY_;
 };
 
 #endif

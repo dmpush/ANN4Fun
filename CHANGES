@@ -61,4 +61,6 @@
 * ReLU - переделан тест;
 * добавлен пример генерации картинок для TestModel -- fuzzy2jpeg;
 TODO: подумать о переделке DataHolder/Tensor/tensormath  в Абстрактную Фабрику или типа того, дабы сделать CUDA;
-TODO: внести tensormath в Tensor;
+
+* Tensor объединен с tensormath и вынесен из DataHolder;
+* в корневой main.cpp добавлено измерение времени;

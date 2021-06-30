@@ -10,7 +10,7 @@
 #include <Successor.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <TensorMath.hpp>
+#include <Tensor.hpp>
 /**
     @brief ReLU - простая функция активации - выпрямленная линейная функция.
 */
@@ -45,8 +45,8 @@ public:
 
 
 private:
-    Tensor<T> X_, Y_;
-    Tensor<T> dX_, dY_;
+    TensorPtr<T> X_, Y_;
+    TensorPtr<T> dX_, dY_;
 protected:
 };
 
