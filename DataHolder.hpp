@@ -92,13 +92,14 @@ public:
     /// true, если хранилище пустое или неинициализированное командой build()
     bool isEmpty() { return size()==0; };
 private:
+    void append(std::string name, typename Tensor<T>::sPtr obj) {
+        objects_[name]=obj;
+    };
+
     std::random_device seed_;
     std::mt19937 rdev_;
     std::uniform_real_distribution<double> uniform_;
     std::normal_distribution<double> normal_;
-    void append(std::string name, typename Tensor<T>::sPtr obj) {
-        objects_[name]=obj;
-    };
     std::vector<T> data_;
     std::map<std::string, typename Tensor<T>::sPtr> objects_;
 

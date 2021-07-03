@@ -12,7 +12,7 @@
 
 #include <DataHolder.hpp>
 #include <Model.hpp>
-
+#include <Timer.hpp>
 using namespace std;
 /**
     @brief Абстрактный класс для тестирования ИНС разных архитектур. Инкапсулирует обучение и тестирование.
@@ -28,7 +28,10 @@ public:
 	batch_size_(batchSize),
 	num_batches_(numBatches),
 	uniform_(0.0, 1.0),
-	normal_(0.0, 1.0) {
+	normal_(0.0, 1.0),
+	elps_fwd_{std::make_unique<Timer<double>>()},
+	elps_bwd_{std::make_unique<Timer<double>>()},
+	elps_train_{std::make_unique<Timer<double>>()} {
 	};
     ~ModelTest() = default;
     /// @brief Установить размер батча.
@@ -70,6 +73,9 @@ public:
     /// @brief Прогоны тестирования.
     /// @param repeats  число прогонов теста.
     size_t run(size_t repeats=100) {
+	elps_fwd_->cleanup();
+	elps_bwd_->cleanup();
+	elps_train_->cleanup();
 	size_t cnt=0;
 	for(size_t k=0; k<repeats; k++)
 	    cnt += step() ? 1u : 0u;
@@ -88,6 +94,37 @@ public:
     /// @brief Псевдослучайный генератор нормального распределения.
     /// @returns псевдослучайные числа с нормальным распределением вероятностей.
     auto gaussianNoise() { return normal_(rdev_); };
+    double getElapsedForward() const {
+	return elps_fwd_->getMean();
+    };
+    double getElapsedForwardStd() const {
+	return elps_fwd_->getStd();
+    };
+
+    double getElapsedBackward() const {
+	return elps_bwd_->getMean();
+    };
+    double getElapsedBackwardStd() const {
+	return elps_bwd_->getStd();
+    };
+
+    double getElapsedTrain() const {
+	return elps_train_->getMean();
+    };
+    double getElapsedTrainStd() const {
+	return elps_train_->getStd();
+    };
+    void elapsed() {
+    cout<<"\033[32m"
+	<<" ("
+	<<getElapsedForward()
+	<<"/"
+	<<getElapsedBackward()
+	<<"/"
+	<<getElapsedTrain()
+	<<" sec) "
+	<<"\033[0m";
+    };
 private:
     /// @brief Один прогон обучения и тестирования модели.
     /// @returns true, если модель успешно прошла тестирование.
@@ -104,12 +141,18 @@ private:
 
 		    for(size_t p=0; p<inputs.size(); p++)
 			model->setInput(p, inputs[p]);
+		    elps_fwd_->tic();
 		    model->forward();
+		    elps_fwd_->toc();
 		    for(size_t p=0; p<outputs.size(); p++)
 			model->setOutput(p, outputs[p]); //AND
+		    elps_bwd_->tic();
 		    model->backward();
+		    elps_bwd_->toc();
 		};
+		elps_train_->tic();
 		model->batchEnd();
+		elps_train_->toc();
 	    };
 	    // проверка
 	    error_max_=0;
@@ -139,7 +182,7 @@ private:
 	};
 	return true;
     }; // step
-    
+
 protected:
     std::random_device seed_;
     std::mt19937 rdev_;
@@ -150,6 +193,9 @@ private:
     size_t num_batches_;
     std::uniform_real_distribution<double> uniform_;
     std::normal_distribution<double> normal_;
+    std::unique_ptr<Timer<double>> elps_fwd_;
+    std::unique_ptr<Timer<double>> elps_bwd_;
+    std::unique_ptr<Timer<double>> elps_train_;
 };
 
 #endif
