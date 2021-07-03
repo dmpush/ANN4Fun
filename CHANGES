@@ -64,3 +64,6 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 
 * Tensor объединен с tensormath и вынесен из DataHolder;
 * в корневой main.cpp добавлено измерение времени;
+
+* добавлен Timer.hpp для измерения времени работы;
+* расширено тестирование DataHolder;

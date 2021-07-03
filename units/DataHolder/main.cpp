@@ -5,7 +5,7 @@
 #include <memory>
 #include <cmath>
 #include <DataHolder.hpp>
-
+#include <Timer.hpp>
 using namespace std;
 
 template<typename T>
@@ -136,6 +136,40 @@ void testFill() {
     cout<<"ok."<<endl;
 };
 
+template<typename T, size_t N>
+void testMul() {
+    cout<<"Проверка операции mul()...";
+    auto holder=std::make_shared<DataHolder<T>>();
+    holder->append("A", {N});
+    holder->append("E", {N,N});
+    holder->append("A1", {N});
+    holder->build();
+    auto A=holder->get("A");
+    auto A1=holder->get("A1");
+    auto E=holder->get("E");
+    for(size_t i=0; i<N; i++)
+	for(size_t j=0; j<N; j++)
+	    E->val({i,j}) = i==j ? 1.0 : 0.0;
+    A->uniformNoise(-1.0, +1.0);
+    Timer timer;
+    timer.tic();
+    A1->mul(A,E);
+    cout<<endl;
+    cout<<"\t вектор на единичную матрицу "<<N<<"x"<<N<<" ...";
+    cout<<" ("<<timer.toc()<<" sec) ";
+    for(size_t i=0; i<N; i++)
+	assert(std::abs(A->raw(i) - A1->raw(i))<1e-3);
+    cout<<"ok"<<endl;
+    cout<<"\t единичная матрица на вектор "<<N<<"x"<<N<<" ...";
+    timer.tic();
+    A1->mul(E,A);
+    cout<<" ("<<timer.toc()<<" sec) ";
+    for(size_t i=0; i<N; i++)
+	assert(std::abs(A->raw(i) - A1->raw(i))<1e-3);
+    cout<<"ok"<<endl;
+    
+}
+
 
 
 
@@ -145,6 +179,9 @@ void test() {
     testClone<T>();
     testExceptions<T>();
     testFill<T>();
+    testMul<T, 10>();
+    testMul<T, 100>();
+    testMul<T, 1000>();
 };
 
 

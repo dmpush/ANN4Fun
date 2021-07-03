@@ -8,11 +8,11 @@
 #include <Model.hpp>
 #include <SELU.hpp>
 #include <Assertion.hpp>
-#include <chrono>
-
+#include <units/Timer.hpp>
 using namespace std;
 int main()
 {
+    Timer timer;
     try {
 	Model<float> model({2});
 	model.addLayer<Layer<float>>({2});
@@ -24,10 +24,7 @@ int main()
 //	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
 //	std::vector<float> L={0.0f,0.00001f};
 //	model.setTutor<SimpleTutor<float>>(0.1f, L);
-    using clock_t=std::chrono::high_resolution_clock;
-    using second_t=std::chrono::duration<double, std::ratio<1>>;
-    std::chrono::time_point<clock_t> ts;
-    ts=clock_t::now();
+	timer.cleanup();
 	for(int i=0; i<1000; i++) {
 	    model.batchBegin();
 
@@ -45,7 +42,9 @@ int main()
 	    model.setOutput(0, 3.14);
 	    model.setOutput(1, 2.71);
 	    model.setOutput(2, 1.41);
+	    timer.tic();
 	    model.backward();
+	    timer.toc();
 
 	    model.batchEnd();
 
@@ -70,7 +69,7 @@ int main()
 	cout<<endl;
 
     };
-    cout<<std::chrono::duration_cast<second_t>(clock_t::now() - ts).count() <<" sec"<<endl;
+	cout<<timer.getMean()<<" +- "<<timer.getStd()<<" sec"<<endl;
     } catch(std::runtime_error ex) {
 	cout<<ex.what()<<endl;
     };
