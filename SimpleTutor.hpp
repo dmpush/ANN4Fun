@@ -17,9 +17,9 @@ public:
     ~SimpleTutor() = default;
 
     void batchEnd() override {
-	if(AbstractTutor<T>::sampleCount_ ==0)
+	if(AbstractTutor<T>::getSampleCount() ==0)
 	    throw std::runtime_error("Пустой батч. Возможно, не хватает вызова Learnable::backward()");
-	T bs=static_cast<T>(AbstractTutor<T>::sampleCount_);
+	T bs=static_cast<T>(AbstractTutor<T>::getSampleCount() );
 	size_t len=AbstractTutor<T>::param_ ->size();
 	for(size_t i=0; i<len; i++) {
 	    T Pi=AbstractTutor<T>::param_ ->raw(i);

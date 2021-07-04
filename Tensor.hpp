@@ -39,9 +39,14 @@ public:
     size_t dim()  const { return dims_.size(); };
     size_t size() const { return size_; };
     auto dims() const { return dims_; };
-
+    /// @brief прямой доступ к элементу тензора по сквозному индексу
+    /// @param ind - сквозной индекс
+    /// @returns элемент тензора
     T& raw(size_t ind) { return holder_->raw(offset_+ind); };
-
+    /// @brief обобщенный доступ к элементу тензора по индексам
+    /// лучше не использовать без необходимости
+    /// @param ind список инициализации -- массив индексов
+    /// @returns элемент тензора
     T& val(const std::initializer_list<size_t>& ind) {
 	if(std::size(ind)!=dim())
 	    throw std::runtime_error("Неправильное число индексов в тензоре");
@@ -54,6 +59,13 @@ public:
 	    k++;
 	};
 	return raw(off);
+    };
+    /// @breif доступ к элементам двухмерного тензора
+    /// @params i,j - индексы элемента тензора
+    /// @returns элемент тензора
+    T& val(size_t i, size_t j) {
+        assert(dim()==2);
+        return raw(i+j*dims_[0]);
     };
     /// паттерн Прототип
     auto clone() {
@@ -152,7 +164,7 @@ void mul   (sPtr A, sPtr B) {
 		for(size_t i=0; i<dimsB[0]; i++) {
 		    T s{0};
 		    for(size_t j=0; j<dimsB[1]; j++)
-			s+=A->raw(j)*B->val({i,j});
+			s+=A->raw(j)*B->val(i,j);
 		    raw(i) = s;
 		};
 	    } else if(A->dim()==2 && B->dim()==1) {
@@ -163,7 +175,7 @@ void mul   (sPtr A, sPtr B) {
 		for(size_t i=0; i<dimsA[1]; i++) {
 		    T s{0};
 		    for(size_t j=0; j<dimsA[0]; j++)
-			s+=A->val({j,i}) * B->raw(j);
+			s+=A->val(j,i) * B->raw(j);
 		    raw(i) = s;
 		};
 	    } else {

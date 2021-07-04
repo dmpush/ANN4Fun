@@ -11,14 +11,14 @@
 */
 template<typename T>
 class AbstractTutor {
+    size_t sampleCount_; ///< счетчик семплов внутри батча
 protected:
     std::vector<T> lambdas_; ///< Коэфф-ты регуляризации
     typename DataHolder<T>::sPtr param_;///< хранилище параметров сети
     typename DataHolder<T>::sPtr grad_; ///< аккумулятор градиента
-    size_t sampleCount_; ///< счетчик семплов внутри батча
 public:
     using uPtr=std::unique_ptr<AbstractTutor<T>>;
-    AbstractTutor() : param_{}, grad_{}, sampleCount_{0} {};
+    AbstractTutor() : sampleCount_{0}, param_{}, grad_{}  {};
     AbstractTutor(const std::vector<T>& lambdas) : lambdas_{lambdas} {
     };
     AbstractTutor(const AbstractTutor&) = delete;
@@ -61,6 +61,9 @@ public:
 	    };
 	return sum;
     };
+    /// @brief счетчик семплов в батче.
+    /// @returns число семплов в батче
+    size_t getSampleCount() const { return sampleCount_; };
 };
 
 #endif
