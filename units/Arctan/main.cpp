@@ -87,8 +87,6 @@ void test1() {
     cout<<"Проверка Arctan<"<<typeid(T).name()<<"> на логических функциях: ";
     ArctanXOR<T> test;
     auto cnt=test.run();
-    test.elapsed();
-    cout<<cnt<<" из 100...";
     assert(cnt>=10);
     std::cout<<"ok."<<std::endl;
 };
@@ -98,8 +96,6 @@ void test2() {
     cout<<"Проверка Arctan<"<<typeid(T).name()<<"> на усилителях: ";
     ArctanGains<T> test;
     auto cnt=test.run();
-    test.elapsed();
-    cout<<cnt<<" из 100...";
     assert(cnt>=10);
     std::cout<<"ok."<<std::endl;
 };

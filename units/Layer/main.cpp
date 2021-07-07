@@ -8,7 +8,9 @@
 
 #include <Input.hpp>
 #include <Layer.hpp>
+#include <Assertion.hpp>
 #include <ANN.hpp>
+#include <TestRot3.hpp>
 
 using namespace std;
 
@@ -48,58 +50,35 @@ void testExceptions() {
 };
 
 
+template<typename T>
+class LayerRot3 : public TestRot3<T> {
+public:
+    std::shared_ptr<Model<T>> buildModel() override {
+	std::vector<size_t> inputShape{TestRot3<T>::getNumInputs()};
+	std::vector<size_t> outputShape{TestRot3<T>::getNumOutputs()};
+	std::function<void(T)> validValue=[](T x) { 
+	    assert(!std::isnan(x));
+	    assert(!std::isinf(x));
+	};
+	auto model=std::make_shared<Model<T>> ( inputShape );
+	model-> template addLayer<Layer<T>>(outputShape);
+	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	return model;
+    };
+    bool assertion() override {
+	return TestRot3<T>::getErrorMeanSquare()<0.001;
+    };
+};
+
 
 template<typename T>
 void testTrain() {
-    cout<<"Проверка Layer<"<<typeid(T).name()<<"> обучаемости (детерминированная)...";
-    bool hasException{false};
-    try {
-	auto  input=std::make_shared<Input<T>> ( std::vector<size_t>({2}) );
-	auto  layer=std::make_shared<Layer<T>> ( input.get(), std::vector<size_t>({2}) );
-
-	for(size_t it=0; it<1000; it++) {
-	    input->batchBegin();
-	    layer->batchBegin();
-	    input->setInput(0, T(1));
-	    input->setInput(1, T(0));
-	    input->forward();
-	    layer->forward();
-	    layer->setOutput(0, T(3.14));
-	    layer->setOutput(1, T(2.71));
-	    layer->backward();
-	    input->backward();
-
-	    input->setInput(0, T(0));
-	    input->setInput(1, T(1));
-	    input->forward();
-	    layer->forward();
-	    layer->setOutput(0, T(2.71));
-	    layer->setOutput(1, T(3.14));
-	    layer->backward();
-	    input->backward();
-
-	    layer->batchEnd();
-	    input->batchEnd();
-	};
-	input->setInput(0, T(1));
-	input->setInput(1, T(0));
-	input->forward();
-	layer->forward();
-	assert(std::abs(3.14 - layer->getOutput(0))<0.01);
-	assert(std::abs(2.71 - layer->getOutput(1))<0.01);
-
-	input->setInput(0, T(0));
-	input->setInput(1, T(1));
-	input->forward();
-	layer->forward();
-	assert(std::abs(2.71 - layer->getOutput(0))<0.01);
-	assert(std::abs(3.14 - layer->getOutput(1))<0.01);
-    } catch(std::runtime_error e) {
-	exceptMsg<T>(e);
-	hasException=true;
-    };
-    assert( ! hasException);
+    cout<<"Проверка Layer<"<<typeid(T).name()<<"> обучаемости на 3D операторе вращения ...";
+    LayerRot3<T> test;
+    auto cnt=test.run(1000);
+    assert(cnt>10);
     cout<<"ok."<<endl;
+
 };
 
 
@@ -118,4 +97,5 @@ int main()
     test<long double>();
     return 0;
 };
+
 

@@ -13,6 +13,7 @@
 #include <DataHolder.hpp>
 #include <Model.hpp>
 #include <Timer.hpp>
+#include <Console.hpp>
 using namespace std;
 /**
     @brief Абстрактный класс для тестирования ИНС разных архитектур. Инкапсулирует обучение и тестирование.
@@ -72,13 +73,27 @@ public:
     virtual size_t getNumOutputs() = 0;
     /// @brief Прогоны тестирования.
     /// @param repeats  число прогонов теста.
-    size_t run(size_t repeats=100) {
+    size_t run(size_t repeats=100, bool verbose=true) {
 	elps_fwd_->cleanup();
 	elps_bwd_->cleanup();
 	elps_train_->cleanup();
 	size_t cnt=0;
 	for(size_t k=0; k<repeats; k++)
 	    cnt += step() ? 1u : 0u;
+	if(verbose) {
+	    elapsed();
+	    float per=100.0f * static_cast<float>(cnt) / static_cast<float>(repeats);
+	    cout<<" ";
+	    if(per > 90.0)
+		cout<<Console().fgColor(Console::aqua);
+	    else if(per > 50.0)
+		cout<<Console().fgColor(Console::green);
+	    else if(per > 10.0)
+		cout<<Console().fgColor(Console::yellow);
+	    else
+		cout<<Console().fgColor(Console::red);
+	    cout<<cnt<<Console().clear()<<" из "<<Console().fgColor(Console::aqua)<<repeats<<Console().clear()<<" ";
+	};
 	return cnt;
     };
 
@@ -115,7 +130,7 @@ public:
 	return elps_train_->getStd();
     };
     void elapsed() {
-    cout<<"\033[32m"
+    cout<<Console().fgColor(Console::green)
 	<<" ("
 	<<getElapsedForward()
 	<<"/"
@@ -123,7 +138,7 @@ public:
 	<<"/"
 	<<getElapsedTrain()
 	<<" sec) "
-	<<"\033[0m";
+	<<Console().clear();
     };
 private:
     /// @brief Один прогон обучения и тестирования модели.
