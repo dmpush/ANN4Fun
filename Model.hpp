@@ -101,7 +101,10 @@ public:
 	getInputs()->dump();
 	getOutputs()->dump();
     };
-    
+    void notify(typename ANN<T>::Notification* notice) override {
+        for(auto l: layers_)
+            l->notify(notice);
+    };
 
 private:
     /// список слоев, составляющих модель

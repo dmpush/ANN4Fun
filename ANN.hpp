@@ -87,6 +87,11 @@ public:
     virtual void setTutor(typename AbstractTutor<T>::uPtr) = 0; 
     /// отладочная информация
     virtual void dump() = 0;
+    class Notification {
+    public:
+	virtual ~Notification() = default;
+    };
+    virtual void notify(Notification*) {};
 private:
     /// @brief Приватный флаг блокировки обучения сети.
     bool lockTrain_;

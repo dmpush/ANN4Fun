@@ -15,7 +15,6 @@
 #include <Arctan.hpp>
 #include <ReLU.hpp>
 #include <Gain.hpp>
-
 #include <Assertion.hpp>
 #include <TestXOR.hpp>
 #include <TestGains.hpp>

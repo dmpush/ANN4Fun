@@ -12,6 +12,7 @@
 
 #include <DataHolder.hpp>
 #include <Model.hpp>
+#include <Dropout.hpp>
 #include <Timer.hpp>
 #include <Console.hpp>
 using namespace std;
@@ -23,9 +24,10 @@ using namespace std;
 template<typename T>
 class ModelTest {
 public:
-    ModelTest(size_t numBatches=100, size_t batchSize=10) :
+    ModelTest(size_t numBatches=100, size_t batchSize=10, bool enabledDropout=false) :
 	seed_{},
 	rdev_{seed_()},
+	enabledDropout_(enabledDropout),
 	batch_size_(batchSize),
 	num_batches_(numBatches),
 	uniform_(0.0, 1.0),
@@ -140,15 +142,24 @@ public:
 	<<" sec) "
 	<<Console().clear();
     };
+    void enableDropout() { enabledDropout_=true; };
+    void disableDropout() { enabledDropout_=false; };
 private:
     /// @brief Один прогон обучения и тестирования модели.
     /// @returns true, если модель успешно прошла тестирование.
     bool step() {
 	try {
+	    typename Dropout<T>::Enabled dropout_on(true);
+	    typename Dropout<T>::Enabled dropout_off(false);
+	    typename Dropout<T>::Update  dropout_update;
 	    auto model=buildModel();
 	    assert(model->getNumInputs() == getNumInputs());
 	    assert(model->getNumOutputs() == getNumOutputs());
+	    if(enabledDropout_)
+		model->notify(&dropout_on);
 	    for(size_t i=0; i<num_batches_; i++) {
+		if(enabledDropout_)
+		    model->notify(&dropout_update);
 		model->batchBegin();
 		for(size_t k=0; k<batch_size_; k++) {
 		    auto inputs=getInput();
@@ -170,6 +181,8 @@ private:
 		elps_train_->toc();
 	    };
 	    // проверка
+	    if(enabledDropout_)
+		model->notify(&dropout_off);
 	    error_max_=0;
 	    error_mse_=0;
 	    for(size_t k=0; k<100; k++) {
@@ -202,6 +215,7 @@ protected:
     std::random_device seed_;
     std::mt19937 rdev_;
 private:
+    bool enabledDropout_;
     double error_max_;
     double error_mse_;
     size_t batch_size_;

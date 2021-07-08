@@ -16,6 +16,7 @@
 #include <SoftMax.hpp>
 #include <Arctan.hpp>
 #include <SELU.hpp>
+#include <Dropout.hpp>
 using namespace std;
 
 template<typename T>
@@ -30,10 +31,13 @@ auto  getModel1() {
     model->template addLayer<Layer<T>>({196});
     model->template addLayer<ReLU<T>>();
     model->template addLayer<Layer<T>>({98});
+    model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<ReLU<T>>();
     model->template addLayer<Layer<T>>({49});
+    model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<ReLU<T>>();
     model->template addLayer<Layer<T>>({25});
+    model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<ReLU<T>>();
     model->template addLayer<Layer<T>>({10});
 //    model->template addLayer<Arctan<T>>();
@@ -43,10 +47,14 @@ auto  getModel1() {
 
 template<typename R, typename T>
 void train(typename MNIST<R>::sPtr mnist, typename Model<T>::sPtr model,  size_t batchSize=10) {
+    typename Dropout<T>::Enabled dropout_on(true);
+    typename Dropout<T>::Update dropout_update;
     auto trainSet=mnist->getTrainSet();
     size_t numBatches=trainSet->numSamples()/batchSize;
+    model->notify(&dropout_on);
     for(size_t bat=0; bat<numBatches; bat++) {
 	size_t batchError=0;
+	model->notify(&dropout_update);
 	model->batchBegin();
 	for(size_t smp=0; smp<batchSize; smp++) {
 	    auto t=trainSet->getRandomSample();
@@ -76,8 +84,10 @@ void train(typename MNIST<R>::sPtr mnist, typename Model<T>::sPtr model,  size_t
 
 template<typename R, typename T>
 void test(typename MNIST<R>::sPtr mnist, typename Model<T>::sPtr model) {
+    typename Dropout<T>::Enabled dropout_off(false);
     auto testSet=mnist->getTestSet();
     size_t errors_count=0;
+    model->notify(&dropout_off);
     for(auto it=testSet->begin(); it!=testSet->end(); it++) {
 	for(size_t q=0; q<28*28; q++)
 	    model->setInput(q, (*it)->data[q]);

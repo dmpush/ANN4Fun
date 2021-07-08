@@ -128,6 +128,18 @@ void sum   (sPtr A, sPtr B) {
     for(size_t i=0; i<size(); i++)
 	raw(i) = A->raw(i) + B->raw(i);
 };
+/// @brief prod() - поэлементное произведение  двух тензоров с записью в третий тензор: this=A.*B
+/// @param A,B - сомножители
+void prod   (sPtr A, sPtr B) {
+    if(dim()!=A->dim() || dim()!=B->dim())
+	throw std::runtime_error("sum: Размерности тензоров различны");
+    if(size()!=A->size() || size()!=B->size())
+	throw std::runtime_error("sum: Размеры тензоров различны");
+    for(size_t i=0; i<size(); i++)
+	raw(i) = A->raw(i) * B->raw(i);
+};
+
+
 
 /// @brief append() - операция += для тензоров: this+=A
 /// @param A -- аргумент
@@ -226,6 +238,13 @@ void uniformNoise(double a, double b) {
     auto holder=getHolder();
     for(size_t i=0; i<size(); i++)
 	raw(i) = holder->uniformNoise() * (b-a)+a;
+    };
+/// @brief распределение Бернулли
+/// @param prob -- вероятнось выпадания орла (heads) либо решки (tails)
+void bernoulliNoise(double prob, T heads=1.0, T tails=0.0) {
+    auto holder=getHolder();
+    for(size_t i=0; i<size(); i++)
+	raw(i) = holder->uniformNoise() < prob ? heads : tails;
     };
 /// @brief apply -- применение функции ко всем элементам тензора
 /// @param func -- функция
