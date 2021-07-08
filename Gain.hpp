@@ -39,24 +39,19 @@ public:
 	dX_=Learnable<T>::getInputErrors();
 	dY_=Learnable<T>::getOutputErrors();
 
-//	Learnable<T>::getParams()->fill(1.0);
 	K_->gaussianNoise(0.0, 0.1);
     };
 
 
     void forward() override {
-	// интерпретируем тензор как одномерный
-	for(size_t i=0; i<X_->size(); i++)
-	    Y_->raw(i) = X_->raw(i) * K_->raw(i);
+	Y_->prod(X_, K_);
     };
 
     void backward() override {
-	for(size_t i=0; i<X_->size(); i++) {
-	    // ошибка по входам
-	    dX_->raw(i) = K_->raw(i) * dY_->raw(i);
-	    // градиент
-	    dK_->raw(i) += X_->raw(i) * dY_->raw(i);
-	};
+	// ошибка по входам
+	dX_->prod(K_, dY_);
+	// градиент весов
+	dK_->prodapp(X_, dY_);
 	Learnable<T>::backward();
     };
     void dump() override {

@@ -139,6 +139,16 @@ void prod   (sPtr A, sPtr B) {
 	raw(i) = A->raw(i) * B->raw(i);
 };
 
+/// @brief prodapp() - поэлементное произведение  двух тензоров с суммированием с  третим тензором: this+=A.*B
+/// @param A,B - сомножители
+void prodapp(sPtr A, sPtr B) {
+    if(dim()!=A->dim() || dim()!=B->dim())
+	throw std::runtime_error("sum: Размерности тензоров различны");
+    if(size()!=A->size() || size()!=B->size())
+	throw std::runtime_error("sum: Размеры тензоров различны");
+    for(size_t i=0; i<size(); i++)
+	raw(i) = raw(i) + A->raw(i) * B->raw(i);
+};
 
 
 /// @brief append() - операция += для тензоров: this+=A
