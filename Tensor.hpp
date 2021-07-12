@@ -205,7 +205,7 @@ void mul   (sPtr A, sPtr B) {
 	    };
 };
 
-/// @brief copy() - название говорит само за себя. Копирование тензоров. this=src
+/// @brief copy() -- название говорит само за себя. Копирование тензоров. this=src
 /// @param src -- источник
 void copy  (sPtr src) {
     if(src->size()!=size())
@@ -213,6 +213,14 @@ void copy  (sPtr src) {
     #pragma omp parallel for
     for(size_t i=0; i<src->size(); i++)
 	raw(i) = src->raw(i);
+};
+
+/// @brief fill() -- заполнение тензора постоянным значением val
+/// @param val -- заполнитель тензора
+void fill  (T val) {
+    #pragma omp parallel for
+    for(size_t i=0; i<size(); i++)
+	raw(i) = val;
 };
 
 /// @brief extmulapp() внешнее произведение двух векторов c добавлением к двухмерной матрице: this+=A*B

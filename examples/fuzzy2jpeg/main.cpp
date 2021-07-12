@@ -8,17 +8,14 @@
 #include <functional>
 
 #include <DataHolder.hpp>
-#include <SimpleTutor.hpp>
 #include <Input.hpp>
 #include <Layer.hpp>
 #include <Model.hpp>
-#include <Arctan.hpp>
-#include <ReLU.hpp>
-#include <Gain.hpp>
-#include <Assertion.hpp>
+#include <Dropout.hpp>
+#include <ReLUx.hpp>
 #include <TestXOR.hpp>
-#include <TestGains.hpp>
 #include <Tensor2JPEG.hpp>
+#include <SimpleTutor.hpp>
 
 template<typename T>
 class ArctanXOR : public TestXOR<T> {
@@ -30,11 +27,21 @@ public:
 	    assert(!std::isinf(x));
 	};
 	auto model=std::make_shared<Model<T>> (inputShape);
+	model-> template addLayer<Layer<T>>({11});
+	model-> template addLayer<Dropout<T>>(0.1);
+	model-> template addLayer<ReLUx<T>>();
+
 	model-> template addLayer<Layer<T>>({7});
-	model-> template addLayer<ReLU<T>>();
+	model-> template addLayer<Dropout<T>>(0.1);
+	model-> template addLayer<ReLUx<T>>();
+
 	model-> template addLayer<Layer<T>>({5});
-	model-> template addLayer<ReLU<T>>();
+	model-> template addLayer<Dropout<T>>(0.1);
+	model-> template addLayer<ReLUx<T>>();
+
 	model-> template addLayer<Layer<T>>({3});
+	std::vector<T> regul={0.001};
+	model->template setTutor<SimpleTutor<T>>(0.1, regul);
 	return model;
     };
     bool assertion() override {
@@ -66,7 +73,10 @@ public:
 int main()
 {
     ArctanXOR<float> test;
-    test.run();
+    test.enableDropout();
+    test.setBatchSize(100);
+    test.setNumBatches(1000);
+    test.run(10, true);
     return 0;
 };
 

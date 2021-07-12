@@ -85,3 +85,8 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 
 * добавлен метод Tensor::prodapp();
 * обновлен код Gain переходом на Tensor::prod() и prodapp();
+
+* добавлен метод Tensor::fill(val);
+* добавлен юнит-тест для Dropout;
+* из Timer вынесен код онлайн-оценки статистических параметров случайной величины в OnlineStatistics;
+* добавлен дропаут в examples/fuzzy2jpeg;
