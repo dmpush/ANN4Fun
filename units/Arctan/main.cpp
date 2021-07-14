@@ -73,6 +73,8 @@ public:
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
 	model-> template addLayer<Arctan<T>>();
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
+//	typename AbstractTutor<T>::uPtr tut=std::make_unique<SimpleTutor<T>>(0.1);
+//	model->setTutor(std::move(tut));
 	return model;
     };
     bool assertion() override {

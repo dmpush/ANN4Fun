@@ -3,6 +3,7 @@ all:
 	make -C Input
 	make -C Layer
 	make -C Model
+	make -C Tutors
 	make -C ReLU
 	make -C Wire
 	make -C Reshape
@@ -21,6 +22,7 @@ run:
 	make -C Input run
 	make -C Layer run
 	make -C Model run
+	make -C Tutors run
 	make -C ReLU run
 	make -C Wire run
 	make -C Reshape run
@@ -39,6 +41,7 @@ clean:
 	make -C Input clean
 	make -C Layer clean
 	make -C Model clean
+	make -C Tutors clean
 	make -C ReLU clean
 	make -C Wire clean
 	make -C Reshape clean
@@ -51,4 +54,3 @@ clean:
 	make -C ELU clean
 	make -C SELU clean
 	make -C Dropout clean
-

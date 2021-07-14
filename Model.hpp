@@ -89,8 +89,11 @@ public:
 	};
     };
 
-    void setTutor(typename AbstractTutor<T>::uPtr) override final {
-	throw std::runtime_error("Невозможно установить одного Учителя для всех компонент сети!");
+    void setTutor(typename AbstractTutor<T>::uPtr tutor) override final {
+//	throw std::runtime_error("Невозможно установить одного Учителя для всех компонент сети!");
+	for(auto it: layers_) {
+	    it->setTutor(std::move(tutor->clone()));
+	};
     };
 
     void dump() override {

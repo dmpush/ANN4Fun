@@ -24,7 +24,7 @@ public:
     AbstractTutor(const AbstractTutor&) = delete;
     virtual ~AbstractTutor() = default;
 
-    void setContext(typename DataHolder<T>::sPtr param, typename DataHolder<T>::sPtr grad) {
+    virtual void setContext(typename DataHolder<T>::sPtr param, typename DataHolder<T>::sPtr grad) {
 	sampleCount_ = 0;
 	param_ = param;
 	grad_ = grad;
@@ -64,6 +64,9 @@ public:
     /// @brief счетчик семплов в батче.
     /// @returns число семплов в батче
     size_t getSampleCount() const { return sampleCount_; };
+    /// @brief поддержка паттерна Прототип для смены Учителя на-лету
+    /// @return указатель unique_ptr на новосозданный объект
+    virtual uPtr clone()  = 0;
 };
 
 #endif

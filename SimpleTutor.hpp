@@ -27,6 +27,10 @@ public:
 	    AbstractTutor<T>::param_ ->raw(i) =  Pi + dt_ * (Gi -  AbstractTutor<T>::getRegularization(Pi));
 	}
     };
+    typename AbstractTutor<T>::uPtr clone() override {
+	auto out=std::make_unique<SimpleTutor<T>>(dt_, AbstractTutor<T>::lambdas_);
+	return out;
+    };
 };
 
 #endif

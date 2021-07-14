@@ -18,6 +18,8 @@
 #include <Arctan.hpp>
 #include <SELU.hpp>
 #include <Dropout.hpp>
+#include <NesterovTutor.hpp>
+
 using namespace std;
 
 template<typename T>
@@ -29,20 +31,27 @@ auto  getModel1() {
 //    model->template addLayer<ReLU<T>>();
 //    model->template addLayer<Layer<T>>({392});
 //    model->template addLayer<ReLU<T>>();
+
     model->template addLayer<Layer<T>>({196});
+    model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<ReLU<T>>();
+
     model->template addLayer<Layer<T>>({98});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<ReLU<T>>();
+
     model->template addLayer<Layer<T>>({49});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<ReLU<T>>();
+
     model->template addLayer<Layer<T>>({25});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<ReLU<T>>();
+
     model->template addLayer<Layer<T>>({10});
 //    model->template addLayer<Arctan<T>>();
     model->template addLayer<SoftMax<T>>();
+    model->template setTutor<NesterovTutor<T>>(0.1, 0.5);
     return model;
 };
 
