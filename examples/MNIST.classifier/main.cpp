@@ -5,6 +5,7 @@
 #include <memory>
 #include <cmath>
 #include <vector>
+#include <deque>
 
 #include <DataHolder.hpp>
 #include <MNIST.hpp>
@@ -45,77 +46,94 @@ auto  getModel1() {
     return model;
 };
 
-template<typename R, typename T>
-void train(typename MNIST<R>::sPtr mnist, typename Model<T>::sPtr model,  size_t batchSize=10) {
-    typename Dropout<T>::Enabled dropout_on(true);
-    typename Dropout<T>::Update dropout_update;
-    auto trainSet=mnist->getTrainSet();
-    size_t numBatches=trainSet->numSamples()/batchSize;
-    model->notify(&dropout_on);
-    for(size_t bat=0; bat<numBatches; bat++) {
-	size_t batchError=0;
-	model->notify(&dropout_update);
-	model->batchBegin();
-	for(size_t smp=0; smp<batchSize; smp++) {
-	    auto t=trainSet->getRandomSample();
-	    for(size_t q=0; q<28*28; q++)
-		model->setInput(q, t->data[q]);
-	    model->forward();
-
-	    size_t lab=0;
-	    for(size_t q=1; q<10; q++) 
-		if(model->getOutput(q) >= model->getOutput(lab))
-		    lab=q;
-	    if(lab!=t->label)
-		batchError++;
-	    for(size_t q=0; q<10; q++) {
-		T target=t->label==q ? 1.0 : 0.0;
-		model->setOutput(q, target);
-	    };
-	    model->backward();
-	};
-	model->batchEnd();
-	float done=static_cast<float>(bat*100)/static_cast<float>(numBatches);
-	float err=static_cast<float>(batchError*100)/static_cast<float>(batchSize);
-	std::cout<<"elapsed =" <<done<<"%, error="<<err<<"%"<<std::endl;;
-    };
-    std::cout<<std::endl;
-};
 
 template<typename R, typename T>
-void test(typename MNIST<R>::sPtr mnist, typename Model<T>::sPtr model) {
+void test(std::shared_ptr<typename MNIST<R>::MNIST_set>  mnistSet, typename Model<T>::sPtr model) {
     typename Dropout<T>::Enabled dropout_off(false);
-    auto testSet=mnist->getTestSet();
     size_t errors_count=0;
     model->notify(&dropout_off);
-    for(auto it=testSet->begin(); it!=testSet->end(); it++) {
+    for(auto it=mnistSet->begin(); it!=mnistSet->end(); it++) {
 	for(size_t q=0; q<28*28; q++)
-	    model->setInput(q, (*it)->data[q]);
+	    model->setInput(q, (*it)->raw(q));
 	model->forward();
 
 	size_t lab=0;
 	for(size_t q=1; q<10; q++) 
 	    if(model->getOutput(q) >= model->getOutput(lab))
 		lab=q;
-	if(lab!=(*it)->label)
+	if(lab!=(*it)->label())
 		errors_count++;
-	};
+    };
     std::cout<<"Error="<<errors_count<<" from "
-	<<testSet->numSamples()
+	<<mnistSet->numSamples()
 	<<" ("
-	<<100.0*(double)errors_count/(double)testSet->numSamples()
+	<<100.0*(double)errors_count/(double)mnistSet->numSamples()
 	<<"%)"
 	<<std::endl;
 };
 
+template<typename R, typename T>
+auto train(std::string prefix, std::deque<typename MNIST<R>::Image::sPtr> dataset, typename Model<T>::sPtr model,  size_t batchSize=10) {
+    std::deque<typename MNIST<R>::Image::sPtr> wrong;
+    typename Dropout<T>::Enabled dropout_on(true);
+    typename Dropout<T>::Update dropout_update;
+    model->notify(&dropout_on);
+    size_t smp=0;
+    for(auto it: dataset) { // начало батча
+	size_t batchError;
+	if( (smp%batchSize) == 0) {
+	    model->notify(&dropout_update);
+	    model->batchBegin();
+	batchError=0;
+	};
+
+	for(size_t q=0; q<28*28; q++)
+	    model->setInput(q, it->raw(q));
+	model->forward();
+
+	size_t lab=0;
+	for(size_t q=1; q<10; q++) 
+	    if(model->getOutput(q) >= model->getOutput(lab))
+		lab=q;
+	if(lab!=it->label()) {
+	    wrong.push_back(it);
+	    batchError++;
+	};
+	for(size_t q=0; q<10; q++) {
+	    T target=it->label()==q ? 1.0 : 0.0;
+	    model->setOutput(q, target);
+	};
+	model->backward();
+	// конец батча или эпохи
+	if( (smp%batchSize) == batchSize-1 || smp+1==dataset.size()) { 
+	    model->batchEnd();
+	float done=static_cast<float>(smp*100)/static_cast<float>(dataset.size());
+	float err=static_cast<float>(batchError*100)/static_cast<float>(batchSize);
+	std::cout<<prefix<<" [elapsed =" <<done<<"%] error="<<err<<"%"<<std::endl;;
+	};
+	smp++;
+    };
+    std::cout<<std::endl;
+    return wrong;
+};
 
 int main()
 {
     auto mnist=std::make_shared<MNIST<float>>("../../../");
     auto model=getModel1<double>();
-    for(size_t ep=0; ep<10; ep++) {
-	train<float,double>(mnist, model);
-	test<float,double>(mnist, model);
+    for(size_t ep=0; ep<1000; ep++) {
+	auto dataset=mnist->getTrainSet()->shuffle();
+	auto wrong=train<float,double>("epoch #"+std::to_string(ep), dataset, model);
+	size_t cnt=0;
+        while(wrong.size()>0 && cnt<1) {
+	    mnist->shuffle(wrong);
+	    wrong=train<float,double>("mistakes correction "+std::to_string(ep)+"."+std::to_string(cnt), wrong, model);
+	    cnt++;
+        };
+	cout<<"Ошибка по обучающей выборке:"<<endl;
+	test<float,double>(mnist->getTrainSet(), model);
+	cout<<"Ошибка по тестовой выборке:"<<endl;
+	test<float,double>(mnist->getTestSet(), model);
     };
 
     return 0;

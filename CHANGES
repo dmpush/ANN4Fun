@@ -90,3 +90,8 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 * добавлен юнит-тест для Dropout;
 * из Timer вынесен код онлайн-оценки статистических параметров случайной величины в OnlineStatistics;
 * добавлен дропаут в examples/fuzzy2jpeg;
+
+* настройки exaples/MNIST.classifier и правки MNIST:
+    - работа над ошибками;
+    - перемешивание выборки;
+    - инкапсуляция семплов;

@@ -6,9 +6,11 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <array>
 #include <memory>
 #include <random>
 #include <cassert>
+#include <deque>
 #include <DataHolder.hpp>
 
 template <class T>
@@ -21,16 +23,25 @@ void endswap(T *objp)
 template <typename T>
 class MNIST
 {
-	std::random_device seed_;
-	std::mt19937 rdev_;
+    std::random_device seed_;
+    std::mt19937 rdev_;
 public:
-	struct Image {
-	    T data[28 * 28];
-	    size_t label;
-	    using sPtr=std::shared_ptr<Image>;
-	};
+    class Image {
+    public: 
+	using Picture=std::array<T, 28u*28u>;
+    private:
+	Picture data_;
+	size_t label_;
+    public:
+	Image() = delete;
+	Image(typename Image::Picture&& pic, size_t&& lab) : data_{std::move(pic)}, label_{std::move(lab)} {};
+	~Image() = default;
+	using sPtr=std::shared_ptr<Image>;
+	auto label() { return label_; };
+	T raw(size_t index) { return data_[index]; };
+	T val(size_t i, size_t j) { return data_[j*28u+i]; };
+    };
     using sPtr = std::shared_ptr<MNIST>;
-private:
 	class MNIST_set
 	{
 		MNIST *owner_;
@@ -40,6 +51,8 @@ private:
 
 		MNIST_set(MNIST *owner, std::string folder = "../", std::string prefix = "train"): owner_(owner)
 		{
+			std::deque<typename Image::Picture> Limages;
+			std::deque<size_t> Llabels;
 			std::ifstream file(folder + prefix + "-images-idx3-ubyte");
 			if (!file.is_open())
 				std::cout << "file not found!" << std::endl;
@@ -56,17 +69,17 @@ private:
 			assert(numItems==60000 || numItems==10000);
 			assert(picWidth==28);
 			assert(picHeight==28);
-			images_.resize(numItems);
 			uint8_t img[28 * 28];
 			for (int i = 0; i < numItems; i++){
-				file.read((char *)&img, 28 * 28);
-				////	    endswap(img);
-				images_[i] = std::make_shared<Image>();
+				file.read((char *)img, 28 * 28);
+				typename Image::Picture pic;
 				for (size_t k = 0; k < 28 * 28; k++){
-					images_[i]->data[k] = static_cast<T>(static_cast<float>(img[k]) / 255.0f);
+				    pic[k] = static_cast<T>(static_cast<float>(img[k]) / 255.0f);
 				}
+				Limages.emplace_back(pic);
 			};
 			file.close();
+
 			file = std::ifstream(folder + prefix + "-labels-idx1-ubyte");
 			if (!file.is_open())
 				std::cout << "file not found!" << std::endl;
@@ -79,8 +92,16 @@ private:
 			for (int i = 0; i < numItems; i++) {
 				char label;
 				file.read((char *)&label, 1);
-				images_[i]->label = static_cast<int>(label);
+				Llabels.emplace_back(static_cast<int>(label));
 			};
+			file.close();
+
+		    assert(Limages.size()==Llabels.size());
+		    std::cout<<Limages.size()<<std::endl;
+		    images_.resize(Limages.size());
+		    for(size_t i=0; i<Limages.size(); i++) {
+			images_[i]=std::make_shared<Image>(std::move(Limages[i]), std::move(Llabels[i]));
+		    };
 		};
 		typename Image::sPtr	getRandomSample() {
 			std::uniform_int_distribution<int> dist(0, images_.size()-1);
@@ -91,19 +112,33 @@ private:
 		}
 		auto begin() { return images_.begin(); };
 		auto end() { return images_.end(); };
+                auto shuffle() {
+	            std::deque<typename MNIST<T>::Image::sPtr> dataset;
+		    std::vector<size_t> indexes(numSamples());
+		    for(size_t n=0; n<numSamples(); n++)
+			indexes[n]=n;
+		    std::shuffle(indexes.begin(), indexes.end(), owner_->rdev_);
+	            for(size_t n=0; n<numSamples(); n++)
+	                dataset.push_back(images_[indexes[n]]);
+                    return dataset;
+                };
 	}; // MNIST_set
-	std::shared_ptr<MNIST_set> train;
-	std::shared_ptr<MNIST_set> test;
+private:	
+    std::shared_ptr<MNIST_set> train_;
+    std::shared_ptr<MNIST_set> test_;
 public:
 
-	MNIST(std::string path) : seed_{}, rdev_{seed_()} {
-	    train = std::make_shared<MNIST_set>(this, path, "train");
-	    test  = std::make_shared<MNIST_set>(this, path, "t10k");
-	};
+    MNIST(std::string path) : seed_{}, rdev_{seed_()} {
+	train_ = std::make_shared<MNIST_set>(this, path, "train");
+	test_  = std::make_shared<MNIST_set>(this, path, "t10k");
+    };
 
-	std::shared_ptr<MNIST_set> getTrainSet() { return train; };
-	std::shared_ptr<MNIST_set> getTestSet() { return test; };
+    std::shared_ptr<MNIST_set> getTrainSet() { return train_; };
+    std::shared_ptr<MNIST_set> getTestSet() { return test_; };
 
+    void shuffle(std::deque<typename MNIST<T>::Image::sPtr>& dataset) {
+	std::shuffle(dataset.begin(), dataset.end(), rdev_);
+    };
 };
 
 #endif

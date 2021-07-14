@@ -23,9 +23,10 @@ int main()
     for(size_t s=0; s<10; s++) {
 	auto t=mnist.getTrainSet()->getRandomSample();
 	for(size_t i=0; i<X->size(); i++)
-	    X->raw(i)= t->data[i];
+	    X->raw(i)= t->raw(i);
 	tensormath::toJPEG<float>(X, "test-"+std::to_string(s)+".jpg");
     };
+
     return 0;
 };
 
