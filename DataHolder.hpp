@@ -59,15 +59,17 @@ public:
     /// количество чисел в хранилище
     size_t size() { return data_.size(); };
     /// создание полной копии хранилища
-    void clone(typename DataHolder<T>::sPtr src) {
-	for(auto [name, obj] : src->objects_) {
+    sPtr clone() {
+        auto out=std::make_shared<DataHolder<T>>();
+	for(auto [name, obj] : objects_) {
 	    auto o=obj->clone();
-	    o->holder_=this;
-	    append(name, o);
+	    o->holder_=out.get();
+	    out->append(name, o);
 	};
-	build();
+	out->build();
 	for(size_t i=0; i<size(); i++)
-	    raw(i)= src->raw(i);
+	    out->raw(i)= raw(i);
+        return out;
     };
     /// заполнение хранилища константой
     void fill(T val=T(0)) {

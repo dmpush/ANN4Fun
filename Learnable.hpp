@@ -21,12 +21,12 @@ public:
     explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) :
 	Successor<T>(ann,Nout),
 	params_{std::make_shared<DataHolder<T>>()},
-	grad_{std::make_shared<DataHolder<T>>()} {
+	grad_{} {
     };
     /// @brief конструктор для параметризированных функций активации
     explicit Learnable(ANN<T>* ann) : Successor<T>(ann),
 	params_{std::make_shared<DataHolder<T>>()},
-	grad_{std::make_shared<DataHolder<T>>()} {
+	grad_{} {
     };
     ~Learnable() = default;
 
@@ -51,6 +51,7 @@ public:
 
     void setTutor(typename AbstractTutor<T>::uPtr tutor) override final { 
 	tutor_=std::move(tutor); 
+        grad_=params_->clone();
 	grad_->fill(T(0));
 	tutor_->setContext(params_, grad_);
     };
@@ -59,7 +60,7 @@ private:
     // unique гарантирует невозможность задать одного Учителя нескольким сетям
     typename AbstractTutor<T>::uPtr tutor_;
     const typename DataHolder<T>::sPtr params_;
-    const typename DataHolder<T>::sPtr grad_;
+    typename DataHolder<T>::sPtr grad_;
 protected:
 };
 
