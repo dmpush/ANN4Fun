@@ -56,9 +56,9 @@ void testNesterov(T dt, T beta) {
 
 template<typename T>
 void test() {
+    testNesterov<T>(0.1, 0.9);
     testNesterov<T>(0.1, 0.5);
     testNesterov<T>(0.1, 0.1);
-    testNesterov<T>(0.1, 0.01);
 };
 
 

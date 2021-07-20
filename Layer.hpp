@@ -32,18 +32,7 @@ public:
 	Learnable<T>::getParams()->append("W", {Nout[0], Nin});
 	Learnable<T>::getParams()->append("C", {Nout[0]});
 	Learnable<T>::getParams()->build();
-
-//	Learnable<T>::getGrad()->clone( Learnable<T>::getParams() );
-	Learnable<T>::setTutor( std::make_unique<SimpleTutor<T>>() );
-	// определяем прямые ссылки на тензоры
-	W_=Learnable<T>::getParams()->get("W");
-	C_=Learnable<T>::getParams()->get("C");
-
-	dW_=Learnable<T>::getGrad()->get("W");
-	dC_=Learnable<T>::getGrad()->get("C");
-
-	X_=Learnable<T>::getInputs();
-	Y_=Learnable<T>::getOutputs();
+	setTutor(std::make_unique<SimpleTutor<T>>() );
 
 	dX_=Learnable<T>::getInputErrors();
 	dY_=Learnable<T>::getOutputErrors();
@@ -54,6 +43,20 @@ public:
 	W_->gaussianNoise(0, std::sqrt(S/2.0));
 	C_->gaussianNoise(0, 1e-9);
     };
+    void setTutor(typename AbstractTutor<T>::uPtr tutor) override {
+	Learnable<T>::setTutor( std::move(tutor)  );
+	// определяем прямые ссылки на тензоры
+	W_=Learnable<T>::getParams()->get("W");
+	C_=Learnable<T>::getParams()->get("C");
+
+	dW_=Learnable<T>::getGrad()->get("W");
+	dC_=Learnable<T>::getGrad()->get("C");
+
+	X_=Learnable<T>::getInputs();
+	Y_=Learnable<T>::getOutputs();
+
+	
+    }
 
 
     void forward() override {

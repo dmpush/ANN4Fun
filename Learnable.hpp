@@ -8,7 +8,7 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <DataHolder.hpp>
+#include <IDataHolder.hpp>
 #include <AbstractTutor.hpp>
 /**
     @brief Learnable - абстрактный слой/сеть, содержащий в своем составе Учителя, вектор параметров и градиента.
@@ -21,7 +21,7 @@ public:
     explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) :
 	Successor<T>(ann,Nout),
 	params_{std::make_shared<DataHolder<T>>()},
-	grad_{} {
+	grad_{nullptr} {
     };
     /// @brief конструктор для параметризированных функций активации
     explicit Learnable(ANN<T>* ann) : Successor<T>(ann),
@@ -34,6 +34,7 @@ public:
     auto getTutor() { return tutor_; };
 
     void backward() override {
+	assert( grad_ );
 	tutor_->backward();
     };
 
@@ -45,22 +46,23 @@ public:
 	    tutor_->batchEnd();
     };
     
-    typename DataHolder<T>::sPtr getParams() { return params_; };
-    typename DataHolder<T>::sPtr getGrad()   { return grad_; };
+    typename IDataHolder<T>::sPtr getParams() { return params_; };
+    typename IDataHolder<T>::sPtr getGrad()   { return grad_; };
 
 
-    void setTutor(typename AbstractTutor<T>::uPtr tutor) override final { 
+    void setTutor(typename AbstractTutor<T>::uPtr tutor) override { 
 	tutor_=std::move(tutor); 
         grad_=params_->clone();
 	grad_->fill(T(0));
 	tutor_->setContext(params_, grad_);
     };
 
+
 private:
     // unique гарантирует невозможность задать одного Учителя нескольким сетям
     typename AbstractTutor<T>::uPtr tutor_;
-    const typename DataHolder<T>::sPtr params_;
-    typename DataHolder<T>::sPtr grad_;
+    const typename IDataHolder<T>::sPtr params_;
+    typename IDataHolder<T>::sPtr grad_;
 protected:
 };
 

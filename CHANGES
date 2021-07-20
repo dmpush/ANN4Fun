@@ -102,3 +102,5 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 
 * Изменен DataHolder::clone() для реализации паттерна Прототип; 
 * Соответсвующие изменеия в Learnable;
+
+* Добавлен интерфейс IDataHolder;

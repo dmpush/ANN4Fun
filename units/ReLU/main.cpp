@@ -82,7 +82,6 @@ void test1() {
     cout<<"Проверка ReLU<"<<typeid(T).name()<<"> на логических функциях: ";
     ReLUxor<T> test;
     auto cnt=test.run();
-    cout<<cnt<<" из 100...";
     assert(cnt>=10);
     std::cout<<"ok."<<std::endl;
 };
@@ -92,7 +91,6 @@ void test2() {
     cout<<"Проверка ReLU<"<<typeid(T).name()<<"> на усилителях: ";
     ReLUGains<T> test;
     auto cnt=test.run();
-    cout<<cnt<<" из 100...";
     assert(cnt>=10);
     std::cout<<"ok."<<std::endl;
 };

@@ -1,3 +1,4 @@
+
 #ifndef __NESTEROV_TUTOR_HPP__
 #define __NESTEROV_TUTOR_HPP__
 
@@ -10,14 +11,14 @@
 template<typename T>
 class NesterovTutor : public AbstractTutor<T> {
     T dt_, beta_;
-    typename DataHolder<T>::uPtr velocity_;
+    typename IDataHolder<T>::sPtr velocity_;
 public:
     NesterovTutor(const NesterovTutor&) = delete;
     NesterovTutor(T dt, T beta) : 
 	AbstractTutor<T>(), 
 	dt_(dt), 
 	beta_(beta), 
-	velocity_{std::make_unique<DataHolder<T>>()}   {};
+	velocity_{nullptr}   {};
     NesterovTutor(T dt, T beta, const std::vector<T>& lambdas) : 
 	AbstractTutor<T>(lambdas), 
 	dt_(dt), 
@@ -25,9 +26,9 @@ public:
 	velocity_{std::make_unique<DataHolder<T>>()} {};
     ~NesterovTutor() = default;
 
-    void setContext(typename DataHolder<T>::sPtr param, typename DataHolder<T>::sPtr grad) override {
+    void setContext(typename IDataHolder<T>::sPtr param, typename IDataHolder<T>::sPtr grad) override {
 	AbstractTutor<T>::setContext(param, grad);
-	velocity_->clone(grad);
+	velocity_=grad->clone();
 	velocity_->fill();
     };
 

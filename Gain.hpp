@@ -27,7 +27,6 @@ public:
 	Learnable<T>::getParams()->append("K", shape );
 	Learnable<T>::getParams()->build();
 
-	Learnable<T>::getGrad()->clone( Learnable<T>::getParams() );
 	Learnable<T>::setTutor( std::make_unique<SimpleTutor<T>>() );
 	// определяем прямые ссылки на тензоры
 	K_=Learnable<T>::getParams()->get("K");

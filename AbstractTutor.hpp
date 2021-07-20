@@ -14,8 +14,8 @@ class AbstractTutor {
     size_t sampleCount_; ///< счетчик семплов внутри батча
 protected:
     std::vector<T> lambdas_; ///< Коэфф-ты регуляризации
-    typename DataHolder<T>::sPtr param_;///< хранилище параметров сети
-    typename DataHolder<T>::sPtr grad_; ///< аккумулятор градиента
+    typename IDataHolder<T>::sPtr param_;///< хранилище параметров сети
+    typename IDataHolder<T>::sPtr grad_; ///< аккумулятор градиента
 public:
     using uPtr=std::unique_ptr<AbstractTutor<T>>;
     AbstractTutor() : sampleCount_{0}, param_{}, grad_{}  {};
@@ -24,7 +24,7 @@ public:
     AbstractTutor(const AbstractTutor&) = delete;
     virtual ~AbstractTutor() = default;
 
-    virtual void setContext(typename DataHolder<T>::sPtr param, typename DataHolder<T>::sPtr grad) {
+    virtual void setContext(typename IDataHolder<T>::sPtr param, typename IDataHolder<T>::sPtr grad) {
 	sampleCount_ = 0;
 	param_ = param;
 	grad_ = grad;
