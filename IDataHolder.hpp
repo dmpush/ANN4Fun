@@ -28,7 +28,7 @@ public:
     /// модификация данных напрямую
     virtual T& raw(size_t ind) = 0;
     /// возвращает указатель на тензор по его имени/ключу
-    typename Tensor<T>::sPtr get(std::string name)  {
+    typename ITensor<T>::sPtr get(std::string name)  {
 	auto it=objects_.find(name);
 	if(it==objects_.end())
 	    throw std::runtime_error(std::string("Нет тензора ")+name+std::string(" в хранилище"));
@@ -67,10 +67,17 @@ public:
     bool isEmpty() { return size()==0; };
 
 protected:
-    void append(std::string name, typename Tensor<T>::sPtr obj) {
+    void append(std::string name, typename ITensor<T>::sPtr obj) {
         objects_[name]=obj;
     };
-    std::map<std::string, typename Tensor<T>::sPtr> objects_;
+    void setHolder(typename ITensor<T>::sPtr tensor, IDataHolder *holder) {
+	tensor->setHolder(holder);
+    };
+
+    void setOffset(typename ITensor<T>::sPtr tensor, size_t offset) {
+	tensor->setOffset(offset);
+    };
+    std::map<std::string, typename ITensor<T>::sPtr> objects_;
 
 }; //class
     

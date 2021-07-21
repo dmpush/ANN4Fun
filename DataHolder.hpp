@@ -11,7 +11,7 @@
 #include <iterator> // std::size
 #include <iostream>
 #include <algorithm> //std::fill
-#include <Tensor.hpp>
+#include <ITensor.hpp>
 #include <IDataHolder.hpp>
 
 /**
@@ -21,9 +21,6 @@
 template<typename T>
 class DataHolder : public IDataHolder<T> {
 public:
-    using sPtr=std::shared_ptr<DataHolder >;
-    using uPtr=std::unique_ptr<DataHolder >;
-
     DataHolder(const DataHolder&) = delete;
     DataHolder() : IDataHolder<T>(), seed_{}, rdev_{seed_()}, uniform_{0.0,1.0}, normal_{0.0, 1.0} {};
     virtual ~DataHolder() = default;
@@ -43,7 +40,7 @@ public:
     void build() override {
 	int offset=0;
 	for(auto [name, obj]: IDataHolder<T>::objects_) {
-	    obj->setOffset(offset);
+	    IDataHolder<T>::setOffset(obj, offset);
 	    offset+=obj->size();
 	};
 	data_.resize(offset);
@@ -56,7 +53,7 @@ public:
         auto out=std::make_shared<DataHolder<T>>();
 	for(auto [name, obj] : IDataHolder<T>::objects_) {
 	    auto o=obj->clone();
-	    o->holder_=out.get();
+	    IDataHolder<T>::setHolder(o, out.get());
 	    out->IDataHolder<T>::append(name, o);
 	};
 	out->build();

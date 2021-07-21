@@ -106,3 +106,6 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 * Добавлен интерфейс IDataHolder;
 
 * Исправления в Makefile;
+
+* Добавлен интерфейс ITensor;
+
