@@ -109,3 +109,6 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 
 * Добавлен интерфейс ITensor;
 
+* Перевод фронтенда на ITensor и IDataHolder;
+* Добавлен оператор osteram<<Timer;
+* изменено отображение времени в TestModel::elapsed();

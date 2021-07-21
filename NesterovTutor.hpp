@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <AbstractTutor.hpp>
-#include <DataHolder.hpp>
+#include <IDataHolder.hpp>
 /**
     @brief NesterovTutor - оптимизация методом Нестерова
 */
@@ -23,7 +23,7 @@ public:
 	AbstractTutor<T>(lambdas), 
 	dt_(dt), 
 	beta_(beta), 
-	velocity_{std::make_unique<DataHolder<T>>()} {};
+	velocity_{nullptr} {};
     ~NesterovTutor() = default;
 
     void setContext(typename IDataHolder<T>::sPtr param, typename IDataHolder<T>::sPtr grad) override {

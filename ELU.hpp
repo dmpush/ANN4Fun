@@ -9,9 +9,9 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <DataHolder.hpp>
+#include <IDataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <Tensor.hpp>
+#include <ITensor.hpp>
 /**
     @brief ELU - Exponential linear unit.
 */

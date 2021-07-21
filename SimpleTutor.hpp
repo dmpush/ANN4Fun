@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <AbstractTutor.hpp>
-#include <DataHolder.hpp>
+#include <IDataHolder.hpp>
 /**
     @brief SimpleTutor - простейшая реализация Учителя - градиентный метод с постоянным шагом.
 */

@@ -9,7 +9,7 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <DataHolder.hpp>
+#include <IDataHolder.hpp>
 #include <AbstractTutor.hpp>
 /**
     @brief SoftMax - обобщенная логистическая функция.

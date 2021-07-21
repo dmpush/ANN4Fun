@@ -5,6 +5,7 @@
 #include <vector>
 #include <stdexcept>
 #include <ANN.hpp>
+#include <IDataHolder.hpp>
 #include <DataHolder.hpp>
 #include <Succession.hpp>
 
@@ -51,7 +52,7 @@ public:
 
 private:
     // хранилище данных и псевдонимы для тензоров
-    typename DataHolder<T>::uPtr holder_;
+    typename IDataHolder<T>::uPtr holder_;
     TensorPtr<T> X_;
     TensorPtr<T> dX_;
     TensorPtr<T> Y_;

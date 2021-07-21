@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include <ANN.hpp>
-#include <DataHolder.hpp>
+#include <IDataHolder.hpp>
 #include <Input.hpp>
 #include <Wire.hpp>
 #include <Succession.hpp>

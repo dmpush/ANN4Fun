@@ -9,9 +9,9 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <DataHolder.hpp>
+#include <IDataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <Tensor.hpp>
+#include <ITensor.hpp>
 /**
     @brief ReLUx - вариан LeakyReLU с параметрами подогнанными таким образом, чтобы сохранялось нулевое среднее 
     и единичная сигма входного распределения.

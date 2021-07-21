@@ -7,7 +7,7 @@
 #include <ANN.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <Tensor.hpp>
+#include <ITensor.hpp>
 /**
     @brief Generator - Входной слой нейронной сети, генерирующий случайный гауссов шум, предназначен для GAN.
 */
@@ -57,7 +57,7 @@ public:
     };
 private:
     // хранилище данных и псевдонимы для тензоров
-    typename DataHolder<T>::uPtr holder_;
+    typename IDataHolder<T>::uPtr holder_;
     TensorPtr<T> X_;
     TensorPtr<T> dX_;
     TensorPtr<T> fake_;

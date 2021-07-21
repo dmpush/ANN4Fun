@@ -8,9 +8,10 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
+#include <ITensor.hpp>
+#include <IDataHolder.hpp>
 #include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <Tensor.hpp>
 
 /** 
     @brief Reshape - преобразование размерностей тензоров между слоями. 
@@ -57,7 +58,7 @@ public:
     TensorPtr<T> getOutputErrors() override { return dY_; };
 
 private:
-    typename DataHolder<T>::uPtr holder_;
+    typename IDataHolder<T>::uPtr holder_;
     TensorPtr<T> X_, Y_;
     TensorPtr<T> dX_, dY_;
 protected:

@@ -8,7 +8,7 @@
 #include <iostream>
 
 #include <Learnable.hpp>
-#include <DataHolder.hpp>
+#include <IDataHolder.hpp>
 #include <AbstractTutor.hpp>
 #include <SimpleTutor.hpp>
 #include <ANN.hpp>

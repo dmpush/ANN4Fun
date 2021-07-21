@@ -11,7 +11,7 @@
 #include <AbstractTutor.hpp>
 #include <SimpleTutor.hpp>
 #include <ANN.hpp>
-#include <Tensor.hpp>
+#include <ITensor.hpp>
 
 /**
     @brief Gain - синаптические связи - усилители. Размерность выходного тензора равна размерности входного тензора.

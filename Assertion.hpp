@@ -9,9 +9,8 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <Tensor.hpp>
+#include <ITensor.hpp>
 
 /** 
     @brief Assertion - Класс, провереяющий данные, проходящие через него.

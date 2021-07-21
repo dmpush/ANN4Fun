@@ -32,9 +32,9 @@ public:
 	num_batches_(numBatches),
 	uniform_(0.0, 1.0),
 	normal_(0.0, 1.0),
-	elps_fwd_{std::make_unique<Timer<double>>()},
-	elps_bwd_{std::make_unique<Timer<double>>()},
-	elps_train_{std::make_unique<Timer<double>>()} {
+	elps_fwd_{std::make_shared<Timer<double>>()},
+	elps_bwd_{std::make_shared<Timer<double>>()},
+	elps_train_{std::make_shared<Timer<double>>()} {
 	};
     ~ModelTest() = default;
     /// @brief Установить размер батча.
@@ -111,36 +111,12 @@ public:
     /// @brief Псевдослучайный генератор нормального распределения.
     /// @returns псевдослучайные числа с нормальным распределением вероятностей.
     auto gaussianNoise() { return normal_(rdev_); };
-    double getElapsedForward() const {
-	return elps_fwd_->getMean();
-    };
-    double getElapsedForwardStd() const {
-	return elps_fwd_->getStd();
-    };
 
-    double getElapsedBackward() const {
-	return elps_bwd_->getMean();
-    };
-    double getElapsedBackwardStd() const {
-	return elps_bwd_->getStd();
-    };
-
-    double getElapsedTrain() const {
-	return elps_train_->getMean();
-    };
-    double getElapsedTrainStd() const {
-	return elps_train_->getStd();
-    };
+public:
     void elapsed() {
-    cout<<Console().fgColor(Console::green)
-	<<" ("
-	<<getElapsedForward()
-	<<"/"
-	<<getElapsedBackward()
-	<<"/"
-	<<getElapsedTrain()
-	<<" sec) "
-	<<Console().clear();
+    cout<<Console().fgColor(Console::green)<<
+    " ("<<*(elps_fwd_.get())<<"/"<<*(elps_bwd_.get())<<"/"<<*(elps_train_.get())<<") "<<
+    Console().clear();
     };
     void enableDropout() { enabledDropout_=true; };
     void disableDropout() { enabledDropout_=false; };
@@ -222,9 +198,9 @@ private:
     size_t num_batches_;
     std::uniform_real_distribution<double> uniform_;
     std::normal_distribution<double> normal_;
-    std::unique_ptr<Timer<double>> elps_fwd_;
-    std::unique_ptr<Timer<double>> elps_bwd_;
-    std::unique_ptr<Timer<double>> elps_train_;
+    std::shared_ptr<Timer<double>> elps_fwd_;
+    std::shared_ptr<Timer<double>> elps_bwd_;
+    std::shared_ptr<Timer<double>> elps_train_;
 };
 
 #endif

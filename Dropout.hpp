@@ -9,8 +9,8 @@
 #include <ANN.hpp>
 #include <Successor.hpp>
 #include <DataHolder.hpp>
+#include <ITensor.hpp>
 #include <AbstractTutor.hpp>
-#include <Tensor.hpp>
 
 /** 
     @brief Dropout - Слой дропаута нейронной сети.
@@ -87,7 +87,7 @@ private:
     TensorPtr<T> X_, Y_;
     TensorPtr<T> dX_, dY_;
     double probability_;
-    typename DataHolder<T>::uPtr holder_;
+    typename IDataHolder<T>::uPtr holder_;
     TensorPtr<T> conduction_;
     bool enabled_;
 protected:

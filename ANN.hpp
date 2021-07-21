@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <memory>
-#include <DataHolder.hpp>
+#include <ITensor.hpp>
 #include <AbstractTutor.hpp>
 /**
     @brief ANN Суперкласс абстрактной нейронной сети.

@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <jpeglib.h>
 #include <algorithm>
-#include <Tensor.hpp>
+#include <ITensor.hpp>
 #include <iostream>
 
 namespace tensormath {
