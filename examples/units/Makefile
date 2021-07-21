@@ -11,7 +11,7 @@ clean:
 	$(RM) callgrind.out*
 	$(RM) *.jpg
 leaks:
-	valgrind --leak-check=full ./$(TAGET).3
+	valgrind --leak-check=full ./$(TARGET)
 profile:
 	valgrind --tool=callgrind ./$(TARGET)
 view:

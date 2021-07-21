@@ -15,8 +15,8 @@ clean:
 	$(RM) $(TARGET).*
 	$(RM) callgrind.out*
 leaks:
-	valgrind --leak-check=full ./$(TAGET).3
+	valgrind --leak-check=full ./$(TARGET).64
 profile:
-	valgrind --tool=callgrind ./$(TARGET)
+	valgrind --tool=callgrind ./$(TARGET).64
 view:
 	qcachegrind 

@@ -104,3 +104,5 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 * Соответсвующие изменеия в Learnable;
 
 * Добавлен интерфейс IDataHolder;
+
+* Исправления в Makefile;
