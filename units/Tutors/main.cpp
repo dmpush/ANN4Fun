@@ -11,6 +11,7 @@
 #include <ANN.hpp>
 #include <TestRot3.hpp>
 #include <NesterovTutor.hpp>
+#include <BackendOpenMP.hpp>
 using namespace std;
 
 template<typename T>
@@ -34,6 +35,7 @@ public:
 	model-> template addLayer<Layer<T>>(outputShape);
 //	model-> template setTutor<NesterovTutor<T>>(dt_,beta_);
 	typename AbstractTutor<T>::uPtr tut=std::make_unique<NesterovTutor<T>>(dt_, beta_);
+	model->build(BackendOpenMP<T>::build());
 	model->setTutor(std::move(tut));
 	return model;
     };

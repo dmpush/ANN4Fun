@@ -10,7 +10,6 @@
 #include <memory>
 #include <stdexcept>
 
-#include <DataHolder.hpp>
 #include <Model.hpp>
 #include <Dropout.hpp>
 #include <Timer.hpp>
@@ -129,6 +128,10 @@ private:
 	    typename Dropout<T>::Enabled dropout_off(false);
 	    typename Dropout<T>::Update  dropout_update;
 	    auto model=buildModel();
+	    assert(model->getInputs());
+	    assert(model->getOutputs());
+	    assert(model->getInputErrors());
+	    assert(model->getOutputErrors());
 	    assert(model->getNumInputs() == getNumInputs());
 	    assert(model->getNumOutputs() == getNumOutputs());
 	    if(enabledDropout_)

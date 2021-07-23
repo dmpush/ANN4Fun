@@ -4,7 +4,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <SimpleTutor.hpp>
 #include <Input.hpp>
 #include <Model.hpp>
@@ -19,7 +19,7 @@ void test1() {
     try {
 	Model<T> model({2});
 	model. template addLayer<Wire<T>>();
-
+	model.build(BackendOpenMP<T>::build());
 
 	for(int i=0; i<1000; i++) {
 	    float x=static_cast<float>(std::rand())/static_cast<float>(RAND_MAX);

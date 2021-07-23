@@ -8,11 +8,11 @@
 #include <iostream>
 
 #include <Learnable.hpp>
+#include <IBackendFactory.hpp>
 #include <IDataHolder.hpp>
 #include <AbstractTutor.hpp>
 #include <SimpleTutor.hpp>
 #include <ANN.hpp>
-#include <Tensor.hpp>
 
 /**
     @brief Layer - классический слой нейронной сети - получает на вход вектор, умножает его на матрицу весов,
@@ -23,14 +23,27 @@ class Layer : public Learnable<T> {
 public:
     Layer() = delete;
     Layer(const Layer&) = delete;
-    Layer(ANN<T> *ann, const std::vector<size_t>& Nout) : Learnable<T>(ann, Nout) {
-	if(Nout.size() != 1)
+    Layer(ANN<T> *ann, const std::vector<size_t>& Nout) : Learnable<T>(ann, Nout),
+    W_{nullptr},
+    C_{nullptr},
+    X_{nullptr},
+    Y_{nullptr},
+    dW_{nullptr},
+    dC_{nullptr},
+    dX_{nullptr},
+    dY_{nullptr} {
+    };
+    
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Learnable<T>::build(factory);
+	auto inputShape=Successor<T>::getPrecursor()->shape();
+	auto outputShape=Learnable<T>::getOutputs()->dims();
+	if(outputShape.size() != 1)
 	    throw std::runtime_error("Выходы должны быть организованны в 1-тензор");
-	if(ann->getOutputs()->dim() != 1)
+	if(inputShape.size() != 1)
 	    throw std::runtime_error("Входы должны быть организованны в 1-тензор");
-	size_t Nin=ann->getOutputs()->size();
-	Learnable<T>::getParams()->append("W", {Nout[0], Nin});
-	Learnable<T>::getParams()->append("C", {Nout[0]});
+	Learnable<T>::getParams()->append("W", {outputShape[0], inputShape[0]});
+	Learnable<T>::getParams()->append("C", {outputShape[0]});
 	Learnable<T>::getParams()->build();
 	setTutor(std::make_unique<SimpleTutor<T>>() );
 
@@ -60,11 +73,21 @@ public:
 
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
+	assert(W_);
+	assert(C_);
 	Y_->mul(X_, W_);
 	Y_->append(C_);
     };
 
     void backward() override {
+	assert(X_);
+	assert(W_);
+	assert(dX_);
+	assert(dY_);
+	assert(dW_);
+	assert(dC_);
 	// ошибки по входам
 	dX_->mul(W_, dY_);
 	// градиент синаптической матрицы - внешнее произведение входов и ошибок по выходам

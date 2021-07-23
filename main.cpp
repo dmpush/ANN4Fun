@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cassert>
 #include <string>
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <SimpleTutor.hpp>
 #include <Input.hpp>
 #include <Layer.hpp>
@@ -20,7 +20,7 @@ int main()
 	model.addLayer<SELU<float>>();
 	model.addLayer<Layer<float>>({3});
 	model.addLayer<SELU<float>>();
-
+	model.build(BackendOpenMP<float>::build());
 //	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
 //	std::vector<float> L={0.0f,0.00001f};
 //	model.setTutor<SimpleTutor<float>>(0.1f, L);

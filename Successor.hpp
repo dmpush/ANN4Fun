@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include <ANN.hpp>
 #include <IDataHolder.hpp>
-#include <DataHolder.hpp>
+#include <IBackendFactory.hpp>
 #include <Succession.hpp>
 
 /**
@@ -16,11 +16,26 @@
 template<typename T>
 class Successor : public Succession<T> {
 public:
-    Successor(ANN<T> *ann, std::vector<size_t> Nout) : Succession<T>(ann), precursor_(ann)  {
+    Successor(ANN<T> *ann, std::vector<size_t> Nout) : Succession<T>(ann), 
+	precursor_(ann), 
+	output_shape_(Nout),
+	holder_{nullptr},
+	X_{nullptr},
+	dX_{nullptr},
+	Y_{nullptr},
+	dY_{nullptr}
+    {
+    };
+
+    Successor(ANN<T> *ann) : Successor(ann, ann->shape()) {};
+
+    virtual ~Successor() = default;
+
+    void build(typename IBackendFactory<T>::sPtr factory) override {
 	// сеть является владельцем своих входов и выходов
-	holder_=std::make_unique<DataHolder<T>>();
-	holder_->append("Y", Nout);
-	holder_->append("dY", Nout);
+	holder_=std::move(factory->makeHolderU());
+	holder_->append("Y", output_shape_);
+	holder_->append("dY", output_shape_);
 	holder_->build();
 	// псевдонимы
 	X_ = precursor_ -> getOutputs();
@@ -29,10 +44,6 @@ public:
 	dY_= holder_    -> get("dY");
 	holder_->fill(T(0));
     };
-
-    Successor(ANN<T> *ann) : Successor(ann, ann->getOutputs()->dims()) {};
-
-    virtual ~Successor() = default;
 
 
 
@@ -47,17 +58,19 @@ public:
 	dX_->dump();
 	holder_->dump();
     };
-
+    ANN<T>* getPrecursor() { return precursor_; };
+    std::vector<size_t> shape() override { return output_shape_; };
 
 
 private:
     // хранилище данных и псевдонимы для тензоров
+    ANN<T> *precursor_;
+    std::vector<size_t> output_shape_;
     typename IDataHolder<T>::uPtr holder_;
     TensorPtr<T> X_;
     TensorPtr<T> dX_;
     TensorPtr<T> Y_;
     TensorPtr<T> dY_;
-    ANN<T> *precursor_;
 };
 
 #endif

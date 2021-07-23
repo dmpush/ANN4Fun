@@ -10,9 +10,8 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <IDataHolder.hpp>
 #include <AbstractTutor.hpp>
-#include <ITensor.hpp>
+#include <IBackendFactory.hpp>
 
 /** 
     @brief Arctan - активаторная функция - арктангенс.f(x)=a*arctan(x/a)
@@ -23,25 +22,36 @@ public:
     Arctan() = delete;
     Arctan(const Arctan&) = delete;
     explicit Arctan(ANN<T>* ann) : Successor<T>(ann), scale_{2.0/std::numbers::pi}  {
+    };
+    ~Arctan() = default;
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Successor<T>::build(factory);
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
 	dY_=Successor<T>::getOutputErrors();
     };
-    ~Arctan() = default;
 
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
 	for(size_t i=0; i<X_->size(); i++)
 	    Y_->raw(i) = std::atan(X_->raw(i)/scale_) * scale_;
     };
     void backward() override {
+	assert(dX_);
+	assert(dY_);
 	for(size_t i=0; i<X_->size(); i++) {
 	    auto x = X_->raw(i) / scale_;
 	    dX_->raw(i) = dY_->raw(i) / (1.0 + x*x);
 	};
     };
     void batchBegin() override {
+	assert(X_);
+	assert(Y_);
+	assert(dX_);
+	assert(dY_);
     };
     void batchEnd() override {
     };

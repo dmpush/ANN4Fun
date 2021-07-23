@@ -8,9 +8,8 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <ITensor.hpp>
+#include <IBackendFactory.hpp>
 #include <IDataHolder.hpp>
-#include <DataHolder.hpp>
 #include <AbstractTutor.hpp>
 
 /** 
@@ -24,30 +23,51 @@ public:
     Reshape(const Reshape&) = delete;
     /// @param ann - входной слой сети
     /// @param shape - размерности выходного тензора
-    explicit Reshape(ANN<T>* ann, const std::vector<size_t>& shape) : Successor<T>(ann) {
-	size_t sz=1;
-	for(auto i: shape)
-	    sz*=i;
-	X_=Successor<T>::getInputs();
-	dX_=Successor<T>::getInputErrors();
-	if(sz != X_->size())
+    explicit Reshape(ANN<T>* ann, const std::vector<size_t>& newShape) :
+	Successor<T>(ann, newShape),
+	X_{nullptr},
+	Y_{nullptr}, 
+	dX_{nullptr},
+	dY_{nullptr} {
+	auto oldShape=ann->shape();
+	size_t sz1=1;
+	for(auto i: newShape)
+	    sz1*=i;
+	size_t sz2=1;
+	for(auto i: oldShape)
+	    sz2*=i;
+	if(sz1 != sz2)
 	    throw std::runtime_error("Операция Reshape невозможна: требуемый объем не сопряжен с сетью.");
-	holder_=std::make_unique<DataHolder<T>>();
-	holder_->append("Y", shape);
-	holder_->append("dY", shape);
-	holder_->build();
-	Y_=holder_->get("Y");
-	dY_=holder_->get("dY");
     };
     ~Reshape() = default;
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Successor<T>::build(factory);
+	X_=Successor<T>::getInputs();
+	dX_=Successor<T>::getInputErrors();
+	holder_=factory->makeHolderU();
+	holder_->append("Y", Successor<T>::shape());
+	holder_->append("dY", Successor<T>::shape());
+	holder_->build();
+	Y_=holder_->get("Y");
+    	dY_=holder_->get("dY");
+    };
+
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
 	Y_->copy(X_);
     };
     void backward() override {
+	assert(dX_);
+	assert(dY_);
 	dX_->copy(dY_);
     };
     void batchBegin() override {
+	assert(X_);
+	assert(Y_);
+	assert(dX_);
+	assert(dY_);
     };
     void batchEnd() override {
     };

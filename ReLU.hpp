@@ -8,7 +8,7 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <IDataHolder.hpp>
+#include <IBackendFactory.hpp>
 #include <AbstractTutor.hpp>
 #include <ITensor.hpp>
 /**
@@ -19,24 +19,35 @@ class ReLU : public Successor<T> {
 public:
     ReLU() = delete;
     ReLU(const ReLU&) = delete;
-    explicit ReLU(ANN<T>* ann) : Successor<T>(ann) {
+    explicit ReLU(ANN<T>* ann) : Successor<T>(ann), X_{nullptr}, Y_{nullptr}, dX_{nullptr}, dY_{nullptr} {
+    };
+    ~ReLU() = default;
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Successor<T>::build(factory);
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
 	dY_=Successor<T>::getOutputErrors();
     };
-    ~ReLU() = default;
 
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
 	for(size_t i=0; i<X_->size(); i++)
 	    Y_->raw(i) = X_->raw(i) > T(0) ? X_->raw(i) : T(0);
     };
     void backward() override {
+	assert(dX_);
+	assert(dY_);
 	for(size_t i=0; i<X_->size(); i++)
 	    dX_->raw(i) =  X_->raw(i) > T(0)? dY_->raw(i) : T(0);
     };
     void batchBegin() override {
+	assert(X_);
+	assert(Y_);
+	assert(dX_);
+	assert(dY_);
     };
     void batchEnd() override {
     };

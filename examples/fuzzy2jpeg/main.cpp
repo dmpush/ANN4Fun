@@ -7,7 +7,7 @@
 #include <memory>
 #include <functional>
 
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <Input.hpp>
 #include <Layer.hpp>
 #include <Model.hpp>
@@ -40,6 +40,7 @@ public:
 	model-> template addLayer<ReLUx<T>>();
 
 	model-> template addLayer<Layer<T>>({3});
+	model->build(BackendOpenMP<T>::build());
 	std::vector<T> regul={0.001};
 	model->template setTutor<SimpleTutor<T>>(0.1, regul);
 	return model;

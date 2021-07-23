@@ -3,7 +3,7 @@
 #include <cassert>
 #include <cmath>
 
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <SimpleTutor.hpp>
 #include <Input.hpp>
 #include <Layer.hpp>
@@ -22,7 +22,7 @@ void test1() {
 	Model<T> model({2});
 	model. template addLayer<Layer<T>>({3});
 	model. template addLayer<SoftMax<T>>();
-
+	model.build(BackendOpenMP<T>::build());
 	model(1)->setTutor(std::make_unique<SimpleTutor<T>>(0.1));
 
 	for(int i=0; i<10000; i++) {

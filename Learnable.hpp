@@ -8,6 +8,7 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
+#include <IBackendFactory.hpp>
 #include <IDataHolder.hpp>
 #include <AbstractTutor.hpp>
 /**
@@ -20,28 +21,38 @@ public:
     Learnable(const Learnable&) = delete;
     explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) :
 	Successor<T>(ann,Nout),
-	params_{std::make_shared<DataHolder<T>>()},
+	params_{nullptr},
 	grad_{nullptr} {
     };
     /// @brief конструктор для параметризированных функций активации
     explicit Learnable(ANN<T>* ann) : Successor<T>(ann),
-	params_{std::make_shared<DataHolder<T>>()},
-	grad_{} {
+	params_{nullptr},
+	grad_{nullptr} {
     };
     ~Learnable() = default;
+
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Successor<T>::build(factory);
+	params_=factory->makeHolderS();
+    };
 
 
     auto getTutor() { return tutor_; };
 
     void backward() override {
-	assert( grad_ );
+	assert(params_);
+	assert(grad_ );
 	tutor_->backward();
     };
 
     void batchBegin() override final {
+	assert(params_);
+	assert(grad_ );
 	tutor_->batchBegin();
     };
     void batchEnd() override final {
+	assert(params_);
+	assert(grad_ );
 	if(ANN<T>::isTrainable())
 	    tutor_->batchEnd();
     };
@@ -51,6 +62,7 @@ public:
 
 
     void setTutor(typename AbstractTutor<T>::uPtr tutor) override { 
+	assert(params_);
 	tutor_=std::move(tutor); 
         grad_=params_->clone();
 	grad_->fill(T(0));
@@ -61,7 +73,7 @@ public:
 private:
     // unique гарантирует невозможность задать одного Учителя нескольким сетям
     typename AbstractTutor<T>::uPtr tutor_;
-    const typename IDataHolder<T>::sPtr params_;
+    typename IDataHolder<T>::sPtr params_;
     typename IDataHolder<T>::sPtr grad_;
 protected:
 };

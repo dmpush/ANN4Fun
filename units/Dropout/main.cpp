@@ -9,7 +9,7 @@
 
 #include <Dropout.hpp>
 #include <Model.hpp>
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <OnlineStatistics.hpp>
 using namespace std;
 
@@ -29,6 +29,7 @@ void test1() {
 
 	auto model=std::make_unique<Model<T>>(inputShape);
 	model->template addLayer<Dropout<T>>(0.1);
+	model->build(BackendOpenMP<T>::build());
 	typename Dropout<T>::Enabled dropoutOn(true);
 	typename Dropout<T>::Enabled dropoutOff(false);
 	typename Dropout<T>::Update dropoutUpdate;

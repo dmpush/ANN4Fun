@@ -7,7 +7,7 @@
 #include <vector>
 #include <deque>
 
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <MNIST.hpp>
 #include <Tensor2JPEG.hpp>
 #include <Model.hpp>
@@ -51,6 +51,7 @@ auto  getModel1() {
     model->template addLayer<Layer<T>>({10});
 //    model->template addLayer<Arctan<T>>();
     model->template addLayer<SoftMax<T>>();
+    model->build(BackendOpenMP<T>::build());
     model->template setTutor<NesterovTutor<T>>(0.1, 0.5);
     return model;
 };

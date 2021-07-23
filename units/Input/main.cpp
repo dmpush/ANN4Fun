@@ -8,7 +8,7 @@
 #include <cmath>
 
 #include <Input.hpp>
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 
 using namespace std;
 
@@ -28,6 +28,7 @@ void test1() {
     hasException=false;
     try {
 	auto  inputs=std::make_shared<Input<T>> ( std::vector<size_t>({2}) );
+	inputs->build(BackendOpenMP<T>::build());
 	T x=static_cast<T>(std::rand())/static_cast<T>(RAND_MAX);
 	T y=static_cast<T>(std::rand())/static_cast<T>(RAND_MAX);
 	inputs->batchBegin();

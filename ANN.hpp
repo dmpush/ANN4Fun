@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <cassert>
 #include <memory>
+#include <IBackendFactory.hpp>
 #include <ITensor.hpp>
 #include <AbstractTutor.hpp>
 /**
@@ -20,7 +21,9 @@ public:
     ANN(ANN*) : ANN() {};
     /// @brief Деструктор.
     virtual ~ANN() = default;
-
+    /// @brief Компиляция объекта нейронной сети с подключением бэкенда.
+    /// @param в качестве аргументы передается shared_ptr на объект фабрики бэкендов.
+    virtual void build(typename IBackendFactory<T>::sPtr) = 0;
     /// @brief Блокировка обучения сети/подсети.
     void lockTrain() { lockTrain_=true; };
     /// @brief Разблокировка обучения сети/подсети.
@@ -87,6 +90,8 @@ public:
     virtual void setTutor(typename AbstractTutor<T>::uPtr) = 0; 
     /// отладочная информация
     virtual void dump() = 0;
+    /// возвращаем вектор с размерностями выхода сети;
+    virtual std::vector<size_t> shape() = 0;
     class Notification {
     public:
 	virtual ~Notification() = default;

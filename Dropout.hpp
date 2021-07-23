@@ -8,7 +8,7 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <DataHolder.hpp>
+#include <IBackendFactory.hpp>
 #include <ITensor.hpp>
 #include <AbstractTutor.hpp>
 
@@ -20,33 +20,55 @@ class Dropout : public Successor<T> {
 public:
     Dropout() = delete;
     Dropout(const Dropout&) = delete;
-    explicit Dropout(ANN<T>* ann, double probability) : Successor<T>(ann), probability_(1.0-probability), enabled_(true)  {
+    explicit Dropout(ANN<T>* ann, double probability) :
+	Successor<T>(ann), 
+	X_{nullptr},
+	Y_{nullptr},
+	dX_{nullptr},
+	dY_{nullptr},
+	probability_(1.0-probability),
+	holder_{nullptr},
+	conduction_{nullptr},
+	enabled_(true)  {
+    };
+    ~Dropout() = default;
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Successor<T>::build(factory);
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
 	dY_=Successor<T>::getOutputErrors();
-	holder_=std::make_unique<DataHolder<T>>();
+	holder_=factory->makeHolderU();
 	holder_->append("conduction", X_->dims());
 	holder_->build();
 	conduction_=holder_->get("conduction");
 	update();
     };
-    ~Dropout() = default;
-
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
+	assert(conduction_);
 	if(enabled_)
 	    Y_->prod(X_, conduction_);
 	else
 	    Y_->copy(X_);
     };
     void backward() override {
+	assert(dX_);
+	assert(dY_);
+	assert(conduction_);
 	if(enabled_)
 	    dX_->prod(dY_, conduction_);
 	else
 	    dX_->copy(dY_);
     };
     void batchBegin() override {
+	assert(X_);
+	assert(Y_);
+	assert(dX_);
+	assert(dY_);
+	assert(conduction_);
     };
     void batchEnd() override {
     };

@@ -11,7 +11,7 @@
 #include <Assertion.hpp>
 #include <ANN.hpp>
 #include <TestRot3.hpp>
-
+#include <BackendOpenMP.hpp>
 using namespace std;
 
 template<typename T>
@@ -30,6 +30,8 @@ void testExceptions() {
     try {
 	auto  inputs=std::make_shared<Input<T>> (std::vector<size_t>({2,2}));
 	auto  layer=std::make_shared<Layer<T>> (inputs.get(), std::vector<size_t>({2}));
+	inputs->build(BackendOpenMP<T>::build());
+	layer->build(BackendOpenMP<T>::build());
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
@@ -40,6 +42,8 @@ void testExceptions() {
     try {
 	auto  inputs=std::make_shared<Input<T>> (std::vector<size_t>({2}));
 	auto  layer=std::make_shared<Layer<T>> (inputs.get(), std::vector<size_t>({2,2}));
+	inputs->build(BackendOpenMP<T>::build());
+	layer->build(BackendOpenMP<T>::build());
     } catch(std::runtime_error e) {
 	exceptMsg<T>(e);
 	hasException=true;
@@ -63,6 +67,7 @@ public:
 	auto model=std::make_shared<Model<T>> ( inputShape );
 	model-> template addLayer<Layer<T>>(outputShape);
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model->build(BackendOpenMP<T>::build());
 	return model;
     };
     bool assertion() override {

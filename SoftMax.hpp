@@ -9,7 +9,7 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <IDataHolder.hpp>
+#include <IBackendFactory.hpp>
 #include <AbstractTutor.hpp>
 /**
     @brief SoftMax - обобщенная логистическая функция.
@@ -19,16 +19,26 @@ class SoftMax : public Successor<T> {
 public:
     SoftMax() = delete;
     SoftMax(const SoftMax&) = delete;
-    explicit SoftMax(ANN<T>* ann) : Successor<T>(ann) {
+    explicit SoftMax(ANN<T>* ann) : 
+	Successor<T>(ann), 
+	X_{nullptr},
+	Y_{nullptr},
+	dX_{nullptr},
+	dY_{nullptr} {};
+    ~SoftMax() = default;
+
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Successor<T>::build(factory);
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
 	dY_=Successor<T>::getOutputErrors();
     };
-    ~SoftMax() = default;
 
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
 	T norm{0};
 	for(size_t i=0; i<X_->size(); i++) {
 	    Y_->raw(i) = static_cast<T>( std::exp(X_->raw(i)) );
@@ -41,6 +51,8 @@ public:
 	}
     };
     void backward() override {
+	assert(dX_);
+	assert(dY_);
 	for(size_t i=0; i<Y_->size(); i++) {
 	    T sum{0};
 	    for(size_t o=0; o<Y_->size(); o++) {
@@ -51,6 +63,10 @@ public:
 	};
     };
     void batchBegin() override {
+	assert(X_);
+	assert(Y_);
+	assert(dX_);
+	assert(dY_);
     };
     void batchEnd() override {
     };

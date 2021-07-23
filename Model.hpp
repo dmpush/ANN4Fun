@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include <ANN.hpp>
+#include <IBackendFactory.hpp>
 #include <IDataHolder.hpp>
 #include <Input.hpp>
 #include <Wire.hpp>
@@ -38,6 +39,11 @@ public:
 
     
     ~Model() = default;
+
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	for(auto it: layers_)
+	    it->build(factory);
+    };
 
     // дабы спрятать выделение памяти от пользователя
     template<Derived<Succession<T>> AnnType>
@@ -108,6 +114,8 @@ public:
         for(auto l: layers_)
             l->notify(notice);
     };
+
+    std::vector<size_t> shape() override { return layers_.back()->shape(); };
 
 private:
     /// список слоев, составляющих модель

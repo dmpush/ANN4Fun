@@ -10,7 +10,7 @@
 #include <ANN.hpp>
 #include <Successor.hpp>
 #include <AbstractTutor.hpp>
-#include <ITensor.hpp>
+#include <IBackendFactory.hpp>
 
 /** 
     @brief Assertion - Класс, провереяющий данные, проходящие через него.
@@ -23,27 +23,40 @@ public:
     Assertion(const Assertion&) = delete;
     explicit Assertion(ANN<T>* ann, const std::function<void(T)>& fwd, const std::function<void(T)>& bwd=[](T){} ) : 
 	Successor<T>(ann),
+	X_{nullptr},
+	Y_{nullptr},
+	dX_{nullptr},
+	dY_{nullptr},
 	fwd_(fwd), 
-	bwd_(bwd) {
+	bwd_(bwd) {};
+    ~Assertion() = default;
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Successor<T>::build(factory);
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
 	dY_=Successor<T>::getOutputErrors();
     };
-    ~Assertion() = default;
-
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
 	for(size_t i=0; i<X_->size(); i++)
 	    fwd_(X_->raw(i));
 	Y_->copy(X_);
     };
     void backward() override {
+	assert(dX_);
+	assert(dY_);
 	for(size_t i=0; i<X_->size(); i++)
 	    bwd_(dY_->raw(i));
 	dX_->copy(dY_);
     };
     void batchBegin() override {
+	assert(X_);
+	assert(Y_);
+	assert(dX_);
+	assert(dY_);
     };
     void batchEnd() override {
     };

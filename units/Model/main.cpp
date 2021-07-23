@@ -2,8 +2,9 @@
 #include <string>
 #include <cassert>
 #include <cmath>
+#include <memory>
 
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <SimpleTutor.hpp>
 #include <Input.hpp>
 #include <Layer.hpp>
@@ -19,6 +20,7 @@ void test1() {
 	Model<T> model({2});
 	model. template addLayer<Layer<T>>({2});
 	model. template addLayer<Layer<T>>({3});
+	model.build(BackendOpenMP<T>::build());
 
 	model(1)->setTutor(std::make_unique<SimpleTutor<T>>(0.1));
 
@@ -75,6 +77,7 @@ void testComposition() {
 
 	Model<T> model(&model1);
 	model. template addLayer<Layer<T>>({3});
+	model.build(BackendOpenMP<T>::build());
 
 	for(int i=0; i<1000; i++) {
 	    model.batchBegin();
@@ -127,8 +130,8 @@ void test() {
 int main()
 {
     test<float>();
-    test<double>();
-    test<long double>();
+//    test<double>();
+//    test<long double>();
     cout<<"Ok."<<endl;
     return 0;
 };

@@ -6,8 +6,9 @@
 #include <stdexcept>
 #include <iostream>
 
+#include <Successor.hpp>
 #include <Learnable.hpp>
-#include <DataHolder.hpp>
+#include <IBackendFactory.hpp>
 #include <AbstractTutor.hpp>
 #include <SimpleTutor.hpp>
 #include <ANN.hpp>
@@ -22,11 +23,20 @@ class Gain : public Learnable<T> {
 public:
     Gain() = delete;
     Gain(const Gain&) = delete;
-    Gain(ANN<T> *ann) : Learnable<T>(ann) {
-	auto shape=ann->getOutputs()->dims();
-	Learnable<T>::getParams()->append("K", shape );
+    Gain(ANN<T> *ann) :
+	Learnable<T>(ann, ann->shape()),
+	K_{nullptr},
+	X_{nullptr},
+	Y_{nullptr},
+	dK_{nullptr},
+	dX_{nullptr},
+	dY_{nullptr} {
+    };
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Learnable<T>::build(factory);
+	Learnable<T>::getParams()->append("K", Successor<T>::shape() );
 	Learnable<T>::getParams()->build();
-
+	/// @todo теоретически, здесь может быть проблема, сделать как в Layer
 	Learnable<T>::setTutor( std::make_unique<SimpleTutor<T>>() );
 	// определяем прямые ссылки на тензоры
 	K_=Learnable<T>::getParams()->get("K");
@@ -43,10 +53,17 @@ public:
 
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
+	assert(K_);
 	Y_->prod(X_, K_);
     };
 
     void backward() override {
+	assert(dX_);
+	assert(dY_);
+	assert(K_);
+	assert(dK_);
 	// ошибка по входам
 	dX_->prod(K_, dY_);
 	// градиент весов

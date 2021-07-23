@@ -5,7 +5,7 @@
 #include <stdexcept>
 
 #include <ANN.hpp>
-#include <DataHolder.hpp>
+#include <IBackendFactory.hpp>
 #include <AbstractTutor.hpp>
 #include <ITensor.hpp>
 /**
@@ -14,23 +14,30 @@
 template<typename T>
 class Generator: public ANN<T> {
 public:
-    explicit Generator(const std::vector<size_t>& Nin) : ANN<T>() {
+    explicit Generator(const std::vector<size_t>& Nin) : 
+	ANN<T>(), 
+	shape_{Nin},
+	holder_{nullptr},
+	X_{nullptr},
+	dX_{nullptr},
+	fake_{nullptr} { };
+
+    explicit Generator(size_t Nin) : Generator<T>(std::vector({Nin})) {};
+    Generator(ANN<T>*) = delete;
+    virtual ~Generator() = default;
+
+    void build(typename IBackendFactory<T>::sPtr factory) override {
 	// сеть является владельцем своих входов и выходов
-	holder_=std::make_unique<DataHolder<T>>();
-	holder_->append("X", Nin);
-	holder_->append("dX", Nin);
+	holder_=factory->makeHolderU();
+	holder_->append("X", shape_);
+	holder_->append("dX", shape_);
 	holder_->append("fake");
 	holder_->build();
 	fake_=holder_->get("fake");
 	X_=holder_->get("X");
 	dX_=holder_->get("dX");
 	holder_->fill(T(0));
-//	holder_->description();
     };
-
-    explicit Generator(size_t Nin) : Generator<T>(std::vector({Nin})) {};
-    Generator(ANN<T>*) = delete;
-    virtual ~Generator() = default;
 
 
 
@@ -41,11 +48,16 @@ public:
     TensorPtr<T>  getOutputErrors() override { return dX_; };
 
     void forward() override {
+	assert(X_);
 	X_->gaussianNoise(0.0, 1.0);
     };
     void backward() override {
+	assert(dX_);
     };
     void batchBegin() override {
+	assert(X_);
+	assert(dX_);
+	assert(fake_);
     };
     void batchEnd() override {
     };
@@ -55,8 +67,10 @@ public:
 	std::cout<<"Generator:"<<std::endl;
 	holder_->dump();
     };
+    std::vector<size_t> shape() override { return shape_; }; 
 private:
     // хранилище данных и псевдонимы для тензоров
+    std::vector<size_t> shape_;
     typename IDataHolder<T>::uPtr holder_;
     TensorPtr<T> X_;
     TensorPtr<T> dX_;

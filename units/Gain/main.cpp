@@ -4,7 +4,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <SimpleTutor.hpp>
 #include <Input.hpp>
 #include <Model.hpp>
@@ -22,6 +22,7 @@ void test1() {
 	model. template addLayer<Gain<T>>();
 	model. template addLayer<Gain<T>>();
 //	model. template addLayer<Gain<T>>();
+	model.build(BackendOpenMP<T>::build());
 
 
 	float x=3.14;//static_cast<float>(std::rand())/static_cast<float>(RAND_MAX);

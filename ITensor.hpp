@@ -16,6 +16,7 @@ class ITensor {
 public:
     friend class IDataHolder<T>;
     using sPtr=std::shared_ptr<ITensor>;
+    using uPtr=std::unique_ptr<ITensor>;
 
     ITensor() = delete;
     explicit ITensor(IDataHolder<T> *holder,  const std::vector<size_t>& dimensions) : holder_(holder) {

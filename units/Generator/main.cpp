@@ -8,7 +8,7 @@
 #include <cmath>
 
 #include <Generator.hpp>
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 
 using namespace std;
 
@@ -29,6 +29,11 @@ void test1() {
     try {
 	std::vector<size_t> shape={10};
 	auto  gen=std::make_shared<Generator<T>> ( 10 );
+	gen->build(BackendOpenMP<T>::build());
+	assert(gen->getInputs());
+	assert(gen->getOutputs());
+	assert(gen->getInputErrors());
+	assert(gen->getOutputErrors());
 	assert(gen->getInputs()->dim() == 0);
 	assert(gen->getNumInputs() == 0);
 	assert(gen->getNumOutputs() == 10);

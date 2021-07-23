@@ -7,7 +7,7 @@
 #include <memory>
 #include <functional>
 
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <SimpleTutor.hpp>
 #include <Input.hpp>
 #include <Layer.hpp>
@@ -43,6 +43,7 @@ public:
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
 	model-> template addLayer<Arctan<T>>();
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model->build(BackendOpenMP<T>::build());
 	return model;
     };
     bool assertion() override {
@@ -73,6 +74,7 @@ public:
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
 	model-> template addLayer<Arctan<T>>();
 	model-> template addLayer<Assertion<T>>(validValue, validValue);
+	model->build(BackendOpenMP<T>::build());
 //	typename AbstractTutor<T>::uPtr tut=std::make_unique<SimpleTutor<T>>(0.1);
 //	model->setTutor(std::move(tut));
 	return model;

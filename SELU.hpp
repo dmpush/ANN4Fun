@@ -9,7 +9,7 @@
 
 #include <ANN.hpp>
 #include <Successor.hpp>
-#include <IDataHolder.hpp>
+#include <IBackendFactory.hpp>
 #include <AbstractTutor.hpp>
 #include <ITensor.hpp>
 /**
@@ -21,26 +21,40 @@ public:
     SELU() = delete;
     SELU(const SELU&) = delete;
     explicit SELU(ANN<T>* ann) : Successor<T>(ann), 
+    X_{nullptr},
+    Y_{nullptr},
+    dX_{nullptr},
+    dY_{nullptr},
     alpha_(1.67326), lambda_(1.0507) {
+    };
+    ~SELU() = default;
+    void build(typename IBackendFactory<T>::sPtr factory) override {
+	Successor<T>::build(factory);
 	X_=Successor<T>::getInputs();
 	Y_=Successor<T>::getOutputs();
 	dX_=Successor<T>::getInputErrors();
 	dY_=Successor<T>::getOutputErrors();
     };
-    ~SELU() = default;
-
 
     void forward() override {
+	assert(X_);
+	assert(Y_);
 	for(size_t i=0; i<X_->size(); i++) {
 	    Y_->raw(i) = f( X_->raw(i) );
 	};
     };
     void backward() override {
+	assert(dX_);
+	assert(dY_);
 	for(size_t i=0; i<X_->size(); i++) {
 	    dX_->raw(i) =  df(X_->raw(i)) * dY_->raw(i);
 	};
     };
     void batchBegin() override {
+	assert(X_);
+	assert(Y_);
+	assert(dX_);
+	assert(dY_);
     };
     void batchEnd() override {
     };
