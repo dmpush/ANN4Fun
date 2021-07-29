@@ -18,7 +18,7 @@ int main()
 	model.addLayer<Layer<float>>({2});
 //	model.template addLayer<Assertion<float>>([](float x){ assert(x<1); });
 	model.addLayer<SELU<float>>();
-	model.addLayer<Layer<float>>({3});
+	model.addLayer<Layer<float>>({30});
 	model.addLayer<SELU<float>>();
 	model.build(BackendOpenMP<float>::build());
 //	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
@@ -42,11 +42,11 @@ int main()
 	    model.setOutput(0, 3.14);
 	    model.setOutput(1, 2.71);
 	    model.setOutput(2, 1.41);
-	    timer.tic();
 	    model.backward();
-	    timer.toc();
 
+	    timer.tic();
 	    model.batchEnd();
+	    timer.toc();
 
 	    model.setInput(0, 0.0);
 	    model.setInput(1, 1.0);
@@ -69,8 +69,8 @@ int main()
 	cout<<endl;
 
     };
-	cout<<timer.getMean()<<" +- "<<timer.getStd()<<" sec"<<endl;
-    } catch(std::runtime_error ex) {
+	cout<<timer<<endl;
+    } catch(std::runtime_error& ex) {
 	cout<<ex.what()<<endl;
     };
     return 0;

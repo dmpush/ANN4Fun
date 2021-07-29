@@ -5,7 +5,7 @@
 #include <memory>
 #include <cmath>
 
-#include <DataHolder.hpp>
+#include <BackendOpenMP.hpp>
 #include <MNIST.hpp>
 #include <Tensor2JPEG.hpp>
 
@@ -16,10 +16,11 @@ using namespace std;
 int main()
 {
     MNIST<float> mnist("../../../");
-    DataHolder<float> dh;
-    dh.append("X", {28,28});
-    dh.build();
-    auto X=dh.get("X");
+    auto factory=BackendOpenMP<float>::build();
+    auto dh=factory->makeHolderS();
+    dh->append("X", {28,28});
+    dh->build();
+    auto X=dh->get("X");
     for(size_t s=0; s<10; s++) {
 	auto t=mnist.getTrainSet()->getRandomSample();
 	for(size_t i=0; i<X->size(); i++)

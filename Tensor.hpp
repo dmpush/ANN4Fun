@@ -186,6 +186,39 @@ void apply(const std::function<T(T)>&func) override {
     for(size_t i=0; i<ITensor<T>::size(); i++)
 	ITensor<T>::raw(i) = func(ITensor<T>::raw(i));
 };
+/// @brief оптимизация методом градиентного спуска с постоянным шагом.
+/// @param grad -- тензор с градиентом
+/// @param scale -- коэфф-т к градиенту - число, обратное к числу сэмплов в батче
+/// @param step -- шаг градиентного метода
+/// @param regpoly -- массив коэфф-тов полином регуляризации
+void optGrad(typename ITensor<T>::sPtr grad, T scale, T step, const std::vector<T>& regpoly)  override {
+    #pragma omp parallel for
+    for(size_t i=0; i<ITensor<T>::size(); i++)  {
+	auto X=ITensor<T>::raw(i);
+	auto dX=grad->raw(i)*scale - this->getRegularization(regpoly, X);
+	ITensor<T>::raw(i) = X  + step *  dX ;
+    };
+};
+/// @brief оптимизация методом Нестерова
+/// @param grad -- тензор с градиентом
+/// @param velocity -- тензор со сглаженным граентом
+/// @param scale -- коэфф-т к градиенту - число, обратное к числу сэмплов в батче
+/// @param step -- шаг градиентного метода
+/// @param beta -- коэфф-т инерции (beta~0 - градиентный метод)
+/// @param regpoly -- массив коэфф-тов полином регуляризации
+void optNesterov(typename ITensor<T>::sPtr grad, typename ITensor<T>::sPtr velocity, 
+	T scale, T step, T beta, const std::vector<T>& regpoly) override {
+    #pragma omp parallel for
+    for(size_t i=0; i<ITensor<T>::size(); i++)  {
+	auto X=this->raw(i);
+	auto dX=grad->raw(i)*scale - this->getRegularization(regpoly, X);
+	auto V=velocity->raw(i);
+	V=V*beta + dX*(1.0 - beta);
+	this->raw(i) = X + step * V;
+	velocity->raw(i) = V;
+    };
+};
+
 }; // class
 
 

@@ -36,15 +36,7 @@ public:
 	if(AbstractTutor<T>::getSampleCount() ==0)
 	    throw std::runtime_error("Пустой батч. Возможно, не хватает вызова Learnable::backward()");
 	T bs=static_cast<T>(AbstractTutor<T>::getSampleCount() );
-	size_t len=AbstractTutor<T>::param_ ->size();
-	for(size_t i=0; i<len; i++) {
-	    T Vi=velocity_->raw(i);
-	    T Pi=AbstractTutor<T>::param_ ->raw(i);
-	    T Gi=AbstractTutor<T>::grad_->raw(i) / bs -  AbstractTutor<T>::getRegularization(Pi);
-	    Vi = Vi*beta_ + Gi*(1.0 - beta_);
-	    AbstractTutor<T>::param_ ->raw(i) =  Pi + dt_ * Vi;
-	    velocity_->raw(i) = Vi;
-	}
+	this->param_->get("*")->optNesterov(this->grad_->get("*"), velocity_->get("*"), 1.0/bs, dt_, beta_, this->lambdas_);
     };
     typename AbstractTutor<T>::uPtr clone() override {
 	auto out=std::make_unique<NesterovTutor<T>>(dt_, beta_, AbstractTutor<T>::lambdas_);

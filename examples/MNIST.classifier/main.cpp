@@ -19,7 +19,7 @@
 #include <SELU.hpp>
 #include <Dropout.hpp>
 #include <NesterovTutor.hpp>
-
+#include <Timer.hpp>
 using namespace std;
 
 template<typename T>
@@ -49,7 +49,7 @@ auto  getModel1() {
     model->template addLayer<ReLU<T>>();
 
     model->template addLayer<Layer<T>>({10});
-//    model->template addLayer<Arctan<T>>();
+//    model->template addLayer<Arctan<T>>(); // вход софтмакса должен быть ограничен
     model->template addLayer<SoftMax<T>>();
     model->build(BackendOpenMP<T>::build());
     model->template setTutor<NesterovTutor<T>>(0.1, 0.5);
@@ -87,20 +87,22 @@ auto train(std::string prefix, std::deque<typename MNIST<R>::Image::sPtr> datase
     std::deque<typename MNIST<R>::Image::sPtr> wrong;
     typename Dropout<T>::Enabled dropout_on(true);
     typename Dropout<T>::Update dropout_update;
+    Timer timerFwd,timerBwd,timerTrain;
     model->notify(&dropout_on);
     size_t smp=0;
+	size_t batchError{0};
     for(auto it: dataset) { // начало батча
-	size_t batchError;
 	if( (smp%batchSize) == 0) {
 	    model->notify(&dropout_update);
 	    model->batchBegin();
-	batchError=0;
+	    batchError=0;
 	};
 
 	for(size_t q=0; q<28*28; q++)
 	    model->setInput(q, it->raw(q));
+	timerFwd.tic();
 	model->forward();
-
+	timerFwd.toc();
 	size_t lab=0;
 	for(size_t q=1; q<10; q++) 
 	    if(model->getOutput(q) >= model->getOutput(lab))
@@ -113,17 +115,24 @@ auto train(std::string prefix, std::deque<typename MNIST<R>::Image::sPtr> datase
 	    T target=it->label()==q ? 1.0 : 0.0;
 	    model->setOutput(q, target);
 	};
+	timerBwd.tic();
 	model->backward();
+	timerBwd.toc();
 	// конец батча или эпохи
 	if( (smp%batchSize) == batchSize-1 || smp+1==dataset.size()) { 
+	    timerTrain.tic();
 	    model->batchEnd();
-	float done=static_cast<float>(smp*100)/static_cast<float>(dataset.size());
-	float err=static_cast<float>(batchError*100)/static_cast<float>(batchSize);
-	std::cout<<prefix<<" [elapsed =" <<done<<"%] error="<<err<<"%"<<std::endl;;
+	    timerTrain.toc();
+	    float done=static_cast<float>(smp*100)/static_cast<float>(dataset.size());
+	    float err=static_cast<float>(batchError*100)/static_cast<float>(batchSize);
+	    std::cout<<prefix<<" [elapsed =" <<done<<"%] error="<<err<<"%"<<std::endl;;
 	};
 	smp++;
     };
     std::cout<<std::endl;
+    std::cout<<"Производительность forward() "<<timerFwd<<endl;
+    std::cout<<"Производительность backward() "<<timerBwd<<endl;
+    std::cout<<"Производительность batchEnd() "<<timerTrain<<endl;
     return wrong;
 };
 
@@ -135,7 +144,8 @@ int main()
 	auto dataset=mnist->getTrainSet()->shuffle();
 	auto wrong=train<float,double>("epoch #"+std::to_string(ep), dataset, model);
 	size_t cnt=0;
-        while(wrong.size()>0 && cnt<1) {
+        while(wrong.size()>0 && cnt<1
+) {
 	    mnist->shuffle(wrong);
 	    wrong=train<float,double>("mistakes correction "+std::to_string(ep)+"."+std::to_string(cnt), wrong, model);
 	    cnt++;

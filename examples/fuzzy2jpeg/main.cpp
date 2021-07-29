@@ -7,6 +7,7 @@
 #include <memory>
 #include <functional>
 
+#include <IBackendFactory.hpp>
 #include <BackendOpenMP.hpp>
 #include <Input.hpp>
 #include <Layer.hpp>
@@ -19,7 +20,11 @@
 
 template<typename T>
 class ArctanXOR : public TestXOR<T> {
+typename IBackendFactory<T>::sPtr factory_;
 public:
+    ArctanXOR() : TestXOR<T>() {
+	factory_=BackendOpenMP<T>::build();
+    };
     std::shared_ptr<Model<T>> buildModel() override {
 	std::vector<size_t> inputShape{2};
 	std::function<void(T)> validValue=[](T x) { 
@@ -40,7 +45,7 @@ public:
 	model-> template addLayer<ReLUx<T>>();
 
 	model-> template addLayer<Layer<T>>({3});
-	model->build(BackendOpenMP<T>::build());
+	model->build(factory_);
 	std::vector<T> regul={0.001};
 	model->template setTutor<SimpleTutor<T>>(0.1, regul);
 	return model;
@@ -49,7 +54,7 @@ public:
 	return TestXOR<T>::getErrorMeanSquare()<0.1;
     };
     void onTunedModel(typename Model<T>::sPtr model) override {
-	auto  holder=std::make_shared<DataHolder<T>>();
+	auto  holder=factory_->makeHolderU();
 	holder->append("Img", {256,256,3});
 	holder->build();
 	auto img=holder->get("Img");

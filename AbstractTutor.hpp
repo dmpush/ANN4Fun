@@ -47,20 +47,7 @@ public:
     /// @brief Градиент параметров.
     /// @return аккумулятор градиента параметров.
     auto getGrad() { return grad_; };
-    /// @brief Вычисление многочлена регуляризации.
-    /// @param x  - параметр param_[i].
-    /// @return значение функции регуляризации для параметра x.
-    T getRegularization(T x) {
-	auto sx= x > T(0.0f) ? T(1.0f) : T(-1.0f);
-	auto xp=x;
-	auto sum=T(0);
-	for(size_t i=0; i<lambdas_.size(); i++) 
-	    if(lambdas_[i] > T(0.0f)){
-		sum += (i>0 ? xp: sx) * lambdas_[i];
-		xp*=x;
-	    };
-	return sum;
-    };
+
     /// @brief счетчик семплов в батче.
     /// @returns число семплов в батче
     size_t getSampleCount() const { return sampleCount_; };

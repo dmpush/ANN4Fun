@@ -23,10 +23,10 @@ public:
     };
 */
     typename IDataHolder<T>::sPtr makeHolderS() override final {
-	return std::make_shared<DataHolder<T>>();
+	return std::make_shared<DataHolder<T, Tensor<T>>>();
     };
     typename IDataHolder<T>::uPtr makeHolderU() override final {
-	return std::make_unique<DataHolder<T>>();
+	return std::make_unique<DataHolder<T, Tensor<T>>>();
     };
     static typename IBackendFactory<T>::sPtr build() {
 	return std::make_shared<BackendOpenMP>();

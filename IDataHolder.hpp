@@ -27,6 +27,7 @@ public:
     virtual ~IDataHolder() = default;
     /// модификация данных напрямую
     virtual T& raw(size_t ind) = 0;
+    virtual T* ref(size_t ind) = 0;
     /// возвращает указатель на тензор по его имени/ключу
     typename ITensor<T>::sPtr get(std::string name)  {
 	auto it=objects_.find(name);
@@ -36,15 +37,38 @@ public:
     };
 
     /// добавляет в хранилище пару имя тензора/форма тензора
-    virtual void append(std::string name, const std::vector<size_t>& dims) = 0;
+    virtual typename ITensor<T>::sPtr append(std::string name, const std::vector<size_t>& dims) = 0;
     /// добавляет пустой тензор 
-    virtual void append(std::string name)  = 0;
+    virtual typename ITensor<T>::sPtr append(std::string name)  = 0;
     /// аллокация памяти хранилища
-    virtual void build() = 0;
+    void build() {
+	size_t offset=0;
+	for(auto [name, obj]: objects_) {
+	    setOffset(obj, offset);
+	    offset+=obj->size();
+	};
+	allocate(offset);
+	auto obj=append("*", {offset});
+	setOffset(obj, 0);
+	fill();
+    };
     /// количество чисел в хранилище
     virtual size_t size() = 0;
     /// создание полной копии хранилища - реализация паттерна Прототип
-    virtual sPtr clone()  = 0;
+    typename IDataHolder<T>::sPtr clone() {
+        auto out=makeEmptyObject();
+	for(auto [name, obj] : objects_) {
+	    if(name != "*" )  {
+		auto o=obj->clone();
+		setHolder(o, out.get());
+		out->append(name, o);
+	    }
+	};
+	out->build();
+	for(size_t i=0; i<size(); i++)
+	    out->raw(i)= raw(i);
+        return out;
+    };
     /// заполнение хранилища константой
     virtual void fill(T val=T(0)) = 0;
     /// печать описания объектов, содержащихся внутри хранилища
@@ -65,8 +89,11 @@ public:
     virtual T gaussianNoise() = 0;
     /// true, если хранилище пустое или неинициализированное командой build()
     bool isEmpty() { return size()==0; };
-
 protected:
+    /// @brief выделение памяти под тензоры. Зависит от реализации, где находится память.
+    virtual void allocate(size_t) = 0;
+    /// @brief создает пустой объект. Используется в методе clone()
+    virtual typename IDataHolder<T>::sPtr makeEmptyObject() = 0;
     void append(std::string name, typename ITensor<T>::sPtr obj) {
         objects_[name]=obj;
     };

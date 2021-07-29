@@ -5,19 +5,20 @@
 #include <memory>
 #include <cmath>
 #include <iostream>
-#include <DataHolder.hpp>
+#include <IBackendFactory.hpp>
+#include <BackendOpenMP.hpp>
 #include <Tensor2JPEG.hpp>
 
 using namespace std;
 
 template <typename T>
-void test1() {
+void test1(typename IBackendFactory<T>::sPtr factory) {
     auto tname=typeid(T).name();
     std::cout<<"Tensor<"<<tname<<"> to JPEG...";
-    DataHolder<T> dh;
-    dh.append("X", {640,240});
-    dh.build();
-    auto X=dh.get("X");
+    auto dh=factory->makeHolderS();
+    dh->append("X", {640,240});
+    dh->build();
+    auto X=dh->get("X");
     auto dims=X->dims();
     for(size_t i=0; i<dims[0]; i++)
 	for(size_t j=0; j<dims[1]; j++) {
@@ -32,13 +33,13 @@ void test1() {
 
 
 template <typename T>
-void test2() {
+void test2(typename IBackendFactory<T>::sPtr factory) {
     auto tname=typeid(T).name();
     std::cout<<"Tensor<"<<tname<<"> to JPEG...";
-    DataHolder<T> dh;
-    dh.append("X", {640,240,3});
-    dh.build();
-    auto X=dh.get("X");
+    auto dh=factory->makeHolderS();
+    dh->append("X", {640,240,3});
+    dh->build();
+    auto X=dh->get("X");
     auto dims=X->dims();
     for(size_t i=0; i<dims[0]; i++)
 	for(size_t j=0; j<dims[1]; j++) {
@@ -55,8 +56,9 @@ void test2() {
 
 template <typename T>
 void test() {
-    test1<T>();
-    test2<T>();
+    auto factory=BackendOpenMP<T>::build();
+    test1<T>(factory);
+    test2<T>(factory);
 };
 int main()
 {

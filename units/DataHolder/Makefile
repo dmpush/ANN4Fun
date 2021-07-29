@@ -4,6 +4,7 @@ all:
 	clear
 	clang++ -Wall -Wextra -std=c++20 -static -m32 -g -I .. -I ../.. main.cpp -o $(TARGET).32
 	clang++ -Wall -Wextra -std=c++20 -static -m64 -g -I .. -I ../.. main.cpp -o $(TARGET).64
+#	g++ -Wall -Wextra -std=c++20 -m64 -g -I .. -I ../.. main.cpp -o $(TARGET).64 -fopenmp -lgomp
 run:
 	make run32
 	make run64

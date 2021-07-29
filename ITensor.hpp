@@ -68,6 +68,23 @@ public:
         return raw(i+j*dims_[0]);
     };
 
+    /// @brief Вычисление многочлена регуляризации. Отрицательные коэфф-ты игнорируются.
+    /// Первый коэфф-т отвечает за негладкую оптимизацию.
+    /// #param poly - вектор коэфф-тов полинома регуляризации
+    /// @param x  - аргумент, от которого вычисляется полином
+    /// @return значение функции регуляризации для параметра x.
+    T getRegularization(const std::vector<T>& poly, T x) {
+	auto sx= x > T(0.0f) ? T(1.0f) : T(-1.0f);
+	auto xp=x;
+	auto sum=T(0);
+	for(size_t i=0; i<poly.size(); i++) 
+	    if(poly[i] > T(0.0f)){
+		sum += (i>0 ? xp : sx) * poly[i];
+		xp*=x;
+	    };
+	return sum;
+    };
+
     /// паттерн Прототип
     virtual typename ITensor<T>::sPtr clone() = 0;
 
@@ -154,6 +171,10 @@ virtual void bernoulliNoise(double prob, T heads=1.0, T tails=0.0) = 0;
 /// @brief apply -- применение функции ко всем элементам тензора
 /// @param func -- функция
 virtual void apply(const std::function<T(T)>&func) = 0;
+/// @brief метод оптимизации - градинетный спуск
+virtual void optGrad(sPtr, T, T, const std::vector<T>&) = 0;
+/// @brief метод оптимизации Нестерова (инерционный)
+virtual void optNesterov(sPtr, sPtr, T, T, T, const std::vector<T>& ) = 0;
 }; // class
 
 template<typename T>

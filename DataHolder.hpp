@@ -15,10 +15,10 @@
 #include <IDataHolder.hpp>
 
 /**
-    @brief DataHolder - массив памяти, хранящий в себе именованные переменные - тензоры. В некоторых случаях,
-    объекты этого класса интерпретиуются как одномерные тензоры (вектор), например в реализации Учителя.
+    @brief DataHolder - массив памяти, хранящий в себе именованные переменные - тензоры. 
+    Основная особенность - данные хранятся в обычной памяти компьютера.
 */
-template<typename T>
+template<typename T, typename TensorType>
 class DataHolder : public IDataHolder<T> {
 public:
     DataHolder(const DataHolder&) = delete;
@@ -26,41 +26,23 @@ public:
     virtual ~DataHolder() = default;
     /// модификация данных напрямую
     T& raw(size_t ind) override { return data_[ind]; }; 
+    T* ref(size_t ind) override { return &data_[ind]; }; 
     /// добавляет в хранилище пару имя тензора/форма тензора
-    void append(std::string name, const std::vector<size_t>& dims) override {
-	auto obj=std::make_shared<Tensor<T>>(this, dims);
+    typename ITensor<T>::sPtr append(std::string name, const std::vector<size_t>& dims) override {
+	auto obj=std::make_shared<TensorType>(this, dims);
 	IDataHolder<T>::append(name, obj);
+	return obj;
     };
     /// добавляет пустой тензор 
-    void append(std::string name) override {
-	auto obj=std::make_shared<Tensor<T>>(this);
+    typename ITensor<T>::sPtr append(std::string name) override {
+	auto obj=std::make_shared<TensorType>(this);
 	IDataHolder<T>::append(name, obj);
+	return obj;
     };
-    /// аллокация памяти хранилища
-    void build() override {
-	int offset=0;
-	for(auto [name, obj]: IDataHolder<T>::objects_) {
-	    IDataHolder<T>::setOffset(obj, offset);
-	    offset+=obj->size();
-	};
-	data_.resize(offset);
-	std::fill(data_.begin(), data_.end(), T(0));
-    };
+
     /// количество чисел в хранилище
     size_t size() override { return data_.size(); };
-    /// создание полной копии хранилища - реализация паттерна Прототип
-    typename IDataHolder<T>::sPtr clone() override {
-        auto out=std::make_shared<DataHolder<T>>();
-	for(auto [name, obj] : IDataHolder<T>::objects_) {
-	    auto o=obj->clone();
-	    IDataHolder<T>::setHolder(o, out.get());
-	    out->IDataHolder<T>::append(name, o);
-	};
-	out->build();
-	for(size_t i=0; i<size(); i++)
-	    out->raw(i)= raw(i);
-        return out;
-    };
+
     /// заполнение хранилища константой
     void fill(T val=T(0)) override {
         std::fill(data_.begin(), data_.end(), val);
@@ -68,6 +50,14 @@ public:
 
     T uniformNoise()  override  { return static_cast<T>( uniform_(rdev_) ); };
     T gaussianNoise() override  { return static_cast<T>( normal_ (rdev_) ); };
+
+protected:
+void allocate(size_t size) override {
+	data_.resize(size);
+};
+typename IDataHolder<T>::sPtr makeEmptyObject() override {
+    return std::make_shared<DataHolder<T,TensorType>>();
+};
 private:
     std::random_device seed_;
     std::mt19937 rdev_;
