@@ -4,7 +4,7 @@
 #include <memory>
 #include <IBackendFactory.hpp>
 #include <DataHolder.hpp>
-#include <Tensor.hpp>
+#include <TensorOMP.hpp>
 
 /**
     @brief Фабрика для бэкенда OpenMP.
@@ -23,10 +23,10 @@ public:
     };
 */
     typename IDataHolder<T>::sPtr makeHolderS() override final {
-	return std::make_shared<DataHolder<T, Tensor<T>>>();
+	return std::make_shared<DataHolder<T, TensorOMP<T>>>();
     };
     typename IDataHolder<T>::uPtr makeHolderU() override final {
-	return std::make_unique<DataHolder<T, Tensor<T>>>();
+	return std::make_unique<DataHolder<T, TensorOMP<T>>>();
     };
     static typename IBackendFactory<T>::sPtr build() {
 	return std::make_shared<BackendOpenMP>();

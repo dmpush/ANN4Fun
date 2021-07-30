@@ -14,21 +14,21 @@ class IDataHolder;
     @brief Tensor - класс, реализующий многомерный массив (тензор). 
 */
 template<typename T>
-class Tensor : public ITensor<T> {
+class TensorOMP : public ITensor<T> {
 public:
     friend class IDataHolder<T>;
 
-    Tensor() = delete;
-    explicit Tensor(IDataHolder<T> *holder,  const std::vector<size_t>& dimensions) : ITensor<T>(holder, dimensions) {
+    TensorOMP() = delete;
+    explicit TensorOMP(IDataHolder<T> *holder,  const std::vector<size_t>& dimensions) : ITensor<T>(holder, dimensions) {
     };
 
-    explicit Tensor(IDataHolder<T> *holder) : ITensor<T>(holder) {};
+    explicit TensorOMP(IDataHolder<T> *holder) : ITensor<T>(holder) {};
 
-    Tensor(const Tensor&) = delete;
-    ~Tensor()=default;
+    TensorOMP(const TensorOMP&) = delete;
+    ~TensorOMP()=default;
     /// паттерн Прототип
     typename ITensor<T>::sPtr clone() override {
-	auto out=std::make_shared<Tensor>(nullptr, ITensor<T>::dims());
+	auto out=std::make_shared<TensorOMP>(nullptr, ITensor<T>::dims());
 	out->setOffset(ITensor<T>::getOffset());
 	return out;
     };

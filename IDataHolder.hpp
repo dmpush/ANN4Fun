@@ -11,7 +11,7 @@
 #include <iterator> // std::size
 #include <iostream>
 #include <algorithm> //std::fill
-#include <Tensor.hpp>
+#include <ITensor.hpp>
 
 /**
     @brief IDataHolder - интерфейс массива памяти для хранения тензоров. 
