@@ -18,6 +18,7 @@
 #include <Arctan.hpp>
 #include <SELU.hpp>
 #include <Dropout.hpp>
+#include <AdamTutor.hpp>
 #include <NesterovTutor.hpp>
 #include <Timer.hpp>
 using namespace std;
@@ -52,7 +53,8 @@ auto  getModel1() {
 //    model->template addLayer<Arctan<T>>(); // вход софтмакса должен быть ограничен
     model->template addLayer<SoftMax<T>>();
     model->build(BackendOpenMP<T>::build());
-    model->template setTutor<NesterovTutor<T>>(0.1, 0.5);
+//    model->template setTutor<NesterovTutor<T>>(0.1, 0.5);
+    model->template setTutor<AdamTutor<T>>();
     return model;
 };
 

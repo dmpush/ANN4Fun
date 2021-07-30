@@ -131,3 +131,5 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 * обновлены тесты;
 
 * Tensor -> TensorOMP;
+
+* добавлен AdamTutor и тесты к нему;

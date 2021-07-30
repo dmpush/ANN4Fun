@@ -1,7 +1,7 @@
-#ifndef __TENSOR_HPP__
-#define __TENSOR_HPP__
+#ifndef __TENSOR_OMP_HPP__
+#define __TENSOR_OMP_HPP__
 
-#include <functional>
+#include <cmath>
 #include <vector>
 #include <ITensor.hpp>
 //#include <IDataHolder.hpp>
@@ -218,7 +218,29 @@ void optNesterov(typename ITensor<T>::sPtr grad, typename ITensor<T>::sPtr veloc
 	velocity->raw(i) = V;
     };
 };
-
+///
+void optAdam(typename ITensor<T>::sPtr grad, typename ITensor<T>::sPtr Mt, typename ITensor<T>::sPtr Vt,
+	T scale, T batchCount, 
+	T dt, T beta1, T beta2, T eps,
+	const std::vector<T>& regpoly) override {
+    T Beta1=std::pow(beta1, batchCount+1.0);
+    T Beta2=std::pow(beta2, batchCount+1.0);
+    #pragma omp parallel for
+    for(size_t i=0; i<this->size(); i++)  {
+	auto X=this->raw(i);
+	auto dX=grad->raw(i)*scale - this->getRegularization(regpoly, X);
+	auto M=Mt->raw(i);
+	auto V=Vt->raw(i);
+	M=M*beta1 + (1.0-beta1) * dX;
+	V=V*beta2 + (1.0-beta2) * dX*dX;
+	auto Mx=M/(1.0-Beta1);
+	auto Vx=V/(1.0-Beta2);
+	X = X + dt*Mx/(std::sqrt(Vx)+eps);
+	this->raw(i)=X;
+	Mt->raw(i)=M;
+	Vt->raw(i)=V;
+    };    
+};
 }; // class
 
 

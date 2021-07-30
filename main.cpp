@@ -3,6 +3,8 @@
 #include <string>
 #include <BackendOpenMP.hpp>
 #include <SimpleTutor.hpp>
+#include <NesterovTutor.hpp>
+#include <AdamTutor.hpp>
 #include <Input.hpp>
 #include <Layer.hpp>
 #include <Model.hpp>
@@ -24,8 +26,9 @@ int main()
 //	model(1)->setTutor(std::make_unique<SimpleTutor<float>>(0.1));
 //	std::vector<float> L={0.0f,0.00001f};
 //	model.setTutor<SimpleTutor<float>>(0.1f, L);
+	model.setTutor<AdamTutor<float>>();
 	timer.cleanup();
-	for(int i=0; i<1000; i++) {
+	for(int i=0; i<10000; i++) {
 	    model.batchBegin();
 
 	    model.setInput(0, 0.0);

@@ -10,6 +10,10 @@
 
 #include <Timer.hpp>
 #include <Console.hpp>
+#include <SimpleTutor.hpp>
+#include <NesterovTutor.hpp>
+#include <AdamTutor.hpp>
+
 using namespace std;
 
 template<typename T>
@@ -191,7 +195,6 @@ void testOptGrad(typename IBackendFactory<T>::sPtr factory) {
 	timer.toc();
     };
     cout<<timer<<endl;
-
 };
 
 template<typename T>
@@ -212,7 +215,29 @@ void testOptNesterov(typename IBackendFactory<T>::sPtr factory) {
 	timer.toc();
     };
     cout<<timer<<endl;
+};
 
+template<typename T>
+void testOptAdam(typename IBackendFactory<T>::sPtr factory) {
+    cout<<"Производительность оптимизатора ADAM<"<<typeid(T).name()<<">: ";
+    auto X=factory->makeHolderS();
+    X->append("X", {1000'000});
+    X->build();
+    auto dX=X->clone();
+    auto M=X->clone();
+    auto V=X->clone();
+    M->fill();
+    V->fill();
+    Timer timer;
+    std::vector<T> regpoly{1e-3,1e-4};
+    for(size_t i=0; i<100; i++) {
+	dX->get("X")->gaussianNoise(0.0, 1e-3);
+	timer.tic();
+	X->get("*")->optAdam(dX->get("*"), M->get("*"), V->get("*"), 1.0, 1.0,
+	1e-3, 0.9, 0.999, 1e-8,  regpoly);
+	timer.toc();
+    };
+    cout<<timer<<endl;
 };
 
 
@@ -229,6 +254,7 @@ void testAll(typename IBackendFactory<T>::sPtr factory) {
     testMul<T, 1000>(factory);
     testOptGrad<T>(factory);
     testOptNesterov<T>(factory);
+    testOptAdam<T>(factory);
 };
 
 template<typename T>
