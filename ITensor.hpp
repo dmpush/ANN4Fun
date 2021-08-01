@@ -176,7 +176,7 @@ virtual void optGrad(sPtr, T, T, const std::vector<T>&) = 0;
 /// @brief метод оптимизации Нестерова (инерционный)
 virtual void optNesterov(sPtr, sPtr, T, T, T, const std::vector<T>& ) = 0;
 ///
-virtual void optAdam(sPtr, sPtr, sPtr, T,T, T,T,T,T,  const std::vector<T>& ) = 0;
+virtual void optAdam(sPtr, sPtr, sPtr, T,T,T, T,T,T,T,  const std::vector<T>& ) = 0;
 }; // class
 
 template<typename T>

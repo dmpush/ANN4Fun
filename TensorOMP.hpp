@@ -220,11 +220,9 @@ void optNesterov(typename ITensor<T>::sPtr grad, typename ITensor<T>::sPtr veloc
 };
 ///
 void optAdam(typename ITensor<T>::sPtr grad, typename ITensor<T>::sPtr Mt, typename ITensor<T>::sPtr Vt,
-	T scale, T batchCount, 
+	T scale, T Beta1, T Beta2,
 	T dt, T beta1, T beta2, T eps,
 	const std::vector<T>& regpoly) override {
-    T Beta1=std::pow(beta1, batchCount+1.0);
-    T Beta2=std::pow(beta2, batchCount+1.0);
     #pragma omp parallel for
     for(size_t i=0; i<this->size(); i++)  {
 	auto X=this->raw(i);

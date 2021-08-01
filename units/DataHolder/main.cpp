@@ -105,13 +105,15 @@ void testClone(typename IBackendFactory<T>::sPtr factory) {
     holder1->append("B", {2,3,4});
     holder1->append("C", {15});
     holder1->build();
+    holder1->get("*")->uniformNoise(-1,1);
     for(size_t i=0; i<holder1->size(); i++)
 	holder1->raw(i)=static_cast<T>(i);
 
     auto holder2 = holder1->clone();
 
     assert(holder1->size() == holder2->size());
-
+    assert(holder1->get("*")->size() == holder2->get("*")->size());
+    assert(holder1->get("*")->dims().size() == holder2->get("*")->dims().size());
 
     for(size_t i=0; i<2; i++)
 	for(size_t j=0; j<3; j++)
@@ -233,7 +235,7 @@ void testOptAdam(typename IBackendFactory<T>::sPtr factory) {
     for(size_t i=0; i<100; i++) {
 	dX->get("X")->gaussianNoise(0.0, 1e-3);
 	timer.tic();
-	X->get("*")->optAdam(dX->get("*"), M->get("*"), V->get("*"), 1.0, 1.0,
+	X->get("*")->optAdam(dX->get("*"), M->get("*"), V->get("*"), 1.0, 0.9, 0.999,
 	1e-3, 0.9, 0.999, 1e-8,  regpoly);
 	timer.toc();
     };

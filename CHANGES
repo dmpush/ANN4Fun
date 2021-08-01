@@ -133,3 +133,7 @@ TODO: подумать о переделке DataHolder/Tensor/tensormath  в А
 * Tensor -> TensorOMP;
 
 * добавлен AdamTutor и тесты к нему;
+
+* исправлено возведение в степень оптимизаторе Адам;
+* немного расширен тест для DataHolder;
+
