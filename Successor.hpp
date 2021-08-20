@@ -65,7 +65,7 @@ public:
 private:
     // хранилище данных и псевдонимы для тензоров
     ANN<T> *precursor_;
-    std::vector<size_t> output_shape_;
+    const std::vector<size_t> output_shape_;
     typename IDataHolder<T>::uPtr holder_;
     TensorPtr<T> X_;
     TensorPtr<T> dX_;
