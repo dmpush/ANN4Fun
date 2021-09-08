@@ -19,7 +19,7 @@ class ReLU : public Successor<T> {
 public:
     ReLU() = delete;
     ReLU(const ReLU&) = delete;
-    explicit ReLU(ANN<T>* ann) : Successor<T>(ann), X_{nullptr}, Y_{nullptr}, dX_{nullptr}, dY_{nullptr} {
+    explicit ReLU(typename ANN<T>::sPtr ann) : Successor<T>(ann), X_{nullptr}, Y_{nullptr}, dX_{nullptr}, dY_{nullptr} {
     };
     ~ReLU() = default;
     void build(typename IBackendFactory<T>::sPtr factory) override {

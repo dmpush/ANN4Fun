@@ -20,9 +20,10 @@
 template<typename T>
 class Wire : public Successor<T> {
 public:
+    using sPtr=std::shared_ptr<Wire<T>>;
     Wire() = delete;
     Wire(const Wire&) = delete;
-    explicit Wire(ANN<T>* ann) : Successor<T>(ann), X_{nullptr}, Y_{nullptr}, dX_{nullptr}, dY_{nullptr} {
+    explicit Wire(typename ANN<T>::sPtr ann) : Successor<T>(ann), X_{nullptr}, Y_{nullptr}, dX_{nullptr}, dY_{nullptr} {
     };
     ~Wire() = default;
 

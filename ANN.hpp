@@ -18,7 +18,7 @@ public:
     /// @brief Конструктор по умолчанию.
     ANN() : lockTrain_{false} {};
     /// @brief Конструктор "следующего слоя".
-    ANN(ANN*) : ANN() {};
+    ANN(typename ANN<T>::sPtr) : ANN() {};
     /// @brief Деструктор.
     virtual ~ANN() = default;
     /// @brief Компиляция объекта нейронной сети с подключением бэкенда.

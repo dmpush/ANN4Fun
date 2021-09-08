@@ -128,7 +128,7 @@ void copy  (typename ITensor<T>::sPtr src) override {
 	throw  std::runtime_error("copy(): тензоры имеют разные размеры");
     #pragma omp parallel for
     for(size_t i=0; i<src->size(); i++)
-	ITensor<T>::raw(i) = src->raw(i);
+	this->raw(i) = src->raw(i);
 };
 
 /// @brief fill() -- заполнение тензора постоянным значением val

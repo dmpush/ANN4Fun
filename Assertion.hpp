@@ -21,7 +21,7 @@ class Assertion : public Successor<T> {
 public:
     Assertion() = delete;
     Assertion(const Assertion&) = delete;
-    explicit Assertion(ANN<T>* ann, const std::function<void(T)>& fwd, const std::function<void(T)>& bwd=[](T){} ) : 
+    explicit Assertion(typename ANN<T>::sPtr ann, const std::function<void(T)>& fwd, const std::function<void(T)>& bwd=[](T){} ) : 
 	Successor<T>(ann),
 	X_{nullptr},
 	Y_{nullptr},

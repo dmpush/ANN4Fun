@@ -36,10 +36,8 @@ public:
     TensorPtr<T>  getOutputErrors() override { return dX_; };
 
     void forward() override {
-	assert(X_);
     };
     void backward() override {
-	assert(dX_);
     };
     void batchBegin() override {
 	assert(X_);

@@ -19,7 +19,7 @@ class SoftMax : public Successor<T> {
 public:
     SoftMax() = delete;
     SoftMax(const SoftMax&) = delete;
-    explicit SoftMax(ANN<T>* ann) : 
+    explicit SoftMax(typename ANN<T>::sPtr ann) :
 	Successor<T>(ann), 
 	X_{nullptr},
 	Y_{nullptr},

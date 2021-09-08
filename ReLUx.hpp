@@ -22,7 +22,7 @@ class ReLUx : public Successor<T> {
 public:
     ReLUx() = delete;
     ReLUx(const ReLUx&) = delete;
-    explicit ReLUx(ANN<T>* ann) : Successor<T>(ann),
+    explicit ReLUx(typename ANN<T>::sPtr ann) : Successor<T>(ann),
 	    X_{nullptr},
 	    Y_{nullptr},
 	    dX_{nullptr},

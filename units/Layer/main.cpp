@@ -29,7 +29,7 @@ void testExceptions() {
     hasException=false;
     try {
 	auto  inputs=std::make_shared<Input<T>> (std::vector<size_t>({2,2}));
-	auto  layer=std::make_shared<Layer<T>> (inputs.get(), std::vector<size_t>({2}));
+	auto  layer=std::make_shared<Layer<T>> (inputs, std::vector<size_t>({2}));
 	inputs->build(BackendOpenMP<T>::build());
 	layer->build(BackendOpenMP<T>::build());
     } catch(std::runtime_error e) {
@@ -41,7 +41,7 @@ void testExceptions() {
     hasException=false;
     try {
 	auto  inputs=std::make_shared<Input<T>> (std::vector<size_t>({2}));
-	auto  layer=std::make_shared<Layer<T>> (inputs.get(), std::vector<size_t>({2,2}));
+	auto  layer=std::make_shared<Layer<T>> (inputs, std::vector<size_t>({2,2}));
 	inputs->build(BackendOpenMP<T>::build());
 	layer->build(BackendOpenMP<T>::build());
     } catch(std::runtime_error e) {

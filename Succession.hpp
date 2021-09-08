@@ -10,7 +10,7 @@
 template<typename T>
 class Succession : public ANN<T> {
 public:
-    Succession(ANN<T> *ann) : ANN<T>(ann) {};
+    Succession(typename ANN<T>::sPtr ann) : ANN<T>(ann) {};
     Succession() : ANN<T>() {};
     virtual ~Succession() = default;
 private:

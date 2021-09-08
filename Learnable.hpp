@@ -19,13 +19,13 @@ class Learnable : public Successor<T> {
 public:
     Learnable() = delete;
     Learnable(const Learnable&) = delete;
-    explicit Learnable(ANN<T>* ann, std::vector<size_t> Nout) :
+    explicit Learnable(typename ANN<T>::sPtr ann, std::vector<size_t> Nout) :
 	Successor<T>(ann,Nout),
 	params_{nullptr},
 	grad_{nullptr} {
     };
     /// @brief конструктор для параметризированных функций активации
-    explicit Learnable(ANN<T>* ann) : Successor<T>(ann),
+    explicit Learnable(typename ANN<T>::sPtr ann) : Successor<T>(ann),
 	params_{nullptr},
 	grad_{nullptr} {
     };

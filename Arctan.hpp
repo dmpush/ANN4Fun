@@ -21,7 +21,7 @@ class Arctan : public Successor<T> {
 public:
     Arctan() = delete;
     Arctan(const Arctan&) = delete;
-    explicit Arctan(ANN<T>* ann) : Successor<T>(ann), scale_{2.0/std::numbers::pi}  {
+    explicit Arctan(typename ANN<T>::sPtr ann) : Successor<T>(ann), scale_{2.0/std::numbers::pi}  {
     };
     ~Arctan() = default;
     void build(typename IBackendFactory<T>::sPtr factory) override {

@@ -23,7 +23,7 @@ class Gain : public Learnable<T> {
 public:
     Gain() = delete;
     Gain(const Gain&) = delete;
-    Gain(ANN<T> *ann) :
+    Gain(typename ANN<T>::sPtr ann) :
 	Learnable<T>(ann, ann->shape()),
 	K_{nullptr},
 	X_{nullptr},

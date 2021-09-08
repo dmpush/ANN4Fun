@@ -20,7 +20,7 @@ class Dropout : public Successor<T> {
 public:
     Dropout() = delete;
     Dropout(const Dropout&) = delete;
-    explicit Dropout(ANN<T>* ann, double probability) :
+    explicit Dropout(typename ANN<T>::sPtr ann, double probability) :
 	Successor<T>(ann), 
 	X_{nullptr},
 	Y_{nullptr},

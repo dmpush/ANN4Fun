@@ -23,7 +23,7 @@ class Layer : public Learnable<T> {
 public:
     Layer() = delete;
     Layer(const Layer&) = delete;
-    Layer(ANN<T> *ann, const std::vector<size_t>& Nout) : Learnable<T>(ann, Nout),
+    Layer(typename ANN<T>::sPtr ann, const std::vector<size_t>& Nout) : Learnable<T>(ann, Nout),
     W_{nullptr},
     C_{nullptr},
     X_{nullptr},

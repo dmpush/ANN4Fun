@@ -23,7 +23,7 @@ public:
     Reshape(const Reshape&) = delete;
     /// @param ann - входной слой сети
     /// @param shape - размерности выходного тензора
-    explicit Reshape(ANN<T>* ann, const std::vector<size_t>& newShape) :
+    explicit Reshape(typename ANN<T>::sPtr ann, const std::vector<size_t>& newShape) :
 	Successor<T>(ann, newShape),
 	X_{nullptr},
 	Y_{nullptr}, 

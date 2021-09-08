@@ -16,7 +16,7 @@
 template<typename T>
 class Successor : public Succession<T> {
 public:
-    Successor(ANN<T> *ann, std::vector<size_t> Nout) : Succession<T>(ann), 
+    Successor(typename ANN<T>::sPtr ann, std::vector<size_t> Nout) : Succession<T>(ann), 
 	precursor_(ann), 
 	output_shape_(Nout),
 	holder_{nullptr},
@@ -27,7 +27,7 @@ public:
     {
     };
 
-    Successor(ANN<T> *ann) : Successor(ann, ann->shape()) {};
+    Successor(typename ANN<T>::sPtr ann) : Successor(ann, ann->shape()) {};
 
     virtual ~Successor() = default;
 
@@ -58,13 +58,13 @@ public:
 	dX_->dump();
 	holder_->dump();
     };
-    ANN<T>* getPrecursor() { return precursor_; };
+    typename ANN<T>::sPtr getPrecursor() { return precursor_; };
     std::vector<size_t> shape() override { return output_shape_; };
 
 
 private:
     // хранилище данных и псевдонимы для тензоров
-    ANN<T> *precursor_;
+    typename ANN<T>::sPtr precursor_;
     const std::vector<size_t> output_shape_;
     typename IDataHolder<T>::uPtr holder_;
     TensorPtr<T> X_;

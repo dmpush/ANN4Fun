@@ -28,13 +28,18 @@ class Model : public Succession<T> {
 public:
     using sPtr=std::shared_ptr<Model<T>>;
 
-    Model() : layers_{} {};
-    Model(const std::vector<size_t>& shape) : Succession<T>(), layers_{} {
-	layers_.push_back(std::make_shared<Input<T>>(shape));
+    Model() =delete; 
+//: layers_{} {
+//    };
+    Model(const std::vector<size_t>& inputShape) {
+	auto inputs=std::make_shared<Input<T>>(inputShape);
+	layers_.push_back(inputs);
     };
+
+
     /// @brief конструктор композиции
-    Model(ANN<T> *ann) : Succession<T>(ann), layers_{} {
-	layers_.push_back(std::make_shared<Wire<T>>(ann));
+    explicit Model(typename ANN<T>::sPtr head) : Succession<T>(head), layers_{} {
+	layers_.push_back(std::make_shared<Wire<T>>(head));
     };
 
     
@@ -47,14 +52,18 @@ public:
 
     // дабы спрятать выделение памяти от пользователя
     template<Derived<Succession<T>> AnnType>
-    void addLayer(std::vector<size_t> dims) {
-	layers_.push_back(std::make_shared<AnnType>(layers_.back().get(), dims) );
+    void addLayer(const std::vector<size_t>& dims) {
+	layers_.push_back(std::make_shared<AnnType>(layers_.back(), dims) );
     };
 
 
     template<Derived<Succession<T>> AnnType, typename... Args>
     void addLayer(Args... args) {
-	layers_.push_back(std::make_shared<AnnType>(layers_.back().get(), args... ) );
+	layers_.push_back(std::make_shared<AnnType>(layers_.back(), args... ) );
+    };
+
+    void addLayer(typename ANN<T>::sPtr ann) {
+	layers_.push_back(ann);
     };
 
     void forward() override {
@@ -116,7 +125,6 @@ public:
     };
 
     std::vector<size_t> shape() override { return layers_.back()->shape(); };
-
 private:
     /// список слоев, составляющих модель
     std::deque<typename ANN<T>::sPtr> layers_;

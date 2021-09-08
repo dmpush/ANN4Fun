@@ -72,10 +72,10 @@ void testComposition() {
     cout<<"Проверка композиции Model<"<<typeid(T).name()<<">...";
     bool hasException{false};
     try {
-	Model<T> model1({2});
-	model1. template addLayer<Layer<T>>({2});
-
-	Model<T> model(&model1);
+	std::vector<size_t> inputShape={2};
+	auto model1 = std::make_shared<Model<T>>(inputShape);
+	model1-> template addLayer<Layer<T>>({2});
+	Model<T> model(model1);
 	model. template addLayer<Layer<T>>({3});
 	model.build(BackendOpenMP<T>::build());
 
@@ -84,6 +84,7 @@ void testComposition() {
 
 	    model.setInput(0, 0.0);
 	    model.setInput(1, 1.0);
+//            model.setInput(2, 0.5);
 	    model.forward();
 	    model.setOutput(0, 1.0);
 	    model.setOutput(1, 2.0);

@@ -1,5 +1,5 @@
 RM=rm -f
-TARGET=test.classifier
+TARGET=test.autoencoder
 all:
 	clear
 #	clang++ -std=c++20 -g -static -I .. -I ../../ -ljpeg main.cpp -o $(TARGET)

@@ -23,7 +23,7 @@ public:
 	fake_{nullptr} { };
 
     explicit Generator(size_t Nin) : Generator<T>(std::vector({Nin})) {};
-    Generator(ANN<T>*) = delete;
+    Generator(typename ANN<T>::sPtr) = delete;
     virtual ~Generator() = default;
 
     void build(typename IBackendFactory<T>::sPtr factory) override {

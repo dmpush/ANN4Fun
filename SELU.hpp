@@ -20,7 +20,7 @@ class SELU : public Successor<T> {
 public:
     SELU() = delete;
     SELU(const SELU&) = delete;
-    explicit SELU(ANN<T>* ann) : Successor<T>(ann), 
+    explicit SELU(typename ANN<T>::sPtr ann) : Successor<T>(ann), 
     X_{nullptr},
     Y_{nullptr},
     dX_{nullptr},

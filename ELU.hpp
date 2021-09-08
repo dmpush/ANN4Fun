@@ -20,7 +20,7 @@ class ELU : public Successor<T> {
 public:
     ELU() = delete;
     ELU(const ELU&) = delete;
-    explicit ELU(ANN<T>* ann, double alpha=1.0) : Successor<T>(ann), 
+    explicit ELU(typename ANN<T>::sPtr ann, double alpha=1.0) : Successor<T>(ann), 
     X_{nullptr},
     Y_{nullptr},
     dX_{nullptr},
