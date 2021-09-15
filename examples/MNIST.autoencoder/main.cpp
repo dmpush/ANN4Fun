@@ -14,10 +14,6 @@
 #include <Model.hpp>
 #include <Reshape.hpp>
 #include <Layer.hpp>
-#include <ReLU.hpp>
-#include <SoftMax.hpp>
-#include <Arctan.hpp>
-#include <SELU.hpp>
 #include <Dropout.hpp>
 #include <Input.hpp>
 #include <Generator.hpp>
@@ -26,9 +22,16 @@
 #include <Composition.hpp>
 #include <Timer.hpp>
 
+#include <ReLU.hpp>
+#include <ReLUx.hpp>
+#include <SoftMax.hpp>
+#include <Normalize.hpp>
+#include <Arctan.hpp>
+#include <SELU.hpp>
+
 using namespace std;
 
-template<typename T>
+template<typename T, typename TAct>
 auto  getDecoder1() {
     std::vector<size_t> inputShape={10u};
     std::vector<size_t> outputShape={28u,28u};
@@ -36,19 +39,22 @@ auto  getDecoder1() {
 
     model->template addLayer<Layer<T>>({25});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({49});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({98});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({196});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<TAct>();
+
+//    model->template addLayer<Layer<T>>({392});
+//    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({28*28});
     model->template addLayer<Arctan<T>>();
@@ -60,34 +66,35 @@ auto  getDecoder1() {
 };
 
 
-template<typename T>
+template<typename T, typename TAct>
 auto  getEncoder1() {
     std::vector<size_t> shape={28u,28u};
     auto model = std::make_shared<Model<T>> (shape);
     model->template addLayer<Reshape<T>>({28*28});
 //    model->template addLayer<Layer<T>>({784});
-//    model->template addLayer<ReLU<T>>();
+//    model->template addLayer<TAct>();
 //    model->template addLayer<Layer<T>>({392});
-//    model->template addLayer<ReLU<T>>();
+//    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({196});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({98});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({49});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({25});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({10});
-    model->template addLayer<Arctan<T>>(); 
+//    model->template addLayer<Arctan<T>>(); 
+    model->template addLayer<Normalize<T>>();  
 //    model->template addLayer<SoftMax<T>>();  // вход софтмакса должен быть ограничен
 //    model->template setTutor<NesterovTutor<T>>(0.1, 0.5);
     model->build(BackendOpenMP<T>::build());
@@ -257,8 +264,8 @@ void saveImagePairs(std::deque<typename MNIST<R>::Image::sPtr> dataset, typename
 int main()
 {
     auto mnist=std::make_shared<MNIST<float>>("../../../");
-    auto  encoder=getEncoder1<double>();
-    auto  decoder=getDecoder1<double>();
+    auto  encoder=getEncoder1<double, Arctan<double>>();
+    auto  decoder=getDecoder1<double, Arctan<double>>();
     auto  autoencoder=getModel<double>(encoder,decoder);
     for(size_t ep=0; ep<100; ep++) {
 

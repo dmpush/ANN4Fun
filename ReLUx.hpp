@@ -1,5 +1,5 @@
-#ifndef __RELU_HPP__
-#define __RELU_HPP__
+#ifndef __RELUx_HPP__
+#define __RELUx_HPP__
 
 #include <cassert>
 #include <stdexcept>
