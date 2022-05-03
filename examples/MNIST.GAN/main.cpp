@@ -33,25 +33,25 @@ using namespace std;
 
 template<typename T, typename TAct>
 std::shared_ptr<Model<T>>  getGenerator() {
-    std::vector<size_t> inputShape={10u};
+    std::vector<size_t> inputShape={49u};
     std::vector<size_t> outputShape={28u,28u};
     auto model = std::make_shared<Model<T>>(inputShape);
 
-    model->template addLayer<Layer<T>>({25});
+    model->template addLayer<Layer<T>>({64});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({49});
+    model->template addLayer<Layer<T>>({81});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({98});
-    model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<TAct>();
+//    model->template addLayer<Layer<T>>({98});
+//    model->template addLayer<Dropout<T>>(0.1);
+//    model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({196});
-    model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<TAct>();
+//    model->template addLayer<Layer<T>>({196});
+//    model->template addLayer<Dropout<T>>(0.1);
+//    model->template addLayer<TAct>();
 
 //    model->template addLayer<Layer<T>>({392});
 //    model->template addLayer<TAct>();
@@ -76,32 +76,32 @@ auto  getDescriminator() {
 //    model->template addLayer<Layer<T>>({392});
 //    model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({196});
+    model->template addLayer<Layer<T>>({81});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({98});
+    model->template addLayer<Layer<T>>({64});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({49});
-    model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<TAct>();
+//    model->template addLayer<Layer<T>>({49});
+//    model->template addLayer<Dropout<T>>(0.1);
+//    model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({25});
-    model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<TAct>();
+//    model->template addLayer<Layer<T>>({25});
+//    model->template addLayer<Dropout<T>>(0.1);
+//    model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({12});
-    model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<TAct>();
+//    model->template addLayer<Layer<T>>({12});
+//    model->template addLayer<Dropout<T>>(0.1);
+//    model->template addLayer<TAct>();
 
-    model->template addLayer<Layer<T>>({6});
-    model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<TAct>();
+//    model->template addLayer<Layer<T>>({6});
+//    model->template addLayer<Dropout<T>>(0.1);
+//    model->template addLayer<TAct>();
 
     model->template addLayer<Layer<T>>({2});
-    model->template addLayer<TAct>();
+    model->template addLayer<SoftMax<T>>();
 
 
     model->build(BackendOpenMP<T>::build());
@@ -126,7 +126,7 @@ void train(std::string prefix, std::shared_ptr<typename MNIST<R>::MNIST_set> dat
     T img[28*28];
     std::vector<T> clazz;
     Timer timerFwd,timerBwd,timerTrain;
-    model->notify(&dropout_on);
+//    model->notify(&dropout_on);
     size_t smp{0};
     T batchError{0};
     
@@ -193,7 +193,7 @@ void saveImages(typename Model<T>::sPtr gen, size_t ep) {
 int main(int argc, char *argv[])
 {
     auto mnist=std::make_shared<MNIST<float>>("../../../");
-    auto  gen=getGenerator<double, Arctan<double>>();
+    auto  gen=getGenerator<double, ReLUx<double>>();
     auto  dis=getDescriminator<double, Arctan<double>>();
     auto  model=getModel<double>(gen,dis);
     for(size_t ep=0; ep<100; ep++) {
