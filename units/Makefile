@@ -16,6 +16,7 @@ all:
 	make -C ELU
 	make -C SELU
 	make -C Dropout
+	make -C SkipConnections
 run:
 	clear
 	make -C DataHolder run
@@ -35,6 +36,7 @@ run:
 	make -C ELU run
 	make -C SELU run
 	make -C Dropout run
+	make -C SkipConnections run
 	echo 'Тестирование удачно завершено!'
 clean:
 	make -C DataHolder clean
@@ -54,3 +56,4 @@ clean:
 	make -C ELU clean
 	make -C SELU clean
 	make -C Dropout clean
+	make -C SkipConnections clean
