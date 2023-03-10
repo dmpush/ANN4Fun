@@ -15,6 +15,7 @@ all:
 	make -C ReLUx
 	make -C ELU
 	make -C SELU
+	make -C SiLU
 	make -C Dropout
 	make -C SkipConnections
 run:
@@ -35,6 +36,7 @@ run:
 	make -C ReLUx run
 	make -C ELU run
 	make -C SELU run
+	make -C SiLU run
 	make -C Dropout run
 	make -C SkipConnections run
 	echo 'Тестирование удачно завершено!'
@@ -55,5 +57,6 @@ clean:
 	make -C ReLUx clean
 	make -C ELU clean
 	make -C SELU clean
+	make -C SiLU clean
 	make -C Dropout clean
 	make -C SkipConnections clean
