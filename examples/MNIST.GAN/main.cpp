@@ -28,6 +28,7 @@
 #include <Normalize.hpp>
 #include <Arctan.hpp>
 #include <SELU.hpp>
+#include <SiLU.hpp>
 
 using namespace std;
 
@@ -193,7 +194,7 @@ void saveImages(typename Model<T>::sPtr gen, size_t ep) {
 int main(int argc, char *argv[])
 {
     auto mnist=std::make_shared<MNIST<float>>("../../../");
-    auto  gen=getGenerator<double, ReLUx<double>>();
+    auto  gen=getGenerator<double, SiLU<double>>();
     auto  dis=getDescriminator<double, Arctan<double>>();
     auto  model=getModel<double>(gen,dis);
     for(size_t ep=0; ep<100; ep++) {

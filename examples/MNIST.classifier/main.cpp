@@ -17,13 +17,18 @@
 #include <SoftMax.hpp>
 #include <Arctan.hpp>
 #include <SELU.hpp>
+#include <SiLU.hpp>
 #include <Dropout.hpp>
 #include <AdamTutor.hpp>
 #include <NesterovTutor.hpp>
 #include <Timer.hpp>
 using namespace std;
 
-template<typename T>
+template<
+    typename T,
+    template<typename>
+	class Act
+>
 auto  getModel1() {
     std::vector<size_t> shape={28u,28u};
     auto model = std::make_shared<Model<T>> (shape);
@@ -35,19 +40,19 @@ auto  getModel1() {
 
     model->template addLayer<Layer<T>>({196});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<Act<T>>();
 
     model->template addLayer<Layer<T>>({98});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<Act<T>>();
 
     model->template addLayer<Layer<T>>({49});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<Act<T>>();
 
     model->template addLayer<Layer<T>>({25});
     model->template addLayer<Dropout<T>>(0.1);
-    model->template addLayer<ReLU<T>>();
+    model->template addLayer<Act<T>>();
 
     model->template addLayer<Layer<T>>({10});
 //    model->template addLayer<Arctan<T>>(); // вход софтмакса должен быть ограничен
@@ -141,7 +146,7 @@ auto train(std::string prefix, std::deque<typename MNIST<R>::Image::sPtr> datase
 int main()
 {
     auto mnist=std::make_shared<MNIST<float>>("../../../");
-    auto model=getModel1<double>();
+    auto model=getModel1<double, SiLU>();
     for(size_t ep=0; ep<1000; ep++) {
 	auto dataset=mnist->getTrainSet()->shuffle();
 	auto wrong=train<float,double>("epoch #"+std::to_string(ep), dataset, model);

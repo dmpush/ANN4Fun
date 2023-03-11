@@ -28,6 +28,7 @@
 #include <Normalize.hpp>
 #include <Arctan.hpp>
 #include <SELU.hpp>
+#include <SiLU.hpp>
 
 using namespace std;
 
@@ -264,8 +265,8 @@ void saveImagePairs(std::deque<typename MNIST<R>::Image::sPtr> dataset, typename
 int main()
 {
     auto mnist=std::make_shared<MNIST<float>>("../../../");
-    auto  encoder=getEncoder1<double, Arctan<double>>();
-    auto  decoder=getDecoder1<double, Arctan<double>>();
+    auto  encoder=getEncoder1<double, SiLU<double>>();
+    auto  decoder=getDecoder1<double, SiLU<double>>();
     auto  autoencoder=getModel<double>(encoder,decoder);
     for(size_t ep=0; ep<100; ep++) {
 
