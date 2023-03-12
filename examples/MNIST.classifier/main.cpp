@@ -145,7 +145,7 @@ auto train(std::string prefix, std::deque<typename MNIST<R>::Image::sPtr> datase
 
 int main()
 {
-    auto mnist=std::make_shared<MNIST<float>>("../../../");
+    auto mnist=std::make_shared<MNIST<float>>("../../../../");
     auto model=getModel1<double, SiLU>();
     for(size_t ep=0; ep<1000; ep++) {
 	auto dataset=mnist->getTrainSet()->shuffle();

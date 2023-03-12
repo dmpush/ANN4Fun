@@ -264,7 +264,7 @@ void saveImagePairs(std::deque<typename MNIST<R>::Image::sPtr> dataset, typename
 
 int main()
 {
-    auto mnist=std::make_shared<MNIST<float>>("../../../");
+    auto mnist=std::make_shared<MNIST<float>>("../../../../");
     auto  encoder=getEncoder1<double, SiLU<double>>();
     auto  decoder=getDecoder1<double, SiLU<double>>();
     auto  autoencoder=getModel<double>(encoder,decoder);

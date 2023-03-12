@@ -20,7 +20,7 @@ void endswap(T *objp)
 	std::reverse(memp, memp + sizeof(T));
 }
 
-template <typename T>
+template <typename T=float>
 class MNIST
 {
     std::random_device seed_;

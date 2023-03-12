@@ -15,7 +15,7 @@ using namespace std;
 
 int main()
 {
-    MNIST<float> mnist("../../../");
+    MNIST<> mnist("../../../../");
     auto factory=BackendOpenMP<float>::build();
     auto dh=factory->makeHolderS();
     dh->append("X", {28,28});

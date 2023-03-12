@@ -193,7 +193,7 @@ void saveImages(typename Model<T>::sPtr gen, size_t ep) {
 
 int main(int argc, char *argv[])
 {
-    auto mnist=std::make_shared<MNIST<float>>("../../../");
+    auto mnist=std::make_shared<MNIST<float>>("../../../../");
     auto  gen=getGenerator<double, SiLU<double>>();
     auto  dis=getDescriminator<double, Arctan<double>>();
     auto  model=getModel<double>(gen,dis);
