@@ -29,5 +29,4 @@ add_subdirectory(Generator)
 add_subdirectory(SkipConnections)
 add_subdirectory(Tensor2JPEG)
 add_subdirectory(MNIST)
-
-
+add_subdirectory(PCA_Layer)

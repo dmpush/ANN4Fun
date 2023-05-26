@@ -21,6 +21,7 @@
 template <typename T>
 class Layer : public Learnable<T> {
 public:
+    using sPtr=std::shared_ptr<Layer<T>>;
     Layer() = delete;
     Layer(const Layer&) = delete;
     Layer(typename ANN<T>::sPtr ann, const std::vector<size_t>& Nout) : Learnable<T>(ann, Nout),

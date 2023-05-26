@@ -242,7 +242,7 @@ void saveImagePairs(std::deque<typename MNIST<R>::Image::sPtr> dataset, typename
 	file<<"<TR>"<<endl;
 	for(size_t j=0; j<10; j++) {
 	    for(size_t q=0; q<10; q++)
-		model->getSecond()->setInput(q, acc[i][q]*0.33333+acc[j][q]*0.77778 );
+		model->getSecond()->setInput(q, acc[i][q]*0.5+acc[j][q]*0.5 );
 	    model->getSecond()->forward();
 	    auto Y=model->getSecond()->getOutputs();
 	    std::string fname="/tmp/lab="+std::to_string(i)+"x"+std::to_string(j)+".jpg";
