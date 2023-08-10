@@ -3,7 +3,7 @@
 
 #include <ANN.hpp>
 #include <Succession.hpp>
-#include <Layer.hpp>
+#include <Linear.hpp>
 #include <iostream>
 #include <vector>
 
@@ -12,8 +12,8 @@ class PCA_Layer : public Succession<T> {
 public:
   explicit PCA_Layer(typename ANN<T>::sPtr previos, const std::vector<size_t>& Sout, size_t Nint) : 
     Succession<T>(previos),
-    first_{std::make_shared<Layer<T>>(previos, std::vector<size_t>({Nint})) },
-    second_{std::make_shared<Layer<T>>(first_, Sout)} {
+    first_{std::make_shared<Linear<T>>(previos, std::vector<size_t>({Nint})) },
+    second_{std::make_shared<Linear<T>>(first_, Sout)} {
 
   }
   virtual ~PCA_Layer() = default;
@@ -83,7 +83,7 @@ public:
 
   std::vector<size_t> shape() override { return second_->shape(); };
 private:
-  typename Layer<T>::sPtr first_, second_;
+  typename Linear<T>::sPtr first_, second_;
 };
 
 #endif

@@ -12,7 +12,7 @@
 #include <Tensor2JPEG.hpp>
 #include <Model.hpp>
 #include <Reshape.hpp>
-#include <Linear.hpp>
+#include <Layer.hpp>
 #include <ReLU.hpp>
 #include <SoftMax.hpp>
 #include <Arctan.hpp>
@@ -22,8 +22,6 @@
 #include <AdamTutor.hpp>
 #include <NesterovTutor.hpp>
 #include <Timer.hpp>
-#include <Normalize.hpp>
-
 using namespace std;
 
 template<
@@ -40,25 +38,24 @@ auto  getModel1() {
 //    model->template addLayer<Layer<T>>({392});
 //    model->template addLayer<ReLU<T>>();
 
-    model->template addLayer<Linear<T>>({196});
+    model->template addLayer<Layer<T>>({196});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<Act<T>>();
 
-    model->template addLayer<Linear<T>>({98});
+    model->template addLayer<Layer<T>>({98});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<Act<T>>();
 
-    model->template addLayer<Linear<T>>({49});
+    model->template addLayer<Layer<T>>({49});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<Act<T>>();
 
-    model->template addLayer<Linear<T>>({25});
+    model->template addLayer<Layer<T>>({25});
     model->template addLayer<Dropout<T>>(0.1);
     model->template addLayer<Act<T>>();
 
-    model->template addLayer<Linear<T>>({10});
+    model->template addLayer<Layer<T>>({10});
 //    model->template addLayer<Arctan<T>>(); // вход софтмакса должен быть ограничен
-    model->template addLayer<Normalize<T>> (); // предотвращаем  взрыв
     model->template addLayer<SoftMax<T>>();
     model->build(BackendOpenMP<T>::build());
 //    model->template setTutor<NesterovTutor<T>>(0.1, 0.5);

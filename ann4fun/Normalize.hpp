@@ -52,9 +52,12 @@ public:
     void backward() override {
 	assert(dX_);
 	assert(dY_);
+	T dYX{0.0};
 	for(size_t i=0; i<Y_->size(); i++) {
-	    auto x=X_->raw(i);
-	    dX_->raw(i) =  (1.0/norm_ - x*x/(norm_*norm_*norm_)) * dY_->raw(i);
+	    dYX += dY_->raw(i) *  X_->raw(i);
+	};
+	for(size_t j=0; j<Y_->size(); j++) {
+	    dX_->raw(j) = (dY_->raw(j)  - X_->raw(j) * dYX / (norm_ * norm_)) / norm_; 
 	};
     };
     void batchBegin() override {

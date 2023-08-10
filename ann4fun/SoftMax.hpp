@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 #include <cmath>
-
+#include <limits>
 #include <ANN.hpp>
 #include <Successor.hpp>
 #include <IBackendFactory.hpp>
@@ -40,8 +40,12 @@ public:
 	assert(X_);
 	assert(Y_);
 	T norm{0};
+        T maxval = std::numeric_limits<T>::min();
+	for(size_t i=0; i<X_->size(); i++) 
+          maxval = std::max(maxval, X_->raw(i) );
 	for(size_t i=0; i<X_->size(); i++) {
-	    Y_->raw(i) = static_cast<T>( std::exp(X_->raw(i)) );
+         
+	    Y_->raw(i) = static_cast<T>( std::exp(X_->raw(i)-maxval) );
 	    assert(!std::isnan(Y_->raw(i)));
 	    norm += Y_->raw(i);
 	    assert(!std::isnan(norm));
