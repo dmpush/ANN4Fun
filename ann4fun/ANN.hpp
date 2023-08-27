@@ -39,11 +39,22 @@ public:
     /// @param ind -- номер выхода;
     /// @param val -- целевое значение.
     /// @return невязка выхода.
-    virtual T setOutput(size_t ind, T val) final { 
+    virtual T setOutput(size_t ind, T val) { 
 	assert(ind<getOutputs()->size());
 	return (getOutputErrors()->raw(ind)=val-getOutputs()->raw(ind)); 
     };
-
+    /// @brief возвращает значение целевой функции оптимизации. 
+    ///        может быть переопределен в дочерних классах.
+    ///        по умолчанию - квадратичная ошибка.
+    virtual T getFitness() {
+      auto out=getOutputErrors();
+      T s{0.0};
+      for(size_t o=0; o<out->size(); o++) {
+         T err = out->raw( o );
+         s += err * err;
+      };
+      return 0.5 * s;
+    };
     /// @brief Возвращает значение входа.
     /// @param ind -- номер входа.
     /// @return значение входа с номером ind нейросети.

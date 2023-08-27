@@ -56,6 +56,18 @@ public:
     };
     void setTutor(typename AbstractTutor<T>::uPtr) override {
     };
+    T setOutput(size_t o, T val) final override {
+      this->getOutputErrors()->raw(o) = val;
+      return val;
+    };
+    T getFitness() final override {
+      auto out=this->getOutputErrors();
+      T s{0};
+      for(size_t o=0; o<out->size(); o++) {
+        s +=  out->raw(o) * std::log( this->getOutputs()->raw(o) );
+      };
+      return - s;
+    };
 
 private:
     TensorPtr<T> X_, Y_;

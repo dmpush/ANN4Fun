@@ -155,11 +155,11 @@ void train(std::string prefix, std::shared_ptr<typename MNIST<R>::MNIST_set> dat
 		dis->setInput(q, img[q]);
 	    dis->forward();
 	    for(size_t q=0; q<2; q++) {
-		T errq=clazz[q]-dis->getOutput(q);
-		batchError+=errq*errq;
-		dis->setError(q, clazz[q]);
-//		dis->setOutput(q, clazz[q]);
+//		T errq=clazz[q]-dis->getOutput(q);
+//		dis->setError(q, clazz[q]);
+		dis->setOutput(q, clazz[q]);
 	    };
+	    batchError += dis->getFitness();
 	    dis->backward();
 	};
 	dis->batchEnd();
@@ -171,12 +171,12 @@ void train(std::string prefix, std::shared_ptr<typename MNIST<R>::MNIST_set> dat
 	    model->getInputs()->gaussianNoise(0.0, 1.0);
 	    model->forward();
 	    for(size_t q=0; q<2; q++)
-		model->setError(q, clazz[q]);
-//		model->setOutput(q, clazz[q]);
+//		model->setError(q, clazz[q]);
+		model->setOutput(q, clazz[q]);
 	    model->backward();
 	};
 	gen->batchEnd();
-	std::cout<<batch<<"/"<<numBatches<<": "<< batchError/(T)batchSize<<std::endl;
+	std::cout<<batch<<"/"<<numBatches<<": Entropy="<< batchError/(T)batchSize<<std::endl;
     };
 };
 
