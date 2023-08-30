@@ -74,6 +74,7 @@ auto  getDescriminator() {
     model->template addLayer<Reshape<T>>({28*28});
 //    model->template addLayer<Layer<T>>({784});
 //    model->template addLayer<TAct>();
+
 //    model->template addLayer<Layer<T>>({392});
 //    model->template addLayer<TAct>();
 
@@ -166,6 +167,7 @@ void train(std::string prefix, std::shared_ptr<typename MNIST<R>::MNIST_set> dat
 	//----
 	clazz={0.0, 1.0};
 	dis->lockTrain();
+        gen->unlockTrain();
 	gen->batchBegin();
 	for(size_t sample=0; sample<batchSize; sample++) {
 	    model->getInputs()->gaussianNoise(0.0, 1.0);
@@ -175,7 +177,7 @@ void train(std::string prefix, std::shared_ptr<typename MNIST<R>::MNIST_set> dat
 		model->setOutput(q, clazz[q]);
 	    model->backward();
 	};
-	gen->batchEnd();
+	model->batchEnd();
 	std::cout<<batch<<"/"<<numBatches<<": Entropy="<< batchError/(T)batchSize<<std::endl;
     };
 };
